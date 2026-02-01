@@ -17,7 +17,7 @@ export const DialogTrigger = forwardRef<
       'hover:bg-surface-hover active:bg-muted',
       'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
       'transition-colors duration-150',
-      className
+      className,
     )}
     {...props}
   />
@@ -36,7 +36,7 @@ export const DialogBackdrop = forwardRef<
       'fixed inset-0 min-h-dvh bg-black/20 dark:bg-black/70',
       'transition-opacity duration-150',
       'data-[starting-style]:opacity-0 data-[ending-style]:opacity-0',
-      className
+      className,
     )}
     {...props}
   />
@@ -57,7 +57,7 @@ export const DialogContent = forwardRef<
       'transition-all duration-150',
       'data-[starting-style]:opacity-0 data-[starting-style]:scale-95',
       'data-[ending-style]:opacity-0 data-[ending-style]:scale-95',
-      className
+      className,
     )}
     {...props}
   />
@@ -101,7 +101,7 @@ export const DialogClose = forwardRef<
       'hover:bg-surface-hover active:bg-muted',
       'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
       'transition-colors duration-150',
-      className
+      className,
     )}
     {...props}
   />

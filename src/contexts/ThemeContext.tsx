@@ -31,18 +31,22 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     // Listen for system theme changes
     let unlistenPromise: Promise<() => void> | null = null
     try {
-      unlistenPromise = getCurrentWindow().onThemeChanged(({ payload: newTheme }: { payload: Theme }) => {
-        setTheme(newTheme)
-      })
+      unlistenPromise = getCurrentWindow().onThemeChanged(
+        ({ payload: newTheme }: { payload: Theme }) => {
+          setTheme(newTheme)
+        },
+      )
     } catch {
       // Tauri not available, skip listener
     }
 
     return () => {
       if (unlistenPromise) {
-        unlistenPromise.then(fn => fn()).catch(() => {
-          // Ignore cleanup errors
-        })
+        unlistenPromise
+          .then((fn) => fn())
+          .catch(() => {
+            // Ignore cleanup errors
+          })
       }
     }
   }, [])
@@ -52,11 +56,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     document.documentElement.classList.toggle('dark', theme === 'dark')
   }, [theme])
 
-  return (
-    <ThemeContext.Provider value={{ theme }}>
-      {children}
-    </ThemeContext.Provider>
-  )
+  return <ThemeContext.Provider value={{ theme }}>{children}</ThemeContext.Provider>
 }
 
 export function useTheme() {

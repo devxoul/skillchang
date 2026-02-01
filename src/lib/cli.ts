@@ -19,10 +19,7 @@ export interface RemoveSkillOptions {
   agents?: string[]
 }
 
-export async function listSkills(
-  global: boolean = false,
-  agents?: string[]
-): Promise<SkillInfo[]> {
+export async function listSkills(global: boolean = false, agents?: string[]): Promise<SkillInfo[]> {
   const args = ['skills', 'list']
   if (global) args.push('-g')
   if (agents?.length) {
@@ -31,7 +28,7 @@ export async function listSkills(
 
   try {
     const result = await Command.create('npx', args).execute()
-    
+
     if (result.code !== 0) {
       throw new Error(`CLI error: ${result.stderr}`)
     }
@@ -43,12 +40,9 @@ export async function listSkills(
   }
 }
 
-export async function addSkill(
-  source: string,
-  options: AddSkillOptions = {}
-): Promise<void> {
+export async function addSkill(source: string, options: AddSkillOptions = {}): Promise<void> {
   const args = ['skills', 'add', source]
-  
+
   if (options.global) args.push('-g')
   if (options.agents?.length) {
     args.push('-a', options.agents.join(','))
@@ -60,7 +54,7 @@ export async function addSkill(
 
   try {
     const result = await Command.create('npx', args).execute()
-    
+
     if (result.code !== 0) {
       throw new Error(`Failed to add skill: ${stripAnsi(result.stderr)}`)
     }
@@ -69,12 +63,9 @@ export async function addSkill(
   }
 }
 
-export async function removeSkill(
-  name: string,
-  options: RemoveSkillOptions = {}
-): Promise<void> {
+export async function removeSkill(name: string, options: RemoveSkillOptions = {}): Promise<void> {
   const args = ['skills', 'remove', name]
-  
+
   if (options.global) args.push('-g')
   if (options.agents?.length) {
     args.push('-a', options.agents.join(','))
@@ -82,7 +73,7 @@ export async function removeSkill(
 
   try {
     const result = await Command.create('npx', args).execute()
-    
+
     if (result.code !== 0) {
       throw new Error(`Failed to remove skill: ${stripAnsi(result.stderr)}`)
     }
@@ -94,7 +85,7 @@ export async function removeSkill(
 export async function checkUpdates(): Promise<string> {
   try {
     const result = await Command.create('npx', ['skills', 'check']).execute()
-    
+
     if (result.code !== 0) {
       throw new Error(`Failed to check updates: ${stripAnsi(result.stderr)}`)
     }

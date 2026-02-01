@@ -14,19 +14,19 @@ const variantStyles: Record<ButtonVariant, string> = {
     'bg-brand-500 text-white',
     'hover:bg-brand-600',
     'active:bg-brand-700',
-    'focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background'
+    'focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
   ),
   secondary: clsx(
     'bg-surface text-foreground border border-border',
     'hover:bg-surface-hover',
     'active:bg-muted',
-    'focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background'
+    'focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
   ),
   ghost: clsx(
     'bg-transparent text-foreground',
     'hover:bg-surface-hover',
     'active:bg-muted',
-    'focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background'
+    'focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
   ),
 }
 
@@ -48,13 +48,13 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           'outline-none',
           variantStyles[variant],
           sizeStyles[size],
-          className
+          className,
         )}
         disabled={disabled}
         {...props}
       />
     )
-  }
+  },
 )
 
 Button.displayName = 'Button'

@@ -1,4 +1,4 @@
-import tailwindcss from 'eslint-plugin-tailwindcss';
+import tailwindcss from 'eslint-plugin-tailwindcss'
 
 export default [
   {
@@ -11,4 +11,4 @@ export default [
       'tailwindcss/no-custom-classname': 'off',
     },
   },
-];
+]

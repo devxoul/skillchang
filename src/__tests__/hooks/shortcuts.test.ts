@@ -17,15 +17,13 @@ describe('useKeyboardShortcuts', () => {
         onFocusSearch: () => {},
         onOpenPreferences: () => {},
         projects: [],
-      })
+      }),
     )
     expect(result.current).toBeUndefined()
   })
 
   test('hook handles Cmd+K shortcut key', () => {
-    const { result } = renderHook(() =>
-      useKeyboardShortcuts({ onFocusSearch: () => {} })
-    )
+    const { result } = renderHook(() => useKeyboardShortcuts({ onFocusSearch: () => {} }))
     expect(result.current).toBeUndefined()
   })
 
@@ -41,15 +39,13 @@ describe('useKeyboardShortcuts', () => {
 
   test('hook handles Cmd+2-9 shortcut keys', () => {
     const { result } = renderHook(() =>
-      useKeyboardShortcuts({ projects: [{ id: 'proj1' }, { id: 'proj2' }] })
+      useKeyboardShortcuts({ projects: [{ id: 'proj1' }, { id: 'proj2' }] }),
     )
     expect(result.current).toBeUndefined()
   })
 
   test('hook handles Cmd+, shortcut key', () => {
-    const { result } = renderHook(() =>
-      useKeyboardShortcuts({ onOpenPreferences: () => {} })
-    )
+    const { result } = renderHook(() => useKeyboardShortcuts({ onOpenPreferences: () => {} }))
     expect(result.current).toBeUndefined()
   })
 

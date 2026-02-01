@@ -1,14 +1,24 @@
 import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { Sidebar } from '../../components/Sidebar'
+
+vi.mock('@/hooks/useProjects', () => ({
+  useProjects: vi.fn(() => ({
+    projects: [],
+    loading: false,
+    importProject: vi.fn(),
+    removeProject: vi.fn(),
+    reorderProjects: vi.fn(),
+  })),
+}))
 
 describe('Sidebar Component', () => {
   it('renders navigation sections correctly', () => {
     render(
       <MemoryRouter>
         <Sidebar />
-      </MemoryRouter>
+      </MemoryRouter>,
     )
 
     expect(screen.getByText('Browse Gallery')).toBeInTheDocument()
@@ -22,12 +32,12 @@ describe('Sidebar Component', () => {
     render(
       <MemoryRouter initialEntries={['/global']}>
         <Sidebar />
-      </MemoryRouter>
+      </MemoryRouter>,
     )
-    
+
     const globalLink = screen.getByText('Global Skills').closest('a')
     expect(globalLink).toHaveClass('bg-brand-100')
-    
+
     const galleryLink = screen.getByText('Browse Gallery').closest('a')
     expect(galleryLink).not.toHaveClass('bg-brand-100')
   })

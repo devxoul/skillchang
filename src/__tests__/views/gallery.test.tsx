@@ -13,9 +13,7 @@ describe('SkillGalleryView', () => {
     render(<SkillGalleryView initialSkills={[]} />)
 
     expect(screen.getByText('Skill Gallery')).toBeInTheDocument()
-    expect(
-      screen.getByText('Browse and discover available skills')
-    ).toBeInTheDocument()
+    expect(screen.getByText('Browse and discover available skills')).toBeInTheDocument()
   })
 
   it('renders search input', () => {
@@ -68,16 +66,14 @@ describe('SkillGalleryView', () => {
     fireEvent.change(searchInput, { target: { value: 'nonexistent' } })
 
     await waitFor(() => {
-      expect(
-        screen.getByText('No skills match your search')
-      ).toBeInTheDocument()
+      expect(screen.getByText('No skills match your search')).toBeInTheDocument()
     })
   })
 
-  it('shows "No skills available" when skills list is empty', () => {
-    render(<SkillGalleryView initialSkills={[]} />)
+  it('shows "No skills available" when skills list is empty', async () => {
+    render(<SkillGalleryView initialSkills={[]} loading={false} />)
 
-    expect(screen.getByText('No skills available')).toBeInTheDocument()
+    expect(await screen.findByText('No skills available')).toBeInTheDocument()
   })
 
   it('displays loading state', () => {
@@ -86,15 +82,10 @@ describe('SkillGalleryView', () => {
     expect(screen.getByText('Loading skills...')).toBeInTheDocument()
   })
 
-  it('displays error state', () => {
-    render(
-      <SkillGalleryView
-        initialSkills={[]}
-        error="Failed to fetch skills"
-      />
-    )
+  it('displays error state', async () => {
+    render(<SkillGalleryView initialSkills={[]} error="Failed to fetch skills" />)
 
-    expect(screen.getByText('Error loading skills')).toBeInTheDocument()
+    expect(await screen.findByText('Error')).toBeInTheDocument()
     expect(screen.getByText('Failed to fetch skills')).toBeInTheDocument()
   })
 

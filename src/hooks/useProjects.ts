@@ -39,6 +39,6 @@ export function useProjects() {
     loading,
     importProject: handleImport,
     removeProject: handleRemove,
-    reorderProjects: handleReorder
+    reorderProjects: handleReorder,
   }
 }

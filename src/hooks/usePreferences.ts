@@ -14,7 +14,7 @@ async function getStore() {
 
 export function usePreferences() {
   const [preferences, setPreferences] = useState<Preferences>({
-    defaultAgents: []
+    defaultAgents: [],
   })
   const [loading, setLoading] = useState(true)
 
@@ -42,6 +42,6 @@ export function usePreferences() {
   return {
     preferences,
     loading,
-    savePreferences
+    savePreferences,
   }
 }

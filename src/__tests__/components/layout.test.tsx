@@ -5,19 +5,12 @@ import { Layout } from '@/components/Layout'
 import { Sidebar } from '@/components/Sidebar'
 import { MainContent } from '@/components/MainContent'
 
-vi.mock('@tauri-apps/api/window', () => ({
-  getCurrentWindow: () => ({
-    theme: vi.fn().mockResolvedValue('light'),
-    onThemeChanged: vi.fn().mockResolvedValue(() => {}),
-  }),
-}))
-
 describe('Layout', () => {
   it('renders Layout component with Sidebar and MainContent', () => {
     render(
       <MemoryRouter>
         <Layout />
-      </MemoryRouter>
+      </MemoryRouter>,
     )
 
     expect(screen.getByText('Browse Gallery')).toBeInTheDocument()
@@ -28,7 +21,7 @@ describe('Layout', () => {
     render(
       <MemoryRouter initialEntries={['/']}>
         <Layout />
-      </MemoryRouter>
+      </MemoryRouter>,
     )
 
     expect(screen.getByText('Skill Gallery')).toBeInTheDocument()
@@ -39,9 +32,9 @@ describe('Layout', () => {
     render(
       <MemoryRouter initialEntries={['/global']}>
         <Layout />
-      </MemoryRouter>
+      </MemoryRouter>,
     )
-    
+
     expect(screen.getAllByText('Global Skills').length).toBeGreaterThanOrEqual(1)
   })
 
@@ -49,7 +42,7 @@ describe('Layout', () => {
     render(
       <MemoryRouter initialEntries={['/project/123']}>
         <Layout />
-      </MemoryRouter>
+      </MemoryRouter>,
     )
 
     expect(screen.getByText('Project')).toBeInTheDocument()
@@ -61,7 +54,7 @@ describe('Sidebar', () => {
     render(
       <MemoryRouter>
         <Sidebar />
-      </MemoryRouter>
+      </MemoryRouter>,
     )
 
     expect(screen.getByText('Browse Gallery')).toBeInTheDocument()
@@ -74,7 +67,7 @@ describe('MainContent', () => {
     render(
       <MemoryRouter initialEntries={['/']}>
         <MainContent />
-      </MemoryRouter>
+      </MemoryRouter>,
     )
 
     expect(screen.getByText('Skill Gallery')).toBeInTheDocument()

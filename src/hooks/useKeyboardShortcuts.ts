@@ -10,7 +10,7 @@ interface UseKeyboardShortcutsOptions {
 export function useKeyboardShortcuts({
   onOpenPreferences,
   onFocusSearch,
-  projects = []
+  projects = [],
 }: UseKeyboardShortcutsOptions) {
   const navigate = useNavigate()
 

@@ -30,13 +30,13 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           'disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-muted',
           error && 'border-error focus:ring-error',
           sizeStyles[inputSize],
-          className
+          className,
         )}
         disabled={disabled}
         {...props}
       />
     )
-  }
+  },
 )
 
 Input.displayName = 'Input'

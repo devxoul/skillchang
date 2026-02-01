@@ -28,21 +28,15 @@ export function SkillCard({ skill, onAdd }: SkillCardProps) {
             <span className="flex items-center gap-1">
               📦 {skill.installs.toLocaleString()} installs
             </span>
-            <span className="flex items-center gap-1">
-              📝 {skill.topSource}
-            </span>
+            <span className="flex items-center gap-1">📝 {skill.topSource}</span>
           </div>
         </div>
         <Button size="sm" onClick={handleOpenDialog}>
           Add
         </Button>
       </div>
-      
-      <AddSkillDialog 
-        skill={skill}
-        open={showDialog}
-        onOpenChange={setShowDialog}
-      />
+
+      <AddSkillDialog skill={skill} open={showDialog} onOpenChange={setShowDialog} />
     </>
   )
 }

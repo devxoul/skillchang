@@ -8,9 +8,9 @@ interface InstalledSkillsViewProps {
   projectPath?: string
 }
 
-export default function InstalledSkillsView({ 
+export default function InstalledSkillsView({
   scope = 'global',
-  projectPath 
+  projectPath,
 }: InstalledSkillsViewProps) {
   const [skills, setSkills] = useState<SkillInfo[]>([])
   const [loading, setLoading] = useState(true)
@@ -26,7 +26,7 @@ export default function InstalledSkillsView({
     setLoading(true)
     setError(null)
     setActionError(null)
-    
+
     try {
       const isGlobal = scope === 'global'
       const result = await listSkills(isGlobal)
@@ -41,7 +41,7 @@ export default function InstalledSkillsView({
   async function handleRemove(skillName: string) {
     setRemoving(skillName)
     setActionError(null)
-    
+
     try {
       const isGlobal = scope === 'global'
       await removeSkill(skillName, { global: isGlobal })
@@ -61,18 +61,15 @@ export default function InstalledSkillsView({
     )
   }
 
-   if (error) {
-     return (
-       <div className="flex items-center justify-center h-full">
-         <div className="w-full max-w-md">
-           <InlineError 
-             message={error}
-             onRetry={loadSkills}
-           />
-         </div>
-       </div>
-     )
-   }
+  if (error) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <div className="w-full max-w-md">
+          <InlineError message={error} onRetry={loadSkills} />
+        </div>
+      </div>
+    )
+  }
 
   if (skills.length === 0) {
     return (
@@ -90,15 +87,10 @@ export default function InstalledSkillsView({
       <h1 className="text-2xl font-bold">
         {scope === 'global' ? 'Global Skills' : 'Project Skills'}
       </h1>
-       {actionError && (
-         <InlineError 
-           message={actionError}
-           onRetry={() => setActionError(null)}
-         />
-       )}
+      {actionError && <InlineError message={actionError} onRetry={() => setActionError(null)} />}
       <div className="space-y-2">
         {skills.map((skill) => (
-          <div 
+          <div
             key={skill.name}
             className="border border-border rounded-lg p-4 flex items-center justify-between bg-surface"
           >
@@ -106,9 +98,7 @@ export default function InstalledSkillsView({
               <h3 className="font-semibold text-foreground">{skill.name}</h3>
               <div className="text-sm text-muted-foreground mt-1">
                 <div>📁 {skill.path}</div>
-                {skill.agents && skill.agents.length > 0 && (
-                  <div>🤖 {skill.agents.join(', ')}</div>
-                )}
+                {skill.agents && skill.agents.length > 0 && <div>🤖 {skill.agents.join(', ')}</div>}
               </div>
             </div>
             <Button

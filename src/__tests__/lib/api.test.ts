@@ -16,14 +16,13 @@ test('fetchSkills returns skills and hasMore flag', async () => {
   const mockResponse = {
     skills: [
       { id: '1', name: 'React', installs: 1000, topSource: 'opencode' },
-      { id: '2', name: 'Vue', installs: 800, topSource: 'opencode' }
+      { id: '2', name: 'Vue', installs: 800, topSource: 'opencode' },
     ],
-    hasMore: true
+    hasMore: true,
   }
-
   ;(global as any).fetch = vi.fn().mockResolvedValueOnce({
     ok: true,
-    json: async () => mockResponse
+    json: async () => mockResponse,
   })
 
   const result = await fetchSkills()
@@ -36,15 +35,12 @@ test('fetchSkills returns skills and hasMore flag', async () => {
 
 test('fetchSkills with pagination', async () => {
   const mockResponse = {
-    skills: [
-      { id: '3', name: 'Angular', installs: 600, topSource: 'opencode' }
-    ],
-    hasMore: false
+    skills: [{ id: '3', name: 'Angular', installs: 600, topSource: 'opencode' }],
+    hasMore: false,
   }
-
   ;(global as any).fetch = vi.fn().mockResolvedValueOnce({
     ok: true,
-    json: async () => mockResponse
+    json: async () => mockResponse,
   })
 
   const result = await fetchSkills(2)
@@ -58,7 +54,7 @@ test('fetchSkills handles HTTP errors', async () => {
   ;(global as any).fetch = vi.fn().mockResolvedValueOnce({
     ok: false,
     status: 404,
-    statusText: 'Not Found'
+    statusText: 'Not Found',
   })
 
   try {
@@ -84,38 +80,30 @@ test('fetchSkills handles network errors', async () => {
 
 test('searchSkills returns matching skills', async () => {
   const mockResponse = {
-    skills: [
-      { id: '1', name: 'React', installs: 1000, topSource: 'opencode' }
-    ]
+    skills: [{ id: '1', name: 'React', installs: 1000, topSource: 'opencode' }],
   }
-
   ;(global as any).fetch = vi.fn().mockResolvedValueOnce({
     ok: true,
-    json: async () => mockResponse
+    json: async () => mockResponse,
   })
 
   const result = await searchSkills('React')
 
   expect(result).toHaveLength(1)
   expect(result[0]?.name).toBe('React')
-  expect(global.fetch).toHaveBeenCalledWith(
-    'https://skills.sh/api/skills?search=React'
-  )
+  expect(global.fetch).toHaveBeenCalledWith('https://skills.sh/api/skills?search=React')
 })
 
 test('searchSkills encodes query parameters', async () => {
   const mockResponse = { skills: [] }
-
   ;(global as any).fetch = vi.fn().mockResolvedValueOnce({
     ok: true,
-    json: async () => mockResponse
+    json: async () => mockResponse,
   })
 
   await searchSkills('React Native')
 
-  expect(global.fetch).toHaveBeenCalledWith(
-    'https://skills.sh/api/skills?search=React%20Native'
-  )
+  expect(global.fetch).toHaveBeenCalledWith('https://skills.sh/api/skills?search=React%20Native')
 })
 
 test('searchSkills returns empty array for empty query', async () => {
@@ -140,7 +128,7 @@ test('searchSkills handles HTTP errors', async () => {
   ;(global as any).fetch = vi.fn().mockResolvedValueOnce({
     ok: false,
     status: 500,
-    statusText: 'Internal Server Error'
+    statusText: 'Internal Server Error',
   })
 
   try {
@@ -167,7 +155,7 @@ test('searchSkills handles network errors', async () => {
 test('fetchSkills handles empty response', async () => {
   ;(global as any).fetch = vi.fn().mockResolvedValueOnce({
     ok: true,
-    json: async () => ({})
+    json: async () => ({}),
   })
 
   const result = await fetchSkills()

@@ -22,12 +22,12 @@ export async function addProject(path: string): Promise<Project> {
   const project: Project = {
     id: crypto.randomUUID(),
     name,
-    path
+    path,
   }
 
   const projects = await getProjects()
   projects.push(project)
-  
+
   const s = await getStore()
   await s.set(STORE_KEY, projects)
   await s.save()
@@ -37,8 +37,8 @@ export async function addProject(path: string): Promise<Project> {
 
 export async function removeProject(id: string): Promise<void> {
   const projects = await getProjects()
-  const filtered = projects.filter(p => p.id !== id)
-  
+  const filtered = projects.filter((p) => p.id !== id)
+
   const s = await getStore()
   await s.set(STORE_KEY, filtered)
   await s.save()
@@ -53,7 +53,7 @@ export async function reorderProjects(projects: Project[]): Promise<void> {
 export async function importProject(): Promise<Project | null> {
   const selected = await open({
     directory: true,
-    multiple: false
+    multiple: false,
   })
 
   if (!selected || typeof selected !== 'string') {

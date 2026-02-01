@@ -29,7 +29,7 @@ describe('InstalledSkillsView', () => {
   })
 
   it('renders loading state initially', async () => {
-    (cli.listSkills as Mock).mockResolvedValue([])
+    ;(cli.listSkills as Mock).mockResolvedValue([])
     render(<InstalledSkillsView scope="global" />)
     expect(screen.getByText('Loading skills...')).toBeInTheDocument()
     await waitFor(() => {
@@ -38,16 +38,16 @@ describe('InstalledSkillsView', () => {
   })
 
   it('renders empty state when no skills found', async () => {
-    (cli.listSkills as Mock).mockResolvedValue([])
+    ;(cli.listSkills as Mock).mockResolvedValue([])
     render(<InstalledSkillsView scope="global" />)
-    
+
     await waitFor(() => {
       expect(screen.getByText('No global skills installed')).toBeInTheDocument()
     })
   })
 
   it('renders list of skills', async () => {
-    (cli.listSkills as Mock).mockResolvedValue(mockSkills)
+    ;(cli.listSkills as Mock).mockResolvedValue(mockSkills)
     render(<InstalledSkillsView scope="global" />)
 
     await waitFor(() => {
@@ -58,7 +58,7 @@ describe('InstalledSkillsView', () => {
   })
 
   it('renders error state', async () => {
-    (cli.listSkills as Mock).mockRejectedValue(new Error('Failed to fetch'))
+    ;(cli.listSkills as Mock).mockRejectedValue(new Error('Failed to fetch'))
     render(<InstalledSkillsView scope="global" />)
 
     await waitFor(() => {
@@ -67,9 +67,9 @@ describe('InstalledSkillsView', () => {
   })
 
   it('handles remove skill action', async () => {
-    (cli.listSkills as Mock).mockResolvedValueOnce(mockSkills);
-    (cli.removeSkill as Mock).mockResolvedValue(undefined);
-    (cli.listSkills as Mock).mockResolvedValueOnce([mockSkills[1]!])
+    ;(cli.listSkills as Mock).mockResolvedValueOnce(mockSkills)
+    ;(cli.removeSkill as Mock).mockResolvedValue(undefined)
+    ;(cli.listSkills as Mock).mockResolvedValueOnce([mockSkills[1]!])
 
     render(<InstalledSkillsView scope="global" />)
 
@@ -95,8 +95,8 @@ describe('InstalledSkillsView', () => {
   })
 
   it('handles remove failure', async () => {
-    (cli.listSkills as Mock).mockResolvedValue(mockSkills);
-    (cli.removeSkill as Mock).mockRejectedValue(new Error('Remove failed'))
+    ;(cli.listSkills as Mock).mockResolvedValue(mockSkills)
+    ;(cli.removeSkill as Mock).mockRejectedValue(new Error('Remove failed'))
 
     render(<InstalledSkillsView scope="global" />)
 
@@ -112,7 +112,7 @@ describe('InstalledSkillsView', () => {
     await waitFor(() => {
       expect(screen.getByText('Remove failed')).toBeInTheDocument()
     })
-    
+
     expect(screen.getByText('skill-1')).toBeInTheDocument()
   })
 })

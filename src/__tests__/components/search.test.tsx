@@ -14,12 +14,7 @@ describe('SearchInput', () => {
 
   it('renders with placeholder', () => {
     const onSearch = vi.fn()
-    render(
-      <SearchInput
-        placeholder="Test placeholder"
-        onSearch={onSearch}
-      />
-    )
+    render(<SearchInput placeholder="Test placeholder" onSearch={onSearch} />)
 
     const input = screen.getByPlaceholderText('Test placeholder')
     expect(input).toBeInTheDocument()

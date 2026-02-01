@@ -2,18 +2,14 @@ import { Checkbox as BaseCheckbox } from '@base-ui-components/react/checkbox'
 import { clsx } from 'clsx'
 import { forwardRef, type ComponentPropsWithoutRef, type ReactNode } from 'react'
 
-export interface CheckboxProps extends Omit<ComponentPropsWithoutRef<typeof BaseCheckbox.Root>, 'children'> {
+export interface CheckboxProps
+  extends Omit<ComponentPropsWithoutRef<typeof BaseCheckbox.Root>, 'children'> {
   label?: ReactNode
 }
 
 function CheckIcon(props: React.ComponentProps<'svg'>) {
   return (
-    <svg
-      {...props}
-      viewBox="0 0 14 14"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg {...props} viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         fillRule="evenodd"
         clipRule="evenodd"
@@ -40,7 +36,7 @@ export const Checkbox = forwardRef<HTMLButtonElement, CheckboxProps>(
             'data-[checked]:bg-brand-500 data-[checked]:border-brand-500 data-[checked]:text-white',
             'data-[indeterminate]:bg-brand-500 data-[indeterminate]:border-brand-500 data-[indeterminate]:text-white',
             'disabled:opacity-50 disabled:cursor-not-allowed',
-            className
+            className,
           )}
           {...props}
         >
@@ -51,7 +47,7 @@ export const Checkbox = forwardRef<HTMLButtonElement, CheckboxProps>(
         {label && <span className="text-foreground">{label}</span>}
       </label>
     )
-  }
+  },
 )
 
 Checkbox.displayName = 'Checkbox'
@@ -59,7 +55,4 @@ Checkbox.displayName = 'Checkbox'
 export const CheckboxRoot = BaseCheckbox.Root
 export const CheckboxIndicator = BaseCheckbox.Indicator
 
-export {
-  CheckboxRoot as Root,
-  CheckboxIndicator as Indicator,
-}
+export { CheckboxRoot as Root, CheckboxIndicator as Indicator }

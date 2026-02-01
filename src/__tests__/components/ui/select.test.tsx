@@ -101,7 +101,7 @@ describe('Select', () => {
             </SelectPopup>
           </SelectPositioner>
         </SelectPortal>
-      </SelectRoot>
+      </SelectRoot>,
     )
 
     expect(screen.getByRole('combobox')).toBeInTheDocument()

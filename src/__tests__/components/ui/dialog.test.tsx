@@ -17,7 +17,7 @@ describe('Dialog', () => {
     render(
       <Dialog trigger="Open" title="Test Title" description="Test Description">
         <p>Content</p>
-      </Dialog>
+      </Dialog>,
     )
 
     expect(screen.getByRole('button', { name: 'Open' })).toBeInTheDocument()
@@ -27,7 +27,7 @@ describe('Dialog', () => {
     render(
       <Dialog trigger="Open" title="Test Title" description="Test Description">
         <p>Dialog Content</p>
-      </Dialog>
+      </Dialog>,
     )
 
     fireEvent.click(screen.getByRole('button', { name: 'Open' }))
@@ -52,7 +52,7 @@ describe('Dialog', () => {
             <DialogClose>Close</DialogClose>
           </DialogContent>
         </DialogPortal>
-      </DialogRoot>
+      </DialogRoot>,
     )
 
     expect(screen.getByRole('button', { name: 'Open Dialog' })).toBeInTheDocument()
@@ -76,7 +76,7 @@ describe('Dialog', () => {
             <DialogClose>Close</DialogClose>
           </DialogContent>
         </DialogPortal>
-      </DialogRoot>
+      </DialogRoot>,
     )
 
     fireEvent.click(screen.getByRole('button', { name: 'Open' }))
@@ -98,7 +98,7 @@ describe('Dialog', () => {
     render(
       <Dialog open={false} onOpenChange={onOpenChange} trigger="Open" title="Controlled">
         <p>Content</p>
-      </Dialog>
+      </Dialog>,
     )
 
     fireEvent.click(screen.getByRole('button', { name: 'Open' }))
@@ -116,7 +116,7 @@ describe('Dialog', () => {
             <DialogDescription className="custom-description">Desc</DialogDescription>
           </DialogContent>
         </DialogPortal>
-      </DialogRoot>
+      </DialogRoot>,
     )
 
     expect(document.querySelector('.custom-backdrop')).toBeInTheDocument()

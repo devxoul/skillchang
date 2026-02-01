@@ -40,5 +40,5 @@ export const AGENTS = [
   'FauxPilot',
   'CopilotForXcode',
   'CodeComplete',
-  'Tabby'
+  'Tabby',
 ]

@@ -1,7 +1,7 @@
 {
   "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
   "files": {
-    "includes": ["**"],
+    "include": ["**"],
     "ignoreUnknown": false
   },
   "formatter": {
@@ -17,20 +17,16 @@
     "rules": {
       "recommended": true,
       "a11y": {
-        "noStaticElementInteractions": "off",
-        "useAriaPropsSupportedByRole": "off",
-        "useHtmlLang": "off",
-        "useKeyWithClickEvents": "off"
+        "useHtmlLang": "off"
       },
       "complexity": {
         "noUselessUndefinedInitialization": "off"
       },
       "correctness": {
-        "noNestedComponentDefinitions": "off",
-        "useUniqueElementIds": "off"
+        "useExhaustiveDependencies": "off"
       },
       "performance": {
-        "noImgElement": "off"
+        "noAccumulatingSpread": "off"
       },
       "security": {
         "noDangerouslySetInnerHtml": "off"
@@ -42,7 +38,6 @@
       },
       "suspicious": {
         "noArrayIndexKey": "off",
-        "noDocumentCookie": "off",
         "noExplicitAny": "off"
       }
     }
@@ -51,11 +46,6 @@
     "formatter": {
       "semicolons": "asNeeded",
       "quoteStyle": "single"
-    }
-  },
-  "css": {
-    "parser": {
-      "tailwindDirectives": true
     }
   }
 }

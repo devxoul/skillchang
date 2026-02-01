@@ -10,25 +10,20 @@ export async function fetchSkills(page: number = 1): Promise<SkillsResponse> {
     const response = await fetch(url)
 
     if (!response.ok) {
-      throw new ApiError(
-        `Failed to fetch skills: ${response.statusText}`,
-        response.status
-      )
+      throw new ApiError(`Failed to fetch skills: ${response.statusText}`, response.status)
     }
 
     const data = await response.json()
 
     return {
       skills: data.skills || [],
-      hasMore: data.hasMore || false
+      hasMore: data.hasMore || false,
     }
   } catch (error) {
     if (error instanceof ApiError) {
       throw error
     }
-    throw new ApiError(
-      `Network error: ${error instanceof Error ? error.message : 'Unknown error'}`
-    )
+    throw new ApiError(`Network error: ${error instanceof Error ? error.message : 'Unknown error'}`)
   }
 }
 
@@ -42,10 +37,7 @@ export async function searchSkills(query: string): Promise<Skill[]> {
     const response = await fetch(url)
 
     if (!response.ok) {
-      throw new ApiError(
-        `Failed to search skills: ${response.statusText}`,
-        response.status
-      )
+      throw new ApiError(`Failed to search skills: ${response.statusText}`, response.status)
     }
 
     const data = await response.json()
@@ -54,8 +46,6 @@ export async function searchSkills(query: string): Promise<Skill[]> {
     if (error instanceof ApiError) {
       throw error
     }
-    throw new ApiError(
-      `Network error: ${error instanceof Error ? error.message : 'Unknown error'}`
-    )
+    throw new ApiError(`Network error: ${error instanceof Error ? error.message : 'Unknown error'}`)
   }
 }

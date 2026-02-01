@@ -12,10 +12,10 @@ interface SkillGalleryViewProps {
   error?: string | null
 }
 
-export function SkillGalleryView({ 
+export function SkillGalleryView({
   initialSkills = [],
   loading: propLoading,
-  error: propError
+  error: propError,
 }: SkillGalleryViewProps) {
   const [skills, setSkills] = useState<Skill[]>(initialSkills)
   const [internalLoading, setInternalLoading] = useState(false)
@@ -42,9 +42,7 @@ export function SkillGalleryView({
         setSkills(response.skills)
         setHasMore(response.hasMore)
       } catch (err) {
-        setInternalError(
-          err instanceof Error ? err.message : 'Failed to load skills'
-        )
+        setInternalError(err instanceof Error ? err.message : 'Failed to load skills')
         setSkills([])
         setHasMore(false)
       } finally {
@@ -76,9 +74,7 @@ export function SkillGalleryView({
     <div className="flex flex-col gap-6 p-6 h-full overflow-hidden">
       <div className="flex-none">
         <h1 className="text-2xl font-bold">Skill Gallery</h1>
-        <p className="mt-1 text-muted-foreground">
-          Browse and discover available skills
-        </p>
+        <p className="mt-1 text-muted-foreground">Browse and discover available skills</p>
       </div>
 
       <div className="flex-none">
@@ -86,15 +82,15 @@ export function SkillGalleryView({
       </div>
 
       <div className="flex-1 overflow-auto min-h-0">
-         {error ? (
-           <InlineError 
-             message={error}
-             onRetry={() => {
-               setInternalError(null)
-               setCurrentPage(1)
-             }}
-           />
-         ) : loading ? (
+        {error ? (
+          <InlineError
+            message={error}
+            onRetry={() => {
+              setInternalError(null)
+              setCurrentPage(1)
+            }}
+          />
+        ) : loading ? (
           <div className="flex items-center justify-center py-12">
             <p className="text-muted-foreground">Loading skills...</p>
           </div>
@@ -111,7 +107,7 @@ export function SkillGalleryView({
                 <SkillCard key={skill.id} skill={skill} />
               ))}
             </div>
-            
+
             {hasMore && !searchQuery && (
               <div className="flex justify-center pt-4">
                 <Button variant="secondary" onClick={handleLoadMore}>

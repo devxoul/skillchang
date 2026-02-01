@@ -13,11 +13,11 @@ interface AddSkillDialogProps {
   defaultAgents?: string[]
 }
 
-export function AddSkillDialog({ 
-  skill, 
-  open, 
+export function AddSkillDialog({
+  skill,
+  open,
   onOpenChange,
-  defaultAgents = []
+  defaultAgents = [],
 }: AddSkillDialogProps) {
   const [scope, setScope] = useState<'global' | 'project'>('global')
   const [selectedAgents, setSelectedAgents] = useState<string[]>(defaultAgents)
@@ -26,10 +26,8 @@ export function AddSkillDialog({
   const [success, setSuccess] = useState(false)
 
   const handleToggleAgent = (agent: string) => {
-    setSelectedAgents(prev =>
-      prev.includes(agent)
-        ? prev.filter(a => a !== agent)
-        : [...prev, agent]
+    setSelectedAgents((prev) =>
+      prev.includes(agent) ? prev.filter((a) => a !== agent) : [...prev, agent],
     )
   }
 
@@ -42,7 +40,7 @@ export function AddSkillDialog({
       await addSkill(skill.name, {
         global: scope === 'global',
         agents: selectedAgents,
-        yes: true
+        yes: true,
       })
       setSuccess(true)
       setTimeout(() => onOpenChange(false), 1500)
@@ -59,7 +57,7 @@ export function AddSkillDialog({
         <DialogBackdrop />
         <DialogContent>
           <DialogTitle>Add {skill.name}</DialogTitle>
-          
+
           <div className="space-y-4">
             <div>
               <label className="text-sm font-medium">Scope</label>
@@ -88,8 +86,11 @@ export function AddSkillDialog({
             <div>
               <label className="text-sm font-medium">Agents</label>
               <div className="mt-2 max-h-48 overflow-y-auto border border-border rounded p-2 space-y-1">
-                {AGENTS.map(agent => (
-                  <label key={agent} className="flex items-center gap-2 text-sm cursor-pointer hover:bg-muted/50 p-1 rounded">
+                {AGENTS.map((agent) => (
+                  <label
+                    key={agent}
+                    className="flex items-center gap-2 text-sm cursor-pointer hover:bg-muted/50 p-1 rounded"
+                  >
                     <Checkbox
                       checked={selectedAgents.includes(agent)}
                       onCheckedChange={() => handleToggleAgent(agent)}
@@ -100,25 +101,14 @@ export function AddSkillDialog({
               </div>
             </div>
 
-            {error && (
-              <div className="text-sm text-error">{error}</div>
-            )}
-            {success && (
-              <div className="text-sm text-success">✓ Skill added successfully!</div>
-            )}
+            {error && <div className="text-sm text-error">{error}</div>}
+            {success && <div className="text-sm text-success">✓ Skill added successfully!</div>}
 
             <div className="flex justify-end gap-2 mt-6">
-              <Button 
-                variant="secondary" 
-                disabled={loading}
-                onClick={() => onOpenChange(false)}
-              >
+              <Button variant="secondary" disabled={loading} onClick={() => onOpenChange(false)}>
                 Cancel
               </Button>
-              <Button 
-                onClick={handleAdd}
-                disabled={loading || selectedAgents.length === 0}
-              >
+              <Button onClick={handleAdd} disabled={loading || selectedAgents.length === 0}>
                 {loading ? 'Adding...' : 'Add'}
               </Button>
             </div>

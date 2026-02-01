@@ -19,10 +19,8 @@ export function PreferencesDialog({ open, onOpenChange }: PreferencesDialogProps
   }, [preferences.defaultAgents])
 
   const handleToggleAgent = (agent: string) => {
-    setSelectedAgents(prev =>
-      prev.includes(agent)
-        ? prev.filter(a => a !== agent)
-        : [...prev, agent]
+    setSelectedAgents((prev) =>
+      prev.includes(agent) ? prev.filter((a) => a !== agent) : [...prev, agent],
     )
   }
 
@@ -45,7 +43,7 @@ export function PreferencesDialog({ open, onOpenChange }: PreferencesDialogProps
                 These agents will be pre-selected when adding skills
               </p>
               <div className="mt-2 max-h-64 overflow-y-auto border border-border rounded p-2 space-y-1">
-                {AGENTS.map(agent => (
+                {AGENTS.map((agent) => (
                   <label key={agent} className="flex items-center gap-2 text-sm cursor-pointer">
                     <Checkbox
                       checked={selectedAgents.includes(agent)}
@@ -58,7 +56,9 @@ export function PreferencesDialog({ open, onOpenChange }: PreferencesDialogProps
             </div>
 
             <div className="flex justify-end gap-2">
-              <Button variant="secondary" onClick={() => onOpenChange(false)}>Cancel</Button>
+              <Button variant="secondary" onClick={() => onOpenChange(false)}>
+                Cancel
+              </Button>
               <Button onClick={handleSave}>Save</Button>
             </div>
           </div>

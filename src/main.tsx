@@ -10,10 +10,10 @@ import { restoreStateCurrent, saveWindowState } from '@tauri-apps/plugin-window-
 
 async function initWindowState() {
   const appWindow = getCurrentWindow()
-  
+
   // Restore saved state
   await restoreStateCurrent()
-  
+
   // Save state on window events
   appWindow.onMoved(() => saveWindowState())
   appWindow.onResized(() => saveWindowState())
@@ -27,5 +27,5 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <ThemeProvider>
       <App />
     </ThemeProvider>
-  </React.StrictMode>
+  </React.StrictMode>,
 )

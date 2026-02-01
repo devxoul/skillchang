@@ -5,14 +5,14 @@ import { addSkill } from '@/lib/cli'
 import type { Skill } from '@/types/skill'
 
 vi.mock('@/lib/cli', () => ({
-  addSkill: vi.fn()
+  addSkill: vi.fn(),
 }))
 
 const mockSkill: Skill = {
   id: 'skill-1',
   name: 'test-skill',
   installs: 100,
-  topSource: 'github:test/skill'
+  topSource: 'github:test/skill',
 }
 
 describe('AddSkillDialog', () => {
@@ -21,13 +21,7 @@ describe('AddSkillDialog', () => {
   })
 
   it('renders correctly when open', () => {
-    render(
-      <AddSkillDialog 
-        skill={mockSkill} 
-        open={true} 
-        onOpenChange={() => {}} 
-      />
-    )
+    render(<AddSkillDialog skill={mockSkill} open={true} onOpenChange={() => {}} />)
 
     expect(screen.getByText('Add test-skill')).toBeInTheDocument()
     expect(screen.getByText('Scope')).toBeInTheDocument()
@@ -35,13 +29,7 @@ describe('AddSkillDialog', () => {
   })
 
   it('allows selecting scope', () => {
-    render(
-      <AddSkillDialog 
-        skill={mockSkill} 
-        open={true} 
-        onOpenChange={() => {}} 
-      />
-    )
+    render(<AddSkillDialog skill={mockSkill} open={true} onOpenChange={() => {}} />)
 
     const globalRadio = screen.getByLabelText('Global') as HTMLInputElement
     const projectRadio = screen.getByLabelText('Project') as HTMLInputElement
@@ -56,48 +44,30 @@ describe('AddSkillDialog', () => {
   })
 
   it('allows selecting agents', () => {
-    render(
-      <AddSkillDialog 
-        skill={mockSkill} 
-        open={true} 
-        onOpenChange={() => {}} 
-      />
-    )
+    render(<AddSkillDialog skill={mockSkill} open={true} onOpenChange={() => {}} />)
 
     const checkboxes = screen.getAllByRole('checkbox')
     const firstAgentCheckbox = checkboxes[0]!
-    
+
     expect(firstAgentCheckbox).not.toBeChecked()
-    
+
     fireEvent.click(firstAgentCheckbox)
-    
+
     expect(firstAgentCheckbox).toBeChecked()
   })
 
   it('disables Add button when no agents selected', () => {
-    render(
-      <AddSkillDialog 
-        skill={mockSkill} 
-        open={true} 
-        onOpenChange={() => {}} 
-      />
-    )
+    render(<AddSkillDialog skill={mockSkill} open={true} onOpenChange={() => {}} />)
 
     const addButton = screen.getByText('Add') as HTMLButtonElement
     expect(addButton).toBeDisabled()
   })
 
   it('calls addSkill when Add button is clicked', async () => {
-    (addSkill as any).mockResolvedValue(undefined)
+    ;(addSkill as any).mockResolvedValue(undefined)
     const onOpenChange = vi.fn()
 
-    render(
-      <AddSkillDialog 
-        skill={mockSkill} 
-        open={true} 
-        onOpenChange={onOpenChange} 
-      />
-    )
+    render(<AddSkillDialog skill={mockSkill} open={true} onOpenChange={onOpenChange} />)
 
     const checkboxes = screen.getAllByRole('checkbox')
     fireEvent.click(checkboxes[0]!)
@@ -107,26 +77,23 @@ describe('AddSkillDialog', () => {
     fireEvent.click(addButton)
 
     await waitFor(() => {
-      expect(addSkill).toHaveBeenCalledWith('test-skill', expect.objectContaining({
-        global: true,
-        agents: expect.any(Array),
-        yes: true
-      }))
+      expect(addSkill).toHaveBeenCalledWith(
+        'test-skill',
+        expect.objectContaining({
+          global: true,
+          agents: expect.any(Array),
+          yes: true,
+        }),
+      )
     })
 
     expect(await screen.findByText(/successfully/)).toBeInTheDocument()
   })
 
   it('handles error during add', async () => {
-    (addSkill as any).mockRejectedValue(new Error('Failed to install'))
+    ;(addSkill as any).mockRejectedValue(new Error('Failed to install'))
 
-    render(
-      <AddSkillDialog 
-        skill={mockSkill} 
-        open={true} 
-        onOpenChange={() => {}} 
-      />
-    )
+    render(<AddSkillDialog skill={mockSkill} open={true} onOpenChange={() => {}} />)
 
     const checkboxes = screen.getAllByRole('checkbox')
     fireEvent.click(checkboxes[0]!)

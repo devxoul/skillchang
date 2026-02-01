@@ -22,7 +22,7 @@ test('ErrorBoundary catches errors and displays fallback UI', () => {
   const { container } = render(
     <ErrorBoundary>
       <ThrowError />
-    </ErrorBoundary>
+    </ErrorBoundary>,
   )
 
   // Verify error message is displayed
@@ -38,7 +38,7 @@ test('ErrorBoundary displays error message from caught error', () => {
   const { container } = render(
     <ErrorBoundary>
       <ThrowError />
-    </ErrorBoundary>
+    </ErrorBoundary>,
   )
 
   // The error message should be visible
@@ -54,7 +54,7 @@ test('ErrorBoundary renders children when no error occurs', () => {
   render(
     <ErrorBoundary>
       <SafeComponent />
-    </ErrorBoundary>
+    </ErrorBoundary>,
   )
 
   expect(screen.getByText('Safe content')).toBeDefined()
@@ -70,7 +70,7 @@ test('ErrorBoundary uses custom fallback when provided', () => {
   render(
     <ErrorBoundary fallback={fallback}>
       <ThrowError />
-    </ErrorBoundary>
+    </ErrorBoundary>,
   )
 
   expect(screen.getByText('Custom error fallback')).toBeDefined()
@@ -87,13 +87,13 @@ test('ErrorBoundary reload button is clickable', async () => {
   render(
     <ErrorBoundary>
       <ThrowError />
-    </ErrorBoundary>
+    </ErrorBoundary>,
   )
 
   const reloadButton = screen.getByText('Reload App')
   expect(reloadButton).toBeDefined()
   expect(reloadButton.tagName).toBe('BUTTON')
-  
+
   // Verify button is clickable (not disabled)
   await user.click(reloadButton)
 })

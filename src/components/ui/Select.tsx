@@ -4,12 +4,7 @@ import { forwardRef, type ComponentPropsWithoutRef, type ReactNode } from 'react
 
 function ChevronDownIcon(props: React.ComponentProps<'svg'>) {
   return (
-    <svg
-      {...props}
-      viewBox="0 0 16 16"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg {...props} viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M4 6L8 10L12 6"
         stroke="currentColor"
@@ -23,12 +18,7 @@ function ChevronDownIcon(props: React.ComponentProps<'svg'>) {
 
 function CheckIcon(props: React.ComponentProps<'svg'>) {
   return (
-    <svg
-      {...props}
-      viewBox="0 0 14 14"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg {...props} viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         fillRule="evenodd"
         clipRule="evenodd"
@@ -58,7 +48,7 @@ export const SelectTrigger = forwardRef<
       'data-[popup-open]:ring-2 data-[popup-open]:ring-ring',
       'disabled:opacity-50 disabled:cursor-not-allowed',
       'cursor-default select-none',
-      className
+      className,
     )}
     {...props}
   >
@@ -73,11 +63,7 @@ export const SelectIcon = forwardRef<
   HTMLSpanElement,
   ComponentPropsWithoutRef<typeof BaseSelect.Icon>
 >(({ className, children, ...props }, ref) => (
-  <BaseSelect.Icon
-    ref={ref}
-    className={clsx('flex text-muted-foreground', className)}
-    {...props}
-  >
+  <BaseSelect.Icon ref={ref} className={clsx('flex text-muted-foreground', className)} {...props}>
     {children ?? <ChevronDownIcon className="w-4 h-4" />}
   </BaseSelect.Icon>
 ))
@@ -112,7 +98,7 @@ export const SelectPopup = forwardRef<
       'transition-all duration-150',
       'data-[starting-style]:opacity-0 data-[starting-style]:scale-95',
       'data-[ending-style]:opacity-0 data-[ending-style]:scale-95',
-      className
+      className,
     )}
     {...props}
   />
@@ -132,7 +118,7 @@ export const SelectItem = forwardRef<
       'outline-none',
       'data-[highlighted]:bg-surface-hover',
       'data-[selected]:text-brand-600',
-      className
+      className,
     )}
     {...props}
   >
@@ -159,7 +145,11 @@ export interface SelectProps {
   className?: string
 }
 
-function getOptionLabel(options: SelectOption[], value: string | null, placeholder: string): string {
+function getOptionLabel(
+  options: SelectOption[],
+  value: string | null,
+  placeholder: string,
+): string {
   if (value === null) return placeholder
   const option = options.find((opt) => opt.value === value)
   return option?.label ?? placeholder
@@ -175,7 +165,12 @@ export function Select({
   className,
 }: SelectProps) {
   return (
-    <SelectRoot value={value} defaultValue={defaultValue} onValueChange={onValueChange} disabled={disabled}>
+    <SelectRoot
+      value={value}
+      defaultValue={defaultValue}
+      onValueChange={onValueChange}
+      disabled={disabled}
+    >
       <SelectTrigger className={className}>
         <BaseSelect.Value>
           {(selectedValue) => getOptionLabel(options, selectedValue as string | null, placeholder)}

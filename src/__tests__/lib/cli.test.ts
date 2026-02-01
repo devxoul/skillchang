@@ -53,12 +53,7 @@ describe('cli', () => {
       await listSkills(false, ['agent1', 'agent2'])
 
       const { Command } = await import('@tauri-apps/plugin-shell')
-      expect(Command.create).toHaveBeenCalledWith('npx', [
-        'skills',
-        'list',
-        '-a',
-        'agent1,agent2',
-      ])
+      expect(Command.create).toHaveBeenCalledWith('npx', ['skills', 'list', '-a', 'agent1,agent2'])
     })
 
     it('throws error on non-zero exit code', async () => {
@@ -95,11 +90,7 @@ describe('cli', () => {
       await addSkill('github:user/repo')
 
       const { Command } = await import('@tauri-apps/plugin-shell')
-      expect(Command.create).toHaveBeenCalledWith('npx', [
-        'skills',
-        'add',
-        'github:user/repo',
-      ])
+      expect(Command.create).toHaveBeenCalledWith('npx', ['skills', 'add', 'github:user/repo'])
     })
 
     it('calls npx skills add with all options', async () => {
@@ -137,9 +128,7 @@ describe('cli', () => {
         stderr: '\x1B[31mError\x1B[0m',
       })
 
-      await expect(addSkill('github:user/repo')).rejects.toThrow(
-        'Failed to add skill: Error'
-      )
+      await expect(addSkill('github:user/repo')).rejects.toThrow('Failed to add skill: Error')
     })
   })
 
@@ -154,11 +143,7 @@ describe('cli', () => {
       await removeSkill('skill-name')
 
       const { Command } = await import('@tauri-apps/plugin-shell')
-      expect(Command.create).toHaveBeenCalledWith('npx', [
-        'skills',
-        'remove',
-        'skill-name',
-      ])
+      expect(Command.create).toHaveBeenCalledWith('npx', ['skills', 'remove', 'skill-name'])
     })
 
     it('calls npx skills remove with options', async () => {
@@ -191,9 +176,7 @@ describe('cli', () => {
         stderr: 'Error',
       })
 
-      await expect(removeSkill('skill-name')).rejects.toThrow(
-        'Failed to remove skill: Error'
-      )
+      await expect(removeSkill('skill-name')).rejects.toThrow('Failed to remove skill: Error')
     })
   })
 

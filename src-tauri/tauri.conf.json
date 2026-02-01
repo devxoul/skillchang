@@ -2,9 +2,9 @@
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "Skillchang",
   "version": "0.1.0",
-  "identifier": "com.tauri.dev",
+  "identifier": "com.skillchang.app",
   "build": {
-    "frontendDist": "dist",
+    "frontendDist": "../dist",
     "devUrl": "http://localhost:5173",
     "beforeDevCommand": "bun run dev",
     "beforeBuildCommand": "bun run build"

@@ -3,12 +3,12 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { PreferencesDialog } from '@/components/PreferencesDialog'
 
 vi.mock('@/hooks/usePreferences', () => ({
-  usePreferences: vi.fn()
+  usePreferences: vi.fn(),
 }))
 vi.mock('@tauri-apps/plugin-store', () => ({
   Store: {
-    load: vi.fn()
-  }
+    load: vi.fn(),
+  },
 }))
 
 import { usePreferences } from '@/hooks/usePreferences'
@@ -20,10 +20,10 @@ describe('PreferencesDialog', () => {
   beforeEach(() => {
     mockUsePreferences.mockReturnValue({
       preferences: {
-        defaultAgents: ['OpenCode', 'Claude Code']
+        defaultAgents: ['OpenCode', 'Claude Code'],
       },
       loading: false,
-      savePreferences: mockSavePreferences
+      savePreferences: mockSavePreferences,
     })
   })
 
@@ -38,7 +38,9 @@ describe('PreferencesDialog', () => {
 
   it('displays default agents description', () => {
     render(<PreferencesDialog open={true} onOpenChange={vi.fn()} />)
-    expect(screen.getByText('These agents will be pre-selected when adding skills')).toBeInTheDocument()
+    expect(
+      screen.getByText('These agents will be pre-selected when adding skills'),
+    ).toBeInTheDocument()
   })
 
   it('renders all agents as checkboxes', () => {
@@ -52,7 +54,7 @@ describe('PreferencesDialog', () => {
     const checkboxes = screen.getAllByRole('checkbox')
     const openCodeCheckbox = checkboxes[0]
     const claudeCheckbox = checkboxes[1]
-    
+
     expect(openCodeCheckbox).toHaveAttribute('aria-checked', 'true')
     expect(claudeCheckbox).toHaveAttribute('aria-checked', 'true')
   })
@@ -60,13 +62,13 @@ describe('PreferencesDialog', () => {
   it('toggles agent selection on checkbox click', async () => {
     render(<PreferencesDialog open={true} onOpenChange={vi.fn()} />)
     const checkboxes = screen.getAllByRole('checkbox')
-    const uncheckedCheckbox = checkboxes.find(cb => cb.getAttribute('aria-checked') === 'false')
-    
+    const uncheckedCheckbox = checkboxes.find((cb) => cb.getAttribute('aria-checked') === 'false')
+
     expect(uncheckedCheckbox).toBeDefined()
     if (uncheckedCheckbox) {
       expect(uncheckedCheckbox).toHaveAttribute('aria-checked', 'false')
       fireEvent.click(uncheckedCheckbox)
-      
+
       await waitFor(() => {
         expect(uncheckedCheckbox).toHaveAttribute('aria-checked', 'true')
       })
@@ -76,10 +78,10 @@ describe('PreferencesDialog', () => {
   it('saves preferences on save button click', async () => {
     const onOpenChange = vi.fn()
     render(<PreferencesDialog open={true} onOpenChange={onOpenChange} />)
-    
+
     const saveButton = screen.getByRole('button', { name: /Save/i })
     fireEvent.click(saveButton)
-    
+
     await waitFor(() => {
       expect(mockSavePreferences).toHaveBeenCalled()
     })
@@ -88,10 +90,10 @@ describe('PreferencesDialog', () => {
   it('closes dialog after saving', async () => {
     const onOpenChange = vi.fn()
     render(<PreferencesDialog open={true} onOpenChange={onOpenChange} />)
-    
+
     const saveButton = screen.getByRole('button', { name: /Save/i })
     fireEvent.click(saveButton)
-    
+
     await waitFor(() => {
       expect(onOpenChange).toHaveBeenCalledWith(false)
     })
@@ -100,28 +102,28 @@ describe('PreferencesDialog', () => {
   it('closes dialog on cancel button click', () => {
     const onOpenChange = vi.fn()
     render(<PreferencesDialog open={true} onOpenChange={onOpenChange} />)
-    
+
     const cancelButton = screen.getByRole('button', { name: /Cancel/i })
     fireEvent.click(cancelButton)
-    
+
     expect(onOpenChange).toHaveBeenCalledWith(false)
   })
 
   it('saves selected agents to preferences', async () => {
     const onOpenChange = vi.fn()
     render(<PreferencesDialog open={true} onOpenChange={onOpenChange} />)
-    
+
     const checkboxes = screen.getAllByRole('checkbox')
-    const uncheckedCheckbox = checkboxes.find(cb => cb.getAttribute('aria-checked') === 'false')
-    
+    const uncheckedCheckbox = checkboxes.find((cb) => cb.getAttribute('aria-checked') === 'false')
+
     expect(uncheckedCheckbox).toBeDefined()
     if (uncheckedCheckbox) {
       fireEvent.click(uncheckedCheckbox)
     }
-    
+
     const saveButton = screen.getByRole('button', { name: /Save/i })
     fireEvent.click(saveButton)
-    
+
     await waitFor(() => {
       expect(mockSavePreferences).toHaveBeenCalled()
       const call = mockSavePreferences.mock.calls[0]?.[0]

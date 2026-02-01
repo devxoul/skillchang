@@ -56,7 +56,7 @@ describe('Checkbox', () => {
     render(
       <CheckboxRoot defaultChecked>
         <CheckboxIndicator />
-      </CheckboxRoot>
+      </CheckboxRoot>,
     )
     expect(screen.getByRole('checkbox')).toBeChecked()
   })
