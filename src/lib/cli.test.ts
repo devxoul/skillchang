@@ -1,5 +1,5 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { listSkills, addSkill, removeSkill, checkUpdates } from '../../lib/cli'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { addSkill, checkUpdates, listSkills, removeSkill } from './cli'
 
 const mockExecute = vi.fn()
 
