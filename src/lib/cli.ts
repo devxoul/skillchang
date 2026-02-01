@@ -19,7 +19,7 @@ export interface RemoveSkillOptions {
   agents?: string[]
 }
 
-export async function listSkills(global: boolean = false, agents?: string[]): Promise<SkillInfo[]> {
+export async function listSkills(global = false, agents?: string[]): Promise<SkillInfo[]> {
   const args = ['skills', 'list']
   if (global) args.push('-g')
   if (agents?.length) {
@@ -97,5 +97,46 @@ export async function checkUpdates(): Promise<string> {
 }
 
 function parseSkillList(output: string): SkillInfo[] {
-  return []
+  const skills: SkillInfo[] = []
+  const lines = output.split('\n')
+  let currentSkill: Partial<SkillInfo> | null = null
+
+  for (const line of lines) {
+    const trimmed = line.trim()
+
+    const isHeaderOrEmpty = !trimmed || trimmed === 'Global Skills' || trimmed === 'Project Skills'
+    if (isHeaderOrEmpty) continue
+
+    const isAgentsLine = trimmed.startsWith('Agents:')
+    if (isAgentsLine && currentSkill) {
+      const agentsStr = trimmed.replace('Agents:', '').trim()
+      currentSkill.agents =
+        agentsStr && agentsStr !== 'not linked' ? agentsStr.split(',').map((a) => a.trim()) : []
+      if (currentSkill.name && currentSkill.path) {
+        skills.push(currentSkill as SkillInfo)
+      }
+      currentSkill = null
+      continue
+    }
+
+    const skillLineMatch = trimmed.match(/^(\S+)\s+(.+)$/)
+    if (skillLineMatch) {
+      if (currentSkill?.name && currentSkill?.path) {
+        currentSkill.agents = currentSkill.agents || []
+        skills.push(currentSkill as SkillInfo)
+      }
+      currentSkill = {
+        name: skillLineMatch[1],
+        path: skillLineMatch[2],
+        agents: [],
+      }
+    }
+  }
+
+  if (currentSkill?.name && currentSkill?.path) {
+    currentSkill.agents = currentSkill.agents || []
+    skills.push(currentSkill as SkillInfo)
+  }
+
+  return skills
 }
