@@ -1,10 +1,10 @@
-import { useState, useMemo, useEffect } from 'react'
+import { InlineError } from '@/components/InlineError'
 import { SearchInput } from '@/components/SearchInput'
 import { SkillCard } from '@/components/SkillCard'
 import { Button } from '@/components/ui/Button'
-import { InlineError } from '@/components/InlineError'
 import { fetchSkills } from '@/lib/api'
 import type { Skill } from '@/types/skill'
+import { useEffect, useMemo, useState } from 'react'
 
 interface SkillGalleryViewProps {
   initialSkills?: Skill[]
@@ -34,24 +34,36 @@ export function SkillGalleryView({
       return
     }
 
+    let cancelled = false
+
     const loadSkills = async () => {
       setInternalLoading(true)
       setInternalError(null)
       try {
         const response = await fetchSkills(currentPage)
-        setSkills(response.skills)
-        setHasMore(response.hasMore)
+        if (!cancelled) {
+          setSkills(response.skills)
+          setHasMore(response.hasMore)
+        }
       } catch (err) {
-        setInternalError(err instanceof Error ? err.message : 'Failed to load skills')
-        setSkills([])
-        setHasMore(false)
+        if (!cancelled) {
+          setInternalError(err instanceof Error ? err.message : 'Failed to load skills')
+          setSkills([])
+          setHasMore(false)
+        }
       } finally {
-        setInternalLoading(false)
+        if (!cancelled) {
+          setInternalLoading(false)
+        }
       }
     }
 
     loadSkills()
-  }, [initialSkills, currentPage])
+
+    return () => {
+      cancelled = true
+    }
+  }, [initialSkills.length, currentPage])
 
   const filteredSkills = useMemo(() => {
     if (!searchQuery.trim()) {
