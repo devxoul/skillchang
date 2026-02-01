@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { describe, expect, it, vi } from 'vitest'
-import { Sidebar } from '../../components/Sidebar'
+import { Sidebar } from '../../components/sidebar'
 
 vi.mock('@/hooks/useProjects', () => ({
   useProjects: vi.fn(() => ({

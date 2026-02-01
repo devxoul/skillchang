@@ -1,4 +1,4 @@
-import { SkillGalleryView } from '@/views/SkillGalleryView'
+import { SkillGalleryView } from '@/views/skill-gallery-view'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 

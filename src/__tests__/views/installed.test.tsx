@@ -1,6 +1,6 @@
 import * as cli from '@/lib/cli'
 import type { SkillInfo } from '@/lib/cli'
-import InstalledSkillsView from '@/views/InstalledSkillsView'
+import InstalledSkillsView from '@/views/installed-skills-view'
 // @vitest-environment jsdom
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { type Mock, beforeEach, describe, expect, it, vi } from 'vitest'

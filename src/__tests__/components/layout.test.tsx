@@ -1,9 +1,9 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
-import { Layout } from '@/components/Layout'
-import { Sidebar } from '@/components/Sidebar'
-import { MainContent } from '@/components/MainContent'
+import { Layout } from '@/components/layout'
+import { Sidebar } from '@/components/sidebar'
+import { MainContent } from '@/components/main-content'
 
 describe('Layout', () => {
   it('renders Layout component with Sidebar and MainContent', () => {

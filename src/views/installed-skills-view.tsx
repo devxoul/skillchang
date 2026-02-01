@@ -1,5 +1,5 @@
-import { InlineError } from '@/components/InlineError'
-import { Button } from '@/components/ui/Button'
+import { InlineError } from '@/components/inline-error'
+import { Button } from '@/components/ui/button'
 import { type SkillInfo, listSkills, removeSkill } from '@/lib/cli'
 import { useEffect, useState } from 'react'
 

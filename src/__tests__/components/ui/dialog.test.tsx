@@ -10,7 +10,7 @@ import {
   DialogTitle,
   DialogDescription,
   DialogClose,
-} from '@/components/ui/Dialog'
+} from '@/components/ui/dialog'
 
 describe('Dialog', () => {
   it('renders convenience component with trigger', () => {

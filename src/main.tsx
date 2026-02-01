@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import { ThemeProvider } from './contexts/ThemeContext'
-import App from './App'
+import { ThemeProvider } from './contexts/theme-context'
+import App from './app'
 import './index.css'
 
 // Initialize window state plugin

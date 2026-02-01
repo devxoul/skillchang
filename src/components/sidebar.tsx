@@ -4,8 +4,8 @@ import { DndContext, closestCenter } from '@dnd-kit/core'
 import type { DragEndEvent } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { Button } from './ui/Button'
-import { useProjects } from '@/hooks/useProjects'
+import { Button } from './ui/button'
+import { useProjects } from '@/hooks/use-projects'
 import type { Project } from '@/types/project'
 
 interface NavLinkProps {

@@ -1,6 +1,6 @@
 import { Routes, Route } from 'react-router-dom'
-import { SkillGalleryView } from '@/views/SkillGalleryView'
-import InstalledSkillsView from '@/views/InstalledSkillsView'
+import { SkillGalleryView } from '@/views/skill-gallery-view'
+import InstalledSkillsView from '@/views/installed-skills-view'
 
 function ProjectPage() {
   return (

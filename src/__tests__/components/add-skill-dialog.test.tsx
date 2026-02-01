@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
-import { AddSkillDialog } from '@/components/AddSkillDialog'
+import { AddSkillDialog } from '@/components/add-skill-dialog'
 import { addSkill } from '@/lib/cli'
 import type { Skill } from '@/types/skill'
 

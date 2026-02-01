@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
-import { DialogRoot, DialogPortal, DialogBackdrop, DialogContent, DialogTitle } from './ui/Dialog'
-import { Button } from './ui/Button'
-import { Checkbox } from './ui/Checkbox'
-import { usePreferences } from '@/hooks/usePreferences'
+import { DialogRoot, DialogPortal, DialogBackdrop, DialogContent, DialogTitle } from './ui/dialog'
+import { Button } from './ui/button'
+import { Checkbox } from './ui/checkbox'
+import { usePreferences } from '@/hooks/use-preferences'
 import { AGENTS } from '@/data/agents'
 
 interface PreferencesDialogProps {

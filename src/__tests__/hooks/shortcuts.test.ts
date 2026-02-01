@@ -1,6 +1,6 @@
 import { test, expect, describe, vi } from 'vitest'
 import { renderHook } from '@testing-library/react'
-import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts'
+import { useKeyboardShortcuts } from '@/hooks/use-keyboard-shortcuts'
 
 vi.mock('react-router-dom', () => ({
   useNavigate: () => vi.fn(),
