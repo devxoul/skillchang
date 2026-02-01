@@ -3,7 +3,7 @@ import { MemoryRouter } from 'react-router-dom'
 import { describe, expect, it, vi } from 'vitest'
 import { Sidebar } from './sidebar'
 
-vi.mock('@/hooks/useProjects', () => ({
+vi.mock('@/hooks/use-projects', () => ({
   useProjects: vi.fn(() => ({
     projects: [],
     loading: false,

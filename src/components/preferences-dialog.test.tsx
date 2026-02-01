@@ -1,8 +1,8 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { PreferencesDialog } from '@/components/preferences-dialog'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-vi.mock('@/hooks/usePreferences', () => ({
+vi.mock('@/hooks/use-preferences', () => ({
   usePreferences: vi.fn(),
 }))
 vi.mock('@tauri-apps/plugin-store', () => ({
