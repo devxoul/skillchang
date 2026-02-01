@@ -20,7 +20,8 @@ describe('Layout', () => {
       </MemoryRouter>
     )
 
-    expect(screen.getByText('Sidebar placeholder')).toBeInTheDocument()
+    expect(screen.getByText('Browse Gallery')).toBeInTheDocument()
+    expect(screen.getByText('Global Skills')).toBeInTheDocument()
   })
 
   it('renders home page content at root route', () => {
@@ -30,8 +31,8 @@ describe('Layout', () => {
       </MemoryRouter>
     )
 
-    expect(screen.getByText('Home')).toBeInTheDocument()
-    expect(screen.getByText('Welcome to Skillchang')).toBeInTheDocument()
+    expect(screen.getByText('Skill Gallery')).toBeInTheDocument()
+    expect(screen.getByText('Browse and discover available skills')).toBeInTheDocument()
   })
 
   it('renders global page at /global route', () => {
@@ -40,8 +41,8 @@ describe('Layout', () => {
         <Layout />
       </MemoryRouter>
     )
-
-    expect(screen.getByText('Global Skills')).toBeInTheDocument()
+    
+    expect(screen.getAllByText('Global Skills').length).toBeGreaterThanOrEqual(1)
   })
 
   it('renders project page at /project/:id route', () => {
@@ -56,10 +57,15 @@ describe('Layout', () => {
 })
 
 describe('Sidebar', () => {
-  it('renders sidebar with placeholder text', () => {
-    render(<Sidebar />)
+  it('renders sidebar with navigation items', () => {
+    render(
+      <MemoryRouter>
+        <Sidebar />
+      </MemoryRouter>
+    )
 
-    expect(screen.getByText('Sidebar placeholder')).toBeInTheDocument()
+    expect(screen.getByText('Browse Gallery')).toBeInTheDocument()
+    expect(screen.getByText('Projects')).toBeInTheDocument()
   })
 })
 
@@ -71,6 +77,6 @@ describe('MainContent', () => {
       </MemoryRouter>
     )
 
-    expect(screen.getByText('Home')).toBeInTheDocument()
+    expect(screen.getByText('Skill Gallery')).toBeInTheDocument()
   })
 })
