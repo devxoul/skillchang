@@ -65,13 +65,13 @@ describe('AddSkillDialog', () => {
     )
 
     const checkboxes = screen.getAllByRole('checkbox')
-    const firstAgentCheckbox = checkboxes[0]! as HTMLInputElement
+    const firstAgentCheckbox = checkboxes[0]!
     
-    expect(firstAgentCheckbox.checked).toBe(false)
+    expect(firstAgentCheckbox).not.toBeChecked()
     
     fireEvent.click(firstAgentCheckbox)
     
-    expect(firstAgentCheckbox.checked).toBe(true)
+    expect(firstAgentCheckbox).toBeChecked()
   })
 
   it('disables Add button when no agents selected', () => {
