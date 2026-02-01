@@ -3,6 +3,17 @@
   "productName": "Skillchang",
   "version": "0.1.0",
   "identifier": "com.skillchang.app",
+  "plugins": {
+    "shell": {
+      "scope": [
+        {
+          "name": "npx",
+          "cmd": "npx",
+          "args": true
+        }
+      ]
+    }
+  },
   "build": {
     "frontendDist": "../dist",
     "devUrl": "http://localhost:5173",
