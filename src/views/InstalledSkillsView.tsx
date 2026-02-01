@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react'
-import { Button } from '@/components/ui/Button'
 import { InlineError } from '@/components/InlineError'
-import { listSkills, removeSkill, type SkillInfo } from '@/lib/cli'
+import { Button } from '@/components/ui/Button'
+import { type SkillInfo, listSkills, removeSkill } from '@/lib/cli'
+import { useEffect, useState } from 'react'
 
 interface InstalledSkillsViewProps {
   scope?: 'global' | 'project'
@@ -84,21 +84,83 @@ export default function InstalledSkillsView({
 
   return (
     <div className="p-6 space-y-4">
-      <h1 className="text-2xl font-bold">
-        {scope === 'global' ? 'Global Skills' : 'Project Skills'}
-      </h1>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold">
+            {scope === 'global' ? 'Global Skills' : 'Project Skills'}
+          </h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            {skills.length} skill{skills.length !== 1 ? 's' : ''} installed
+          </p>
+        </div>
+        <Button variant="secondary" size="sm" onClick={loadSkills}>
+          Refresh
+        </Button>
+      </div>
       {actionError && <InlineError message={actionError} onRetry={() => setActionError(null)} />}
       <div className="space-y-2">
         {skills.map((skill) => (
           <div
             key={skill.name}
-            className="border border-border rounded-lg p-4 flex items-center justify-between bg-surface"
+            className="border border-border rounded-lg p-4 flex items-center justify-between bg-surface hover:bg-muted/50 transition-colors"
           >
-            <div className="flex-1">
-              <h3 className="font-semibold text-foreground">{skill.name}</h3>
-              <div className="text-sm text-muted-foreground mt-1">
-                <div>📁 {skill.path}</div>
-                {skill.agents && skill.agents.length > 0 && <div>🤖 {skill.agents.join(', ')}</div>}
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2">
+                <h3 className="font-semibold text-foreground truncate">{skill.name}</h3>
+                {skill.agents && skill.agents.length > 0 ? (
+                  <span className="shrink-0 inline-flex items-center rounded-full bg-green-500/10 text-green-600 dark:text-green-400 px-2 py-0.5 text-xs font-medium">
+                    Linked
+                  </span>
+                ) : (
+                  <span className="shrink-0 inline-flex items-center rounded-full bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 px-2 py-0.5 text-xs font-medium">
+                    Not linked
+                  </span>
+                )}
+              </div>
+              <div className="mt-2 flex flex-col gap-1.5 text-sm text-muted-foreground">
+                <div className="flex items-center gap-1.5">
+                  <svg
+                    className="h-3.5 w-3.5 shrink-0"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+                    />
+                  </svg>
+                  <span className="truncate">{skill.path}</span>
+                </div>
+                {skill.agents && skill.agents.length > 0 && (
+                  <div className="flex items-center gap-1.5">
+                    <svg
+                      className="h-3.5 w-3.5 shrink-0"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                      />
+                    </svg>
+                    <div className="flex flex-wrap gap-1">
+                      {skill.agents.map((agent) => (
+                        <span
+                          key={agent}
+                          className="inline-flex items-center rounded bg-muted px-1.5 py-0.5 text-xs"
+                        >
+                          {agent}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
             <Button
@@ -106,7 +168,7 @@ export default function InstalledSkillsView({
               variant="secondary"
               onClick={() => handleRemove(skill.name)}
               disabled={removing === skill.name}
-              className="ml-4"
+              className="ml-4 shrink-0"
             >
               {removing === skill.name ? 'Removing...' : 'Remove'}
             </Button>
