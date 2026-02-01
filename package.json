@@ -10,7 +10,8 @@
     "format": "biome format --write .",
     "lint": "eslint .",
     "test": "vitest run",
-    "tauri": "tauri"
+    "tauri": "tauri",
+    "tauri:dev": "tauri dev"
   },
   "dependencies": {
     "@base-ui-components/react": "^1.0.0-alpha.12",
