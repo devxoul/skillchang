@@ -73,7 +73,7 @@ describe('projects', () => {
       const existing = [
         { id: '1', name: 'Existing', path: '/existing' }
       ]
-      mockStore.get.mockResolvedValue(existing)
+      mockStore.get.mockImplementation(() => Promise.resolve([...existing]))
       
       const project = await addProject('/new/project')
       
