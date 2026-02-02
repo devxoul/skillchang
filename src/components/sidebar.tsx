@@ -88,6 +88,7 @@ function ProjectItem({ project, onRemove }: ProjectItemProps) {
         </span>
         <button
           type="button"
+          tabIndex={-1}
           onClick={(e) => {
             e.preventDefault()
             onRemove(project.id)
