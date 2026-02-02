@@ -1,6 +1,20 @@
 import '@testing-library/jest-dom'
 import { vi } from 'vitest'
 
+vi.mock('@lobehub/icons', () => ({
+  Claude: () => null,
+  Cursor: () => null,
+  Cline: () => null,
+  Windsurf: () => null,
+  GithubCopilot: () => null,
+  Gemini: () => null,
+  OpenAI: () => null,
+  DeepSeek: () => null,
+  CodeGeeX: () => null,
+  Replit: () => null,
+  Aws: () => null,
+}))
+
 vi.mock('@tauri-apps/api/core', () => ({
   invoke: vi.fn(),
 }))

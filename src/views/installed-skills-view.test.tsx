@@ -44,7 +44,7 @@ describe('InstalledSkillsView', () => {
     renderWithProvider(<InstalledSkillsView scope="global" />)
 
     await waitFor(() => {
-      expect(screen.getByText('No global skills installed')).toBeInTheDocument()
+      expect(screen.getByText('No skills installed')).toBeInTheDocument()
     })
   })
 

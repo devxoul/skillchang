@@ -1,10 +1,11 @@
-import { useState } from 'react'
-import { DialogRoot, DialogPortal, DialogBackdrop, DialogContent, DialogTitle } from '@/ui/dialog'
+import { AgentIcon } from '@/components/agent-icon'
+import { AGENTS } from '@/data/agents'
+import { addSkill } from '@/lib/cli'
+import type { Skill } from '@/types/skill'
 import { Button } from '@/ui/button'
 import { Checkbox } from '@/ui/checkbox'
-import { addSkill } from '@/lib/cli'
-import { AGENTS } from '@/data/agents'
-import type { Skill } from '@/types/skill'
+import { DialogBackdrop, DialogContent, DialogPortal, DialogRoot, DialogTitle } from '@/ui/dialog'
+import { useState } from 'react'
 
 interface AddSkillDialogProps {
   skill: Skill
@@ -95,7 +96,8 @@ export function AddSkillDialog({
                       checked={selectedAgents.includes(agent)}
                       onCheckedChange={() => handleToggleAgent(agent)}
                     />
-                    {agent}
+                    <AgentIcon agent={agent} size={16} />
+                    <span>{agent}</span>
                   </label>
                 ))}
               </div>

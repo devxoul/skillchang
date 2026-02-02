@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react'
-import { DialogRoot, DialogPortal, DialogBackdrop, DialogContent, DialogTitle } from '@/ui/dialog'
+import { AgentIcon } from '@/components/agent-icon'
+import { AGENTS } from '@/data/agents'
+import { usePreferences } from '@/hooks/use-preferences'
 import { Button } from '@/ui/button'
 import { Checkbox } from '@/ui/checkbox'
-import { usePreferences } from '@/hooks/use-preferences'
-import { AGENTS } from '@/data/agents'
+import { DialogBackdrop, DialogContent, DialogPortal, DialogRoot, DialogTitle } from '@/ui/dialog'
+import { useEffect, useState } from 'react'
 
 interface PreferencesDialogProps {
   open: boolean
@@ -34,28 +35,34 @@ export function PreferencesDialog({ open, onOpenChange }: PreferencesDialogProps
       <DialogPortal>
         <DialogBackdrop />
         <DialogContent>
-          <DialogTitle>Preferences</DialogTitle>
+          <DialogTitle className="text-[15px]">Preferences</DialogTitle>
 
           <div className="space-y-4">
             <div>
-              <label className="text-sm font-medium">Default Agents</label>
-              <p className="mt-1 text-sm text-muted-foreground">
+              <span className="text-[11px] font-medium uppercase tracking-wide text-foreground/40">
+                Default Agents
+              </span>
+              <p className="mt-1 text-[12px] text-foreground/40">
                 These agents will be pre-selected when adding skills
               </p>
-              <div className="mt-2 max-h-64 space-y-1 overflow-y-auto rounded border border-border p-2">
+              <div className="mt-3 max-h-64 space-y-0.5 overflow-y-auto rounded-lg border border-white/[0.06] bg-white/[0.04] p-2">
                 {AGENTS.map((agent) => (
-                  <label key={agent} className="flex cursor-pointer items-center gap-2 text-sm">
+                  <label
+                    key={agent}
+                    className="flex cursor-pointer items-center gap-2.5 rounded-md px-2 py-1.5 text-[13px] transition-colors hover:bg-white/[0.06]"
+                  >
                     <Checkbox
                       checked={selectedAgents.includes(agent)}
                       onCheckedChange={() => handleToggleAgent(agent)}
                     />
-                    {agent}
+                    <AgentIcon agent={agent} size={16} className="shrink-0 text-foreground/60" />
+                    <span className="text-foreground">{agent}</span>
                   </label>
                 ))}
               </div>
             </div>
 
-            <div className="flex justify-end gap-2">
+            <div className="flex justify-end gap-2 pt-2">
               <Button variant="secondary" onClick={() => onOpenChange(false)}>
                 Cancel
               </Button>

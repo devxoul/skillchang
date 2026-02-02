@@ -2,7 +2,7 @@ import { Layout } from '@/components/layout'
 import { MainContent } from '@/components/main-content'
 import { Sidebar } from '@/components/sidebar'
 import { SkillsProvider } from '@/contexts/skills-context'
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { describe, expect, it, vi } from 'vitest'
 
@@ -49,10 +49,12 @@ describe('Layout', () => {
     expect(screen.getAllByText('Global Skills').length).toBeGreaterThanOrEqual(1)
   })
 
-  it('renders project page at /project/:id route', () => {
+  it('renders project page at /project/:id route', async () => {
     renderWithProviders(<Layout />, { route: '/project/123' })
 
-    expect(screen.getByText('Project')).toBeInTheDocument()
+    await waitFor(() => {
+      expect(screen.getByText('Project Skills')).toBeInTheDocument()
+    })
   })
 })
 
