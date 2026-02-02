@@ -17,6 +17,18 @@
           "cmd": "npx",
           "args": true,
           "sidecar": false
+        },
+        {
+          "name": "pnpx",
+          "cmd": "pnpx",
+          "args": true,
+          "sidecar": false
+        },
+        {
+          "name": "bunx",
+          "cmd": "bunx",
+          "args": true,
+          "sidecar": false
         }
       ]
     },
