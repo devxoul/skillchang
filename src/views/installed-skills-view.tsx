@@ -1,5 +1,6 @@
 import { AgentIcon } from '@/components/agent-icon'
 import { InlineError } from '@/components/inline-error'
+import { SearchInput } from '@/components/search-input'
 import { useInstalledSkills } from '@/contexts/skills-context'
 import {
   ArrowClockwise,
@@ -11,7 +12,7 @@ import {
   SpinnerGap,
   Trash,
 } from '@phosphor-icons/react'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 interface InstalledSkillsViewProps {
   scope?: 'global' | 'project'
@@ -25,10 +26,19 @@ export default function InstalledSkillsView({
   const { skills, loading, error, refresh, fetch, remove } = useInstalledSkills(scope)
   const [actionError, setActionError] = useState<string | null>(null)
   const [removing, setRemoving] = useState<string | null>(null)
+  const [searchQuery, setSearchQuery] = useState('')
 
   useEffect(() => {
     fetch()
   }, [fetch])
+
+  const filteredSkills = useMemo(() => {
+    if (!searchQuery.trim()) {
+      return skills
+    }
+    const query = searchQuery.toLowerCase()
+    return skills.filter((skill) => skill.name.toLowerCase().includes(query))
+  }, [skills, searchQuery])
 
   async function handleRemove(skillName: string) {
     setRemoving(skillName)
@@ -78,17 +88,34 @@ export default function InstalledSkillsView({
       )
     }
 
+    if (filteredSkills.length === 0) {
+      return (
+        <div className="flex flex-1 flex-col">
+          <div className="shrink-0 px-4 py-3">
+            <SearchInput onSearch={setSearchQuery} placeholder="Search skills..." />
+          </div>
+          <div className="flex flex-1 items-center justify-center">
+            <p className="text-[13px] text-foreground/40">No skills match your search</p>
+          </div>
+        </div>
+      )
+    }
+
     return (
       <>
+        <div className="shrink-0 px-4 py-3">
+          <SearchInput onSearch={setSearchQuery} placeholder="Search skills..." />
+        </div>
+
         {actionError && (
-          <div className="shrink-0 px-4 pt-3">
+          <div className="shrink-0 px-4 pb-3">
             <InlineError message={actionError} onRetry={() => setActionError(null)} />
           </div>
         )}
 
-        <div className="min-h-0 flex-1 overflow-y-auto px-2 py-2">
-          <div className="space-y-0.5">
-            {skills.map((skill) => (
+        <div className="min-h-0 flex-1 overflow-y-auto px-2">
+          <div className="space-y-0.5 pb-2">
+            {filteredSkills.map((skill) => (
               <div
                 key={skill.name}
                 className="group flex items-start gap-3 rounded-lg px-3 py-2.5 transition-all duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] hover:bg-white/[0.06]"
