@@ -1,10 +1,8 @@
 import { Robot } from '@phosphor-icons/react'
 import type { ReactElement } from 'react'
 
-import Aws from '@lobehub/icons/es/Aws/components/Mono'
 import Claude from '@lobehub/icons/es/Claude/components/Mono'
 import Cline from '@lobehub/icons/es/Cline/components/Mono'
-import CodeGeeX from '@lobehub/icons/es/CodeGeeX/components/Mono'
 import Cursor from '@lobehub/icons/es/Cursor/components/Mono'
 import DeepSeek from '@lobehub/icons/es/DeepSeek/components/Mono'
 import Gemini from '@lobehub/icons/es/Gemini/components/Mono'
@@ -22,18 +20,15 @@ interface AgentIconProps {
 type IconRenderer = (size: number) => ReactElement
 
 const AGENT_ICONS: Record<string, IconRenderer> = {
-  'Claude Code': (size) => <Claude size={size} />,
-  Cursor: (size) => <Cursor size={size} />,
-  Cline: (size) => <Cline size={size} />,
-  Windsurf: (size) => <Windsurf size={size} />,
-  'GitHub Copilot': (size) => <GithubCopilot size={size} />,
-  'Gemini CLI': (size) => <Gemini size={size} />,
-  Codex: (size) => <OpenAI size={size} />,
-  'DeepSeek Coder': (size) => <DeepSeek size={size} />,
-  CodeGeex: (size) => <CodeGeeX size={size} />,
-  'Replit Ghostwriter': (size) => <Replit size={size} />,
-  'Amazon Q': (size) => <Aws size={size} />,
-  CodeWhisperer: (size) => <Aws size={size} />,
+  'claude-code': (size) => <Claude size={size} />,
+  cursor: (size) => <Cursor size={size} />,
+  cline: (size) => <Cline size={size} />,
+  windsurf: (size) => <Windsurf size={size} />,
+  'github-copilot': (size) => <GithubCopilot size={size} />,
+  'gemini-cli': (size) => <Gemini size={size} />,
+  codex: (size) => <OpenAI size={size} />,
+  'qwen-code': (size) => <DeepSeek size={size} />,
+  replit: (size) => <Replit size={size} />,
 }
 
 export function AgentIcon({ agent, size = 16, className }: AgentIconProps) {

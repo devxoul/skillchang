@@ -48,15 +48,15 @@ export function PreferencesDialog({ open, onOpenChange }: PreferencesDialogProps
               <div className="mt-3 max-h-64 space-y-0.5 overflow-y-auto rounded-lg border border-white/[0.06] bg-white/[0.04] p-2">
                 {AGENTS.map((agent) => (
                   <label
-                    key={agent}
+                    key={agent.id}
                     className="flex cursor-pointer items-center gap-2.5 rounded-md px-2 py-1.5 text-[13px] transition-colors hover:bg-white/[0.06]"
                   >
                     <Checkbox
-                      checked={selectedAgents.includes(agent)}
-                      onCheckedChange={() => handleToggleAgent(agent)}
+                      checked={selectedAgents.includes(agent.id)}
+                      onCheckedChange={() => handleToggleAgent(agent.id)}
                     />
-                    <AgentIcon agent={agent} size={16} className="shrink-0 text-foreground/60" />
-                    <span className="text-foreground">{agent}</span>
+                    <AgentIcon agent={agent.id} size={16} className="shrink-0 text-foreground/60" />
+                    <span className="text-foreground">{agent.name}</span>
                   </label>
                 ))}
               </div>

@@ -53,7 +53,7 @@ export function AddSkillDialog({
     try {
       if (includeGlobal) {
         try {
-          await addSkill(skill.name, {
+          await addSkill(skill.topSource, {
             global: true,
             agents: selectedAgents,
             yes: true,
@@ -69,7 +69,7 @@ export function AddSkillDialog({
         if (!project) continue
 
         try {
-          await addSkill(skill.name, {
+          await addSkill(skill.topSource, {
             agents: selectedAgents,
             yes: true,
             cwd: project.path,
@@ -148,15 +148,15 @@ export function AddSkillDialog({
                 <div className="mt-2 max-h-48 space-y-1 overflow-y-auto rounded-lg border border-foreground/10 bg-foreground/[0.02] p-2">
                   {AGENTS.map((agent) => (
                     <label
-                      key={agent}
+                      key={agent.id}
                       className="flex cursor-pointer items-center gap-2 rounded-md p-1.5 text-[13px] transition-colors duration-150 hover:bg-foreground/[0.06]"
                     >
                       <Checkbox
-                        checked={selectedAgents.includes(agent)}
-                        onCheckedChange={() => handleToggleAgent(agent)}
+                        checked={selectedAgents.includes(agent.id)}
+                        onCheckedChange={() => handleToggleAgent(agent.id)}
                       />
-                      <AgentIcon agent={agent} size={16} />
-                      <span>{agent}</span>
+                      <AgentIcon agent={agent.id} size={16} />
+                      <span>{agent.name}</span>
                     </label>
                   ))}
                 </div>

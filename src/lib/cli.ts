@@ -27,18 +27,22 @@ export async function listSkills(global = false, agents?: string[]): Promise<Ski
     args.push('-a', agents.join(','))
   }
 
+  let result: Awaited<ReturnType<ReturnType<typeof Command.create>['execute']>>
   try {
-    const result = await Command.create('npx', args).execute()
-
-    if (result.code !== 0) {
-      throw new Error(`CLI error: ${result.stderr}`)
-    }
-
-    const output = stripAnsi(result.stdout)
-    return parseSkillList(output)
+    result = await Command.create('npx', args).execute()
   } catch (error) {
     throw new Error(`Failed to list skills: ${error}`)
   }
+
+  if (result.code !== 0) {
+    const stderr = stripAnsi(result.stderr).trim()
+    const stdout = stripAnsi(result.stdout).trim()
+    const message = stderr || stdout || `Command exited with code ${result.code}`
+    throw new Error(`Failed to list skills: ${message}`)
+  }
+
+  const output = stripAnsi(result.stdout)
+  return parseSkillList(output)
 }
 
 export async function addSkill(source: string, options: AddSkillOptions = {}): Promise<void> {
@@ -53,15 +57,19 @@ export async function addSkill(source: string, options: AddSkillOptions = {}): P
   }
   if (options.yes) args.push('-y')
 
+  const commandOptions = options.cwd ? { cwd: options.cwd } : undefined
+  let result: Awaited<ReturnType<ReturnType<typeof Command.create>['execute']>>
   try {
-    const commandOptions = options.cwd ? { cwd: options.cwd } : undefined
-    const result = await Command.create('npx', args, commandOptions).execute()
-
-    if (result.code !== 0) {
-      throw new Error(`Failed to add skill: ${stripAnsi(result.stderr)}`)
-    }
+    result = await Command.create('npx', args, commandOptions).execute()
   } catch (error) {
     throw new Error(`Failed to add skill: ${error}`)
+  }
+
+  if (result.code !== 0) {
+    const stderr = stripAnsi(result.stderr).trim()
+    const stdout = stripAnsi(result.stdout).trim()
+    const message = stderr || stdout || `Command exited with code ${result.code}`
+    throw new Error(`Failed to add skill: ${message}`)
   }
 }
 
@@ -73,29 +81,37 @@ export async function removeSkill(name: string, options: RemoveSkillOptions = {}
     args.push('-a', options.agents.join(','))
   }
 
+  let result: Awaited<ReturnType<ReturnType<typeof Command.create>['execute']>>
   try {
-    const result = await Command.create('npx', args).execute()
-
-    if (result.code !== 0) {
-      throw new Error(`Failed to remove skill: ${stripAnsi(result.stderr)}`)
-    }
+    result = await Command.create('npx', args).execute()
   } catch (error) {
     throw new Error(`Failed to remove skill: ${error}`)
+  }
+
+  if (result.code !== 0) {
+    const stderr = stripAnsi(result.stderr).trim()
+    const stdout = stripAnsi(result.stdout).trim()
+    const message = stderr || stdout || `Command exited with code ${result.code}`
+    throw new Error(`Failed to remove skill: ${message}`)
   }
 }
 
 export async function checkUpdates(): Promise<string> {
+  let result: Awaited<ReturnType<ReturnType<typeof Command.create>['execute']>>
   try {
-    const result = await Command.create('npx', ['skills', 'check']).execute()
-
-    if (result.code !== 0) {
-      throw new Error(`Failed to check updates: ${stripAnsi(result.stderr)}`)
-    }
-
-    return stripAnsi(result.stdout)
+    result = await Command.create('npx', ['skills', 'check']).execute()
   } catch (error) {
     throw new Error(`Failed to check updates: ${error}`)
   }
+
+  if (result.code !== 0) {
+    const stderr = stripAnsi(result.stderr).trim()
+    const stdout = stripAnsi(result.stdout).trim()
+    const message = stderr || stdout || `Command exited with code ${result.code}`
+    throw new Error(`Failed to check updates: ${message}`)
+  }
+
+  return stripAnsi(result.stdout)
 }
 
 function parseSkillList(output: string): SkillInfo[] {

@@ -63,7 +63,7 @@ describe('cli', () => {
         stderr: 'Error message',
       })
 
-      await expect(listSkills()).rejects.toThrow('CLI error: Error message')
+      await expect(listSkills()).rejects.toThrow('Failed to list skills: Error message')
     })
 
     it('strips ANSI codes from output', async () => {

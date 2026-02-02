@@ -120,7 +120,7 @@ describe('AddSkillDialog', () => {
 
     await waitFor(() => {
       expect(addSkill).toHaveBeenCalledWith(
-        'test-skill',
+        'github:test/skill',
         expect.objectContaining({
           global: true,
           agents: expect.any(Array),
@@ -150,9 +150,12 @@ describe('AddSkillDialog', () => {
 
     await waitFor(() => {
       expect(addSkill).toHaveBeenCalledTimes(2)
-      expect(addSkill).toHaveBeenCalledWith('test-skill', expect.objectContaining({ global: true }))
       expect(addSkill).toHaveBeenCalledWith(
-        'test-skill',
+        'github:test/skill',
+        expect.objectContaining({ global: true }),
+      )
+      expect(addSkill).toHaveBeenCalledWith(
+        'github:test/skill',
         expect.objectContaining({ cwd: '/path/to/project-a' }),
       )
     })

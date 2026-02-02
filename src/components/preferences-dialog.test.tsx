@@ -20,7 +20,7 @@ describe('PreferencesDialog', () => {
   beforeEach(() => {
     mockUsePreferences.mockReturnValue({
       preferences: {
-        defaultAgents: ['OpenCode', 'Claude Code'],
+        defaultAgents: ['opencode', 'claude-code'],
       },
       loading: false,
       savePreferences: mockSavePreferences,
@@ -127,8 +127,8 @@ describe('PreferencesDialog', () => {
     await waitFor(() => {
       expect(mockSavePreferences).toHaveBeenCalled()
       const call = mockSavePreferences.mock.calls[0]?.[0]
-      expect(call?.defaultAgents).toContain('OpenCode')
-      expect(call?.defaultAgents).toContain('Claude Code')
+      expect(call?.defaultAgents).toContain('opencode')
+      expect(call?.defaultAgents).toContain('claude-code')
       expect(call?.defaultAgents?.length).toBe(3)
     })
   })
