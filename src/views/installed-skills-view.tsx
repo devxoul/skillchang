@@ -1,3 +1,4 @@
+import { AgentIcon } from '@/components/agent-icon'
 import { InlineError } from '@/components/inline-error'
 import { useInstalledSkills } from '@/contexts/skills-context'
 import {
@@ -6,7 +7,6 @@ import {
   FolderOpen,
   Globe,
   LinkSimple,
-  Monitor,
   Package,
   SpinnerGap,
   Trash,
@@ -170,18 +170,16 @@ export default function InstalledSkillsView({
                     <span className="truncate">{skill.path}</span>
                   </div>
                   {skill.agents && skill.agents.length > 0 && (
-                    <div className="flex items-center gap-1.5 text-[11px] text-foreground/40">
-                      <Monitor size={12} weight="duotone" className="shrink-0" />
-                      <div className="flex flex-wrap gap-1">
-                        {skill.agents.map((agent) => (
-                          <span
-                            key={agent}
-                            className="rounded bg-white/[0.08] px-1.5 py-0.5 text-[10px] text-foreground/60"
-                          >
-                            {agent}
-                          </span>
-                        ))}
-                      </div>
+                    <div className="flex flex-wrap gap-1.5">
+                      {skill.agents.map((agent) => (
+                        <span
+                          key={agent}
+                          className="flex items-center gap-1 rounded bg-white/[0.08] px-1.5 py-0.5 text-[10px] text-foreground/60"
+                        >
+                          <AgentIcon agent={agent} size={12} />
+                          {agent}
+                        </span>
+                      ))}
                     </div>
                   )}
                 </div>
