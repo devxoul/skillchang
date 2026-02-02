@@ -23,7 +23,10 @@ export default function InstalledSkillsView({
   scope = 'global',
   projectPath,
 }: InstalledSkillsViewProps) {
-  const { skills, loading, error, refresh, fetch, remove } = useInstalledSkills(scope)
+  const { skills, loading, refetching, error, refresh, fetch, remove } = useInstalledSkills(
+    scope,
+    projectPath,
+  )
   const [actionError, setActionError] = useState<string | null>(null)
   const [removing, setRemoving] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
@@ -45,7 +48,10 @@ export default function InstalledSkillsView({
     setActionError(null)
 
     try {
-      await remove(skillName, { global: scope === 'global' })
+      await remove(skillName, {
+        global: scope === 'global',
+        cwd: scope === 'project' ? projectPath : undefined,
+      })
     } catch (err) {
       setActionError(err instanceof Error ? err.message : 'Failed to remove skill')
     } finally {
@@ -218,11 +224,15 @@ export default function InstalledSkillsView({
         <button
           type="button"
           onClick={refresh}
-          disabled={loading}
+          disabled={loading || refetching}
           className="cursor-pointer rounded-md p-1.5 text-foreground/40 transition-colors hover:bg-white/[0.06] hover:text-foreground/70 disabled:cursor-not-allowed disabled:opacity-50"
           aria-label="Refresh"
         >
-          <ArrowClockwise size={16} weight="bold" className={loading ? 'animate-spin' : ''} />
+          <ArrowClockwise
+            size={16}
+            weight="bold"
+            className={loading || refetching ? 'animate-spin' : ''}
+          />
         </button>
       </header>
 

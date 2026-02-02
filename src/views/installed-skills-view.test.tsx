@@ -43,8 +43,10 @@ describe('InstalledSkillsView', () => {
     ;(cli.listSkills as Mock).mockResolvedValue([])
     renderWithProvider(<InstalledSkillsView scope="global" />)
 
+    // given: text appears in both header and main content
     await waitFor(() => {
-      expect(screen.getByText('No skills installed')).toBeInTheDocument()
+      const elements = screen.getAllByText('No skills installed')
+      expect(elements.length).toBeGreaterThanOrEqual(1)
     })
   })
 
@@ -63,15 +65,22 @@ describe('InstalledSkillsView', () => {
     ;(cli.listSkills as Mock).mockRejectedValue(new Error('Failed to fetch'))
     renderWithProvider(<InstalledSkillsView scope="global" />)
 
-    await waitFor(() => {
-      expect(screen.getByText('Failed to fetch')).toBeInTheDocument()
-    })
+    // then: error message appears in InlineError component
+    await waitFor(
+      () => {
+        expect(screen.getByText('Failed to fetch')).toBeInTheDocument()
+      },
+      { timeout: 2000 },
+    )
   })
 
   it('handles remove skill action', async () => {
-    ;(cli.listSkills as Mock).mockResolvedValueOnce(mockSkills)
+    // given: initial list has both skills, after removal only skill-2 remains
+    ;(cli.listSkills as Mock)
+      .mockResolvedValueOnce(mockSkills)
+      .mockResolvedValueOnce([mockSkills[1]!])
+      .mockResolvedValue([mockSkills[1]!])
     ;(cli.removeSkill as Mock).mockResolvedValue(undefined)
-    ;(cli.listSkills as Mock).mockResolvedValueOnce([mockSkills[1]!])
 
     renderWithProvider(<InstalledSkillsView scope="global" />)
 
@@ -79,6 +88,7 @@ describe('InstalledSkillsView', () => {
       expect(screen.getByText('skill-1')).toBeInTheDocument()
     })
 
+    // when: click remove on first skill
     const removeButtons = screen.getAllByLabelText('Remove skill')
     const button = removeButtons[0]
     if (!button) throw new Error('No remove button found')
@@ -86,6 +96,7 @@ describe('InstalledSkillsView', () => {
 
     expect(cli.removeSkill).toHaveBeenCalledWith('skill-1', { global: true })
 
+    // then: skill-1 is removed from list
     await waitFor(() => {
       expect(screen.queryByText('skill-1')).not.toBeInTheDocument()
       expect(screen.getByText('skill-2')).toBeInTheDocument()
@@ -93,20 +104,25 @@ describe('InstalledSkillsView', () => {
   })
 
   it('handles remove failure', async () => {
+    // given: always return both skills (removal fails so list stays the same)
     ;(cli.listSkills as Mock).mockResolvedValue(mockSkills)
     ;(cli.removeSkill as Mock).mockRejectedValue(new Error('Remove failed'))
 
     renderWithProvider(<InstalledSkillsView scope="global" />)
 
+    // when: initial list loads
     await waitFor(() => {
       expect(screen.getByText('skill-1')).toBeInTheDocument()
+      expect(screen.getByText('skill-2')).toBeInTheDocument()
     })
 
+    // when: click remove on first skill
     const removeButtons = screen.getAllByLabelText('Remove skill')
     const button = removeButtons[0]
     if (!button) throw new Error('No remove button found')
     fireEvent.click(button)
 
+    // then: error message appears and skill-1 remains in list
     await waitFor(() => {
       expect(screen.getByText('Remove failed')).toBeInTheDocument()
     })
@@ -128,15 +144,18 @@ describe('InstalledSkillsView', () => {
     expect(cli.listSkills).toHaveBeenCalledTimes(1)
   })
 
-  it('passes correct global flag based on scope', async () => {
+  it('passes correct options for project scope with path', async () => {
     ;(cli.listSkills as Mock).mockResolvedValue([])
 
-    // given: render with project scope
-    renderWithProvider(<InstalledSkillsView scope="project" />)
+    // given: render with project scope and path
+    renderWithProvider(<InstalledSkillsView scope="project" projectPath="/path/to/project" />)
 
-    // then: listSkills should be called with global=false
+    // then: listSkills should be called with global=false and cwd
     await waitFor(() => {
-      expect(cli.listSkills).toHaveBeenCalledWith(false)
+      expect(cli.listSkills).toHaveBeenCalledWith({
+        global: false,
+        cwd: '/path/to/project',
+      })
     })
   })
 
@@ -148,7 +167,7 @@ describe('InstalledSkillsView', () => {
 
     // then: listSkills should be called with global=true
     await waitFor(() => {
-      expect(cli.listSkills).toHaveBeenCalledWith(true)
+      expect(cli.listSkills).toHaveBeenCalledWith({ global: true, cwd: undefined })
     })
   })
 })

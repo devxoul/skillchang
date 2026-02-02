@@ -1,5 +1,6 @@
 import { AgentIcon } from '@/components/agent-icon'
 import { useProjects } from '@/contexts/projects-context'
+import { useSkills } from '@/contexts/skills-context'
 import { AGENTS } from '@/data/agents'
 import { addSkill } from '@/lib/cli'
 import type { Skill } from '@/types/skill'
@@ -23,6 +24,7 @@ export function AddSkillDialog({
   defaultAgents = [],
 }: AddSkillDialogProps) {
   const { projects, loading: projectsLoading } = useProjects()
+  const { invalidateInstalledCache } = useSkills()
   const [includeGlobal, setIncludeGlobal] = useState(true)
   const [selectedProjects, setSelectedProjects] = useState<string[]>([])
   const [selectedAgents, setSelectedAgents] = useState<string[]>(defaultAgents)
@@ -78,6 +80,16 @@ export function AddSkillDialog({
         } catch (err) {
           errors.push(`${project.name}: ${err instanceof Error ? err.message : 'Failed'}`)
         }
+      }
+
+      const scopesToInvalidate: string[] = []
+      if (includeGlobal) scopesToInvalidate.push('global')
+      for (const projectId of selectedProjects) {
+        const project = projects.find((p) => p.id === projectId)
+        if (project) scopesToInvalidate.push(project.path)
+      }
+      if (scopesToInvalidate.length > 0) {
+        invalidateInstalledCache(scopesToInvalidate)
       }
 
       if (errors.length > 0) {

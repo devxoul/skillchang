@@ -1,5 +1,6 @@
 import { AddSkillDialog } from '@/components/add-skill-dialog'
 import { ProjectsProvider } from '@/contexts/projects-context'
+import { SkillsProvider } from '@/contexts/skills-context'
 import { addSkill } from '@/lib/cli'
 import type { Skill } from '@/types/skill'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
@@ -7,6 +8,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 vi.mock('@/lib/cli', () => ({
   addSkill: vi.fn(),
+  listSkills: vi.fn().mockResolvedValue([]),
+  removeSkill: vi.fn(),
 }))
 
 vi.mock('@/lib/projects', () => ({
@@ -27,7 +30,11 @@ const mockSkill: Skill = {
 }
 
 function renderWithProvider(ui: React.ReactElement) {
-  return render(<ProjectsProvider>{ui}</ProjectsProvider>)
+  return render(
+    <ProjectsProvider>
+      <SkillsProvider>{ui}</SkillsProvider>
+    </ProjectsProvider>,
+  )
 }
 
 describe('AddSkillDialog', () => {

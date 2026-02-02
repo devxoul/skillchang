@@ -18,18 +18,27 @@ export interface AddSkillOptions {
 export interface RemoveSkillOptions {
   global?: boolean
   agents?: string[]
+  cwd?: string
 }
 
-export async function listSkills(global = false, agents?: string[]): Promise<SkillInfo[]> {
+export interface ListSkillsOptions {
+  global?: boolean
+  agents?: string[]
+  cwd?: string
+}
+
+export async function listSkills(options: ListSkillsOptions = {}): Promise<SkillInfo[]> {
+  const { global = false, agents, cwd } = options
   const args = ['skills', 'list']
   if (global) args.push('-g')
   if (agents?.length) {
     args.push('-a', agents.join(','))
   }
 
+  const commandOptions = cwd ? { cwd } : undefined
   let result: Awaited<ReturnType<ReturnType<typeof Command.create>['execute']>>
   try {
-    result = await Command.create('npx', args).execute()
+    result = await Command.create('npx', args, commandOptions).execute()
   } catch (error) {
     throw new Error(`Failed to list skills: ${error}`)
   }
@@ -74,16 +83,17 @@ export async function addSkill(source: string, options: AddSkillOptions = {}): P
 }
 
 export async function removeSkill(name: string, options: RemoveSkillOptions = {}): Promise<void> {
-  const args = ['skills', 'remove', name]
+  const args = ['skills', 'remove', name, '-y']
 
   if (options.global) args.push('-g')
   if (options.agents?.length) {
     args.push('-a', options.agents.join(','))
   }
 
+  const commandOptions = options.cwd ? { cwd: options.cwd } : undefined
   let result: Awaited<ReturnType<ReturnType<typeof Command.create>['execute']>>
   try {
-    result = await Command.create('npx', args).execute()
+    result = await Command.create('npx', args, commandOptions).execute()
   } catch (error) {
     throw new Error(`Failed to remove skill: ${error}`)
   }

@@ -1,5 +1,11 @@
 import { fetchSkills } from '@/lib/api'
-import { type RemoveSkillOptions, type SkillInfo, listSkills, removeSkill } from '@/lib/cli'
+import {
+  type ListSkillsOptions,
+  type RemoveSkillOptions,
+  type SkillInfo,
+  listSkills,
+  removeSkill,
+} from '@/lib/cli'
 import type { Skill } from '@/types/skill'
 import { type ReactNode, createContext, useCallback, useContext, useMemo, useState } from 'react'
 
@@ -11,12 +17,21 @@ interface GalleryState {
   lastFetched: number | null
 }
 
-interface InstalledState {
+interface ScopeCacheEntry {
   skills: SkillInfo[]
-  loading: boolean
+  lastFetched: number
   error: string | null
-  lastFetched: number | null
-  lastScope: 'global' | 'project' | null
+}
+
+interface InstalledState {
+  cache: Record<string, ScopeCacheEntry>
+  loadingScope: string | null
+}
+
+interface FetchInstalledOptions {
+  global?: boolean
+  projectPath?: string
+  force?: boolean
 }
 
 interface SkillsContextValue {
@@ -24,8 +39,9 @@ interface SkillsContextValue {
   installed: InstalledState
   fetchGallerySkills: (force?: boolean) => Promise<void>
   loadMoreGallerySkills: () => Promise<void>
-  fetchInstalledSkills: (global?: boolean, force?: boolean) => Promise<void>
+  fetchInstalledSkills: (options?: FetchInstalledOptions) => Promise<void>
   removeInstalledSkill: (name: string, options?: RemoveSkillOptions) => Promise<void>
+  invalidateInstalledCache: (scopes?: string[]) => void
 }
 
 const SkillsContext = createContext<SkillsContextValue | null>(null)
@@ -42,11 +58,8 @@ export function SkillsProvider({ children }: { children: ReactNode }) {
   })
 
   const [installed, setInstalled] = useState<InstalledState>({
-    skills: [],
-    loading: false,
-    error: null,
-    lastFetched: null,
-    lastScope: null,
+    cache: {},
+    loadingScope: null,
   })
 
   const [galleryPage, setGalleryPage] = useState(1)
@@ -109,53 +122,71 @@ export function SkillsProvider({ children }: { children: ReactNode }) {
   }, [gallery.loading, gallery.hasMore, galleryPage])
 
   const fetchInstalledSkills = useCallback(
-    async (global = true, force = false) => {
-      const scope = global ? 'global' : 'project'
+    async (options: FetchInstalledOptions = {}) => {
+      const { global = true, projectPath, force = false } = options
+      const scope = global ? 'global' : projectPath || 'project'
       const now = Date.now()
-      const scopeChanged = installed.lastScope !== scope
-      const isCacheValid =
-        installed.lastFetched && now - installed.lastFetched < CACHE_DURATION && !scopeChanged
+      const cached = installed.cache[scope]
+      const isCacheValid = cached?.lastFetched && now - cached.lastFetched < CACHE_DURATION
 
-      if (!force && isCacheValid && installed.skills.length > 0) {
+      if (!force && isCacheValid) {
         return
       }
 
-      if (!force && !scopeChanged && installed.lastFetched && installed.skills.length === 0) {
-        const timeSinceLastFetch = now - installed.lastFetched
-        if (timeSinceLastFetch < CACHE_DURATION) {
-          return
-        }
-      }
-
-      setInstalled((prev) => ({ ...prev, loading: true, error: null }))
+      setInstalled((prev) => ({ ...prev, loadingScope: scope }))
 
       try {
-        const skills = await listSkills(global)
-        setInstalled({
-          skills,
-          loading: false,
-          error: null,
-          lastFetched: Date.now(),
-          lastScope: scope,
-        })
+        const skills = await listSkills({ global, cwd: projectPath })
+        setInstalled((prev) => ({
+          ...prev,
+          loadingScope: null,
+          cache: {
+            ...prev.cache,
+            [scope]: { skills, lastFetched: Date.now(), error: null },
+          },
+        }))
       } catch (err) {
         setInstalled((prev) => ({
           ...prev,
-          loading: false,
-          error: err instanceof Error ? err.message : 'Failed to load skills',
+          loadingScope: null,
+          cache: {
+            ...prev.cache,
+            [scope]: {
+              skills: prev.cache[scope]?.skills ?? [],
+              lastFetched: Date.now(),
+              error: err instanceof Error ? err.message : 'Failed to load skills',
+            },
+          },
         }))
       }
     },
-    [installed.lastFetched, installed.skills.length, installed.lastScope],
+    [installed.cache],
   )
 
   const removeInstalledSkill = useCallback(
     async (name: string, options?: RemoveSkillOptions) => {
       await removeSkill(name, options)
-      await fetchInstalledSkills(true)
+      await fetchInstalledSkills({
+        global: options?.global ?? true,
+        projectPath: options?.cwd,
+        force: true,
+      })
     },
     [fetchInstalledSkills],
   )
+
+  const invalidateInstalledCache = useCallback((scopes?: string[]) => {
+    setInstalled((prev) => {
+      if (!scopes) {
+        return { ...prev, cache: {} }
+      }
+      const newCache = { ...prev.cache }
+      for (const scope of scopes) {
+        delete newCache[scope]
+      }
+      return { ...prev, cache: newCache }
+    })
+  }, [])
 
   const value = useMemo(
     () => ({
@@ -165,6 +196,7 @@ export function SkillsProvider({ children }: { children: ReactNode }) {
       loadMoreGallerySkills,
       fetchInstalledSkills,
       removeInstalledSkill,
+      invalidateInstalledCache,
     }),
     [
       gallery,
@@ -173,6 +205,7 @@ export function SkillsProvider({ children }: { children: ReactNode }) {
       loadMoreGallerySkills,
       fetchInstalledSkills,
       removeInstalledSkill,
+      invalidateInstalledCache,
     ],
   )
 
@@ -197,23 +230,31 @@ export function useGallerySkills() {
   }
 }
 
-export function useInstalledSkills(scope: 'global' | 'project' = 'global') {
-  const { installed, fetchInstalledSkills, removeInstalledSkill } = useSkills()
+export function useInstalledSkills(scope: 'global' | 'project' = 'global', projectPath?: string) {
+  const { installed, fetchInstalledSkills, removeInstalledSkill, invalidateInstalledCache } =
+    useSkills()
   const isGlobal = scope === 'global'
-  const scopeMatches = installed.lastScope === scope
+  const expectedScope = isGlobal ? 'global' : projectPath || 'project'
+  const cached = installed.cache[expectedScope]
+  const isLoadingThisScope = installed.loadingScope === expectedScope
 
   const refresh = useCallback(
-    () => fetchInstalledSkills(isGlobal, true),
-    [fetchInstalledSkills, isGlobal],
+    () => fetchInstalledSkills({ global: isGlobal, projectPath, force: true }),
+    [fetchInstalledSkills, isGlobal, projectPath],
   )
-  const fetch = useCallback(() => fetchInstalledSkills(isGlobal), [fetchInstalledSkills, isGlobal])
+  const fetch = useCallback(
+    () => fetchInstalledSkills({ global: isGlobal, projectPath }),
+    [fetchInstalledSkills, isGlobal, projectPath],
+  )
 
   return {
-    skills: scopeMatches ? installed.skills : [],
-    loading: installed.loading || !scopeMatches,
-    error: scopeMatches ? installed.error : null,
+    skills: cached?.skills ?? [],
+    loading: isLoadingThisScope && !cached?.skills.length,
+    refetching: isLoadingThisScope && (cached?.skills.length ?? 0) > 0,
+    error: cached?.error ?? null,
     refresh,
     fetch,
     remove: removeInstalledSkill,
+    invalidateCache: invalidateInstalledCache,
   }
 }

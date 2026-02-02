@@ -27,7 +27,7 @@ describe('cli', () => {
       await listSkills()
 
       const { Command } = await import('@tauri-apps/plugin-shell')
-      expect(Command.create).toHaveBeenCalledWith('npx', ['skills', 'list'])
+      expect(Command.create).toHaveBeenCalledWith('npx', ['skills', 'list'], undefined)
     })
 
     it('calls npx skills list with global flag', async () => {
@@ -37,10 +37,10 @@ describe('cli', () => {
         stderr: '',
       })
 
-      await listSkills(true)
+      await listSkills({ global: true })
 
       const { Command } = await import('@tauri-apps/plugin-shell')
-      expect(Command.create).toHaveBeenCalledWith('npx', ['skills', 'list', '-g'])
+      expect(Command.create).toHaveBeenCalledWith('npx', ['skills', 'list', '-g'], undefined)
     })
 
     it('calls npx skills list with agents filter', async () => {
@@ -50,10 +50,29 @@ describe('cli', () => {
         stderr: '',
       })
 
-      await listSkills(false, ['agent1', 'agent2'])
+      await listSkills({ agents: ['agent1', 'agent2'] })
 
       const { Command } = await import('@tauri-apps/plugin-shell')
-      expect(Command.create).toHaveBeenCalledWith('npx', ['skills', 'list', '-a', 'agent1,agent2'])
+      expect(Command.create).toHaveBeenCalledWith(
+        'npx',
+        ['skills', 'list', '-a', 'agent1,agent2'],
+        undefined,
+      )
+    })
+
+    it('calls npx skills list with cwd option', async () => {
+      mockExecute.mockResolvedValue({
+        code: 0,
+        stdout: '',
+        stderr: '',
+      })
+
+      await listSkills({ cwd: '/path/to/project' })
+
+      const { Command } = await import('@tauri-apps/plugin-shell')
+      expect(Command.create).toHaveBeenCalledWith('npx', ['skills', 'list'], {
+        cwd: '/path/to/project',
+      })
     })
 
     it('throws error on non-zero exit code', async () => {
@@ -88,7 +107,7 @@ Try listing global skills with -g`,
         stderr: '',
       })
 
-      const result = await listSkills(false)
+      const result = await listSkills()
 
       expect(result).toEqual([])
     })
@@ -103,7 +122,7 @@ my-skill    /Users/test/.skills/my-skill
         stderr: '',
       })
 
-      const result = await listSkills(true)
+      const result = await listSkills({ global: true })
 
       expect(result).toEqual([
         {
@@ -198,7 +217,11 @@ my-skill    /Users/test/.skills/my-skill
       await removeSkill('skill-name')
 
       const { Command } = await import('@tauri-apps/plugin-shell')
-      expect(Command.create).toHaveBeenCalledWith('npx', ['skills', 'remove', 'skill-name'])
+      expect(Command.create).toHaveBeenCalledWith(
+        'npx',
+        ['skills', 'remove', 'skill-name', '-y'],
+        undefined,
+      )
     })
 
     it('calls npx skills remove with options', async () => {
@@ -214,14 +237,29 @@ my-skill    /Users/test/.skills/my-skill
       })
 
       const { Command } = await import('@tauri-apps/plugin-shell')
-      expect(Command.create).toHaveBeenCalledWith('npx', [
-        'skills',
-        'remove',
-        'skill-name',
-        '-g',
-        '-a',
-        'agent1',
-      ])
+      expect(Command.create).toHaveBeenCalledWith(
+        'npx',
+        ['skills', 'remove', 'skill-name', '-y', '-g', '-a', 'agent1'],
+        undefined,
+      )
+    })
+
+    it('calls npx skills remove with cwd option', async () => {
+      mockExecute.mockResolvedValue({
+        code: 0,
+        stdout: '',
+        stderr: '',
+      })
+
+      await removeSkill('skill-name', { cwd: '/path/to/project' })
+
+      const { Command } = await import('@tauri-apps/plugin-shell')
+      expect(Command.create).toHaveBeenCalledWith(
+        'npx',
+        ['skills', 'remove', 'skill-name', '-y'],
+        { cwd: '/path/to/project' },
+      )
+    })
     })
 
     it('throws error on non-zero exit code', async () => {
