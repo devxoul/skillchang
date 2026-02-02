@@ -1,5 +1,22 @@
+import type { PackageManager, Preferences } from '@/types/preferences'
 import { Command } from '@tauri-apps/plugin-shell'
+import { Store } from '@tauri-apps/plugin-store'
 import { stripAnsi } from './ansi'
+
+let store: Store | null = null
+
+async function getStore() {
+  if (!store) {
+    store = await Store.load('skillchang.json')
+  }
+  return store
+}
+
+async function getPackageManager(): Promise<PackageManager> {
+  const s = await getStore()
+  const prefs = await s.get<Preferences>('preferences')
+  return prefs?.packageManager ?? 'npx'
+}
 
 export interface SkillInfo {
   name: string
@@ -36,9 +53,10 @@ export async function listSkills(options: ListSkillsOptions = {}): Promise<Skill
   }
 
   const commandOptions = cwd ? { cwd } : undefined
+  const pm = await getPackageManager()
   let result: Awaited<ReturnType<ReturnType<typeof Command.create>['execute']>>
   try {
-    result = await Command.create('npx', args, commandOptions).execute()
+    result = await Command.create(pm, args, commandOptions).execute()
   } catch (error) {
     throw new Error(`Failed to list skills: ${error}`)
   }
@@ -67,9 +85,10 @@ export async function addSkill(source: string, options: AddSkillOptions = {}): P
   if (options.yes) args.push('-y')
 
   const commandOptions = options.cwd ? { cwd: options.cwd } : undefined
+  const pm = await getPackageManager()
   let result: Awaited<ReturnType<ReturnType<typeof Command.create>['execute']>>
   try {
-    result = await Command.create('npx', args, commandOptions).execute()
+    result = await Command.create(pm, args, commandOptions).execute()
   } catch (error) {
     throw new Error(`Failed to add skill: ${error}`)
   }
@@ -91,9 +110,10 @@ export async function removeSkill(name: string, options: RemoveSkillOptions = {}
   }
 
   const commandOptions = options.cwd ? { cwd: options.cwd } : undefined
+  const pm = await getPackageManager()
   let result: Awaited<ReturnType<ReturnType<typeof Command.create>['execute']>>
   try {
-    result = await Command.create('npx', args, commandOptions).execute()
+    result = await Command.create(pm, args, commandOptions).execute()
   } catch (error) {
     throw new Error(`Failed to remove skill: ${error}`)
   }
@@ -107,9 +127,10 @@ export async function removeSkill(name: string, options: RemoveSkillOptions = {}
 }
 
 export async function checkUpdates(): Promise<string> {
+  const pm = await getPackageManager()
   let result: Awaited<ReturnType<ReturnType<typeof Command.create>['execute']>>
   try {
-    result = await Command.create('npx', ['skills', 'check']).execute()
+    result = await Command.create(pm, ['skills', 'check']).execute()
   } catch (error) {
     throw new Error(`Failed to check updates: ${error}`)
   }
