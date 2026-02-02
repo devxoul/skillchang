@@ -1,9 +1,9 @@
+import { useProjects } from '@/contexts/projects-context'
+import { useKeyboardShortcuts } from '@/hooks/use-keyboard-shortcuts'
 import { useState } from 'react'
-import { Sidebar } from './sidebar'
 import { MainContent } from './main-content'
 import { PreferencesDialog } from './preferences-dialog'
-import { useKeyboardShortcuts } from '@/hooks/use-keyboard-shortcuts'
-import { useProjects } from '@/hooks/use-projects'
+import { Sidebar } from './sidebar'
 
 export function Layout() {
   const [preferencesOpen, setPreferencesOpen] = useState(false)

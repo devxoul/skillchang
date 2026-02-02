@@ -1,4 +1,4 @@
-import { useProjects } from '@/hooks/use-projects'
+import { useProjects } from '@/contexts/projects-context'
 import InstalledSkillsView from '@/views/installed-skills-view'
 import { SkillGalleryView } from '@/views/skill-gallery-view'
 import { Route, Routes, useParams } from 'react-router-dom'

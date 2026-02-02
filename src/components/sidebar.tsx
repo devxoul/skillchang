@@ -1,4 +1,4 @@
-import { useProjects } from '@/hooks/use-projects'
+import { useProjects } from '@/contexts/projects-context'
 import type { Project } from '@/types/project'
 import { DndContext, PointerSensor, closestCenter, useSensor, useSensors } from '@dnd-kit/core'
 import type { DragEndEvent } from '@dnd-kit/core'
