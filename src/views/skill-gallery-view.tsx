@@ -1,9 +1,9 @@
 import { InlineError } from '@/components/inline-error'
 import { SearchInput } from '@/components/search-input'
 import { SkillCard } from '@/components/skill-card'
-import { Button } from '@/ui/button'
 import { fetchSkills } from '@/lib/api'
 import type { Skill } from '@/types/skill'
+import { SpinnerGap } from '@phosphor-icons/react'
 import { useEffect, useMemo, useState } from 'react'
 
 interface SkillGalleryViewProps {
@@ -83,48 +83,54 @@ export function SkillGalleryView({
   }
 
   return (
-    <div className="flex h-full flex-col gap-6 overflow-hidden p-6">
-      <div className="flex-none">
-        <h1 className="text-2xl font-bold">Skill Gallery</h1>
-        <p className="mt-1 text-muted-foreground">Browse and discover available skills</p>
-      </div>
+    <div className="flex h-full flex-col">
+      <header className="shrink-0 border-b border-white/[0.06] px-5 py-4">
+        <h1 className="text-[15px] font-semibold text-foreground">Gallery</h1>
+        <p className="mt-0.5 text-[12px] text-foreground/40">
+          Browse and discover available skills
+        </p>
+      </header>
 
-      <div className="flex-none">
+      <div className="shrink-0 px-4 py-3">
         <SearchInput onSearch={handleSearch} placeholder="Search skills..." />
       </div>
 
-      <div className="min-h-0 flex-1 overflow-auto">
+      <div className="min-h-0 flex-1 overflow-y-auto px-2">
         {error ? (
-          <InlineError
-            message={error}
-            onRetry={() => {
-              setInternalError(null)
-              setCurrentPage(1)
-            }}
-          />
+          <div className="p-4">
+            <InlineError
+              message={error}
+              onRetry={() => {
+                setInternalError(null)
+                setCurrentPage(1)
+              }}
+            />
+          </div>
         ) : loading ? (
-          <div className="flex items-center justify-center py-12">
-            <p className="text-muted-foreground">Loading skills...</p>
+          <div className="flex items-center justify-center py-16">
+            <SpinnerGap size={24} className="animate-spin text-foreground/30" />
           </div>
         ) : filteredSkills.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-12">
-            <p className="text-muted-foreground">
+          <div className="flex flex-col items-center justify-center py-16">
+            <p className="text-[13px] text-foreground/40">
               {searchQuery ? 'No skills match your search' : 'No skills available'}
             </p>
           </div>
         ) : (
-          <div className="space-y-2 pb-6">
-            <div className="grid gap-4">
-              {filteredSkills.map((skill) => (
-                <SkillCard key={skill.id} skill={skill} />
-              ))}
-            </div>
+          <div className="space-y-0.5 pb-4">
+            {filteredSkills.map((skill) => (
+              <SkillCard key={skill.id} skill={skill} />
+            ))}
 
             {hasMore && !searchQuery && (
               <div className="flex justify-center pt-4">
-                <Button variant="secondary" onClick={handleLoadMore}>
-                  Load More
-                </Button>
+                <button
+                  type="button"
+                  onClick={handleLoadMore}
+                  className="rounded-md px-3 py-1.5 text-[12px] font-medium text-foreground/50 transition-colors hover:bg-white/[0.06] hover:text-foreground/70"
+                >
+                  Load more
+                </button>
               </div>
             )}
           </div>

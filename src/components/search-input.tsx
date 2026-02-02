@@ -1,6 +1,5 @@
 import { useDebouncedValue } from '@/hooks/use-debounced-value'
-import { Input } from '@/ui/input'
-import { X } from '@phosphor-icons/react'
+import { MagnifyingGlass, X } from '@phosphor-icons/react'
 import { forwardRef, useEffect, useState } from 'react'
 
 interface SearchInputProps {
@@ -10,7 +9,7 @@ interface SearchInputProps {
 }
 
 export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(function SearchInput(
-  { placeholder = 'Search skills...', onSearch, debounceMs = 300 },
+  { placeholder = 'Search...', onSearch, debounceMs = 300 },
   ref,
 ) {
   const [query, setQuery] = useState('')
@@ -32,23 +31,28 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(functi
 
   return (
     <div className="relative">
-      <Input
+      <MagnifyingGlass
+        size={14}
+        weight="bold"
+        className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-foreground/30"
+      />
+      <input
         ref={ref}
         type="text"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         onKeyDown={handleKeyDown}
         placeholder={placeholder}
-        className="pr-8"
+        className="w-full rounded-lg bg-white/[0.06] py-2 pl-8 pr-8 text-[13px] text-foreground placeholder:text-foreground/30 transition-all duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] hover:bg-white/[0.08] focus:bg-white/[0.08] focus:outline-none focus:ring-1 focus:ring-white/[0.15]"
       />
       {query && (
         <button
           type="button"
           onClick={handleClear}
-          className="absolute top-1/2 right-2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+          className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-0.5 text-foreground/30 transition-colors hover:text-foreground/60"
           aria-label="Clear search"
         >
-          <X size={16} weight="bold" />
+          <X size={14} weight="bold" />
         </button>
       )}
     </div>

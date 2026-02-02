@@ -1,6 +1,14 @@
 import { InlineError } from '@/components/inline-error'
-import { Button } from '@/ui/button'
 import { type SkillInfo, listSkills, removeSkill } from '@/lib/cli'
+import {
+  ArrowClockwise,
+  Folder,
+  LinkSimple,
+  Monitor,
+  Package,
+  SpinnerGap,
+  Trash,
+} from '@phosphor-icons/react'
 import { useEffect, useState } from 'react'
 
 interface InstalledSkillsViewProps {
@@ -56,14 +64,14 @@ export default function InstalledSkillsView({
   if (loading) {
     return (
       <div className="flex h-full items-center justify-center">
-        <div className="text-muted-foreground">Loading skills...</div>
+        <SpinnerGap size={24} className="animate-spin text-foreground/30" />
       </div>
     )
   }
 
   if (error) {
     return (
-      <div className="flex h-full items-center justify-center">
+      <div className="flex h-full items-center justify-center p-6">
         <div className="w-full max-w-md">
           <InlineError message={error} onRetry={loadSkills} />
         </div>
@@ -74,106 +82,102 @@ export default function InstalledSkillsView({
   if (skills.length === 0) {
     return (
       <div className="flex h-full items-center justify-center">
-        <div className="text-center text-muted-foreground">
-          <div className="mb-2 text-4xl">📦</div>
-          <div>No {scope} skills installed</div>
+        <div className="text-center">
+          <Package size={32} weight="duotone" className="mx-auto text-foreground/20" />
+          <p className="mt-2 text-[13px] text-foreground/40">No {scope} skills installed</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="space-y-4 p-6">
-      <div className="flex items-center justify-between">
+    <div className="flex h-full flex-col">
+      <header className="flex shrink-0 items-center justify-between border-b border-white/[0.06] px-5 py-4">
         <div>
-          <h1 className="text-2xl font-bold">
+          <h1 className="text-[15px] font-semibold text-foreground">
             {scope === 'global' ? 'Global Skills' : 'Project Skills'}
           </h1>
-          <p className="mt-1 text-sm text-muted-foreground">
+          <p className="mt-0.5 text-[12px] text-foreground/40">
             {skills.length} skill{skills.length !== 1 ? 's' : ''} installed
           </p>
         </div>
-        <Button variant="secondary" size="sm" onClick={loadSkills}>
-          Refresh
-        </Button>
-      </div>
-      {actionError && <InlineError message={actionError} onRetry={() => setActionError(null)} />}
-      <div className="space-y-2">
-        {skills.map((skill) => (
-          <div
-            key={skill.name}
-            className="flex items-center justify-between rounded-lg border border-border bg-surface p-4 transition-colors hover:bg-muted/50"
-          >
-            <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-2">
-                <h3 className="truncate font-semibold text-foreground">{skill.name}</h3>
-                {skill.agents && skill.agents.length > 0 ? (
-                  <span className="inline-flex shrink-0 items-center rounded-full bg-green-500/10 px-2 py-0.5 text-xs font-medium text-green-600 dark:text-green-400">
-                    Linked
-                  </span>
-                ) : (
-                  <span className="inline-flex shrink-0 items-center rounded-full bg-yellow-500/10 px-2 py-0.5 text-xs font-medium text-yellow-600 dark:text-yellow-400">
-                    Not linked
-                  </span>
-                )}
-              </div>
-              <div className="mt-2 flex flex-col gap-1.5 text-sm text-muted-foreground">
-                <div className="flex items-center gap-1.5">
-                  <svg
-                    className="h-3.5 w-3.5 shrink-0"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
-                    />
-                  </svg>
-                  <span className="truncate">{skill.path}</span>
-                </div>
-                {skill.agents && skill.agents.length > 0 && (
-                  <div className="flex items-center gap-1.5">
-                    <svg
-                      className="h-3.5 w-3.5 shrink-0"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                      />
-                    </svg>
-                    <div className="flex flex-wrap gap-1">
-                      {skill.agents.map((agent) => (
-                        <span
-                          key={agent}
-                          className="inline-flex items-center rounded bg-muted px-1.5 py-0.5 text-xs"
-                        >
-                          {agent}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-            <Button
-              size="sm"
-              variant="secondary"
-              onClick={() => handleRemove(skill.name)}
-              disabled={removing === skill.name}
-              className="ml-4 shrink-0"
+        <button
+          type="button"
+          onClick={loadSkills}
+          className="rounded-md p-1.5 text-foreground/40 transition-colors hover:bg-white/[0.06] hover:text-foreground/70"
+          aria-label="Refresh"
+        >
+          <ArrowClockwise size={16} weight="bold" />
+        </button>
+      </header>
+
+      {actionError && (
+        <div className="shrink-0 px-4 pt-3">
+          <InlineError message={actionError} onRetry={() => setActionError(null)} />
+        </div>
+      )}
+
+      <div className="min-h-0 flex-1 overflow-y-auto px-2 py-2">
+        <div className="space-y-0.5">
+          {skills.map((skill) => (
+            <div
+              key={skill.name}
+              className="group flex items-start gap-3 rounded-lg px-3 py-2.5 transition-all duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] hover:bg-white/[0.06]"
             >
-              {removing === skill.name ? 'Removing...' : 'Remove'}
-            </Button>
-          </div>
-        ))}
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-2">
+                  <span className="truncate text-[13px] font-medium text-foreground">
+                    {skill.name}
+                  </span>
+                  {skill.agents && skill.agents.length > 0 ? (
+                    <span className="flex shrink-0 items-center gap-1 rounded-full bg-emerald-500/10 px-1.5 py-0.5 text-[10px] font-medium text-emerald-500">
+                      <LinkSimple size={10} weight="bold" />
+                      Linked
+                    </span>
+                  ) : (
+                    <span className="flex shrink-0 items-center gap-1 rounded-full bg-amber-500/10 px-1.5 py-0.5 text-[10px] font-medium text-amber-500">
+                      Not linked
+                    </span>
+                  )}
+                </div>
+                <div className="mt-1.5 space-y-1">
+                  <div className="flex items-center gap-1.5 text-[11px] text-foreground/40">
+                    <Folder size={12} weight="duotone" className="shrink-0" />
+                    <span className="truncate">{skill.path}</span>
+                  </div>
+                  {skill.agents && skill.agents.length > 0 && (
+                    <div className="flex items-center gap-1.5 text-[11px] text-foreground/40">
+                      <Monitor size={12} weight="duotone" className="shrink-0" />
+                      <div className="flex flex-wrap gap-1">
+                        {skill.agents.map((agent) => (
+                          <span
+                            key={agent}
+                            className="rounded bg-white/[0.08] px-1.5 py-0.5 text-[10px] text-foreground/60"
+                          >
+                            {agent}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => handleRemove(skill.name)}
+                disabled={removing === skill.name}
+                className="shrink-0 rounded-md p-1.5 text-foreground/30 opacity-0 transition-all duration-150 hover:bg-red-500/10 hover:text-red-400 disabled:opacity-50 group-hover:opacity-100"
+                aria-label="Remove skill"
+              >
+                {removing === skill.name ? (
+                  <SpinnerGap size={14} className="animate-spin" />
+                ) : (
+                  <Trash size={14} />
+                )}
+              </button>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   )
