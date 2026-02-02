@@ -1,6 +1,6 @@
 import { useProjects } from '@/hooks/use-projects'
 import type { Project } from '@/types/project'
-import { DndContext, closestCenter } from '@dnd-kit/core'
+import { DndContext, PointerSensor, closestCenter, useSensor, useSensors } from '@dnd-kit/core'
 import type { DragEndEvent } from '@dnd-kit/core'
 import { SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
@@ -97,6 +97,13 @@ function ProjectItem({ project, onRemove }: ProjectItemProps) {
 
 export function Sidebar() {
   const { projects, loading, importProject, removeProject, reorderProjects } = useProjects()
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+  )
 
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event
@@ -162,7 +169,11 @@ export function Sidebar() {
                 No projects
               </div>
             ) : (
-              <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragEnd}
+              >
                 <SortableContext
                   items={projects.map((p) => p.id)}
                   strategy={verticalListSortingStrategy}
