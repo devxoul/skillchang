@@ -8,7 +8,7 @@ import { Button } from '@/ui/button'
 import { Checkbox } from '@/ui/checkbox'
 import { DialogBackdrop, DialogContent, DialogPortal, DialogRoot, DialogTitle } from '@/ui/dialog'
 import { FolderOpen, Globe } from '@phosphor-icons/react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 interface AddSkillDialogProps {
   skill: Skill
@@ -31,6 +31,16 @@ export function AddSkillDialog({
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
+
+  useEffect(() => {
+    if (open) {
+      setSelectedAgents(defaultAgents)
+      setSelectedProjects([])
+      setIncludeGlobal(true)
+      setError(null)
+      setSuccess(false)
+    }
+  }, [open, defaultAgents])
 
   const handleToggleProject = (projectId: string) => {
     setSelectedProjects((prev) =>

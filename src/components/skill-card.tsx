@@ -1,4 +1,5 @@
 import { AddSkillDialog } from '@/components/add-skill-dialog'
+import { usePreferences } from '@/hooks/use-preferences'
 import type { Skill } from '@/types/skill'
 import { GithubLogo, Plus } from '@phosphor-icons/react'
 import { useState } from 'react'
@@ -19,6 +20,7 @@ function getSourceOrg(source: string): string {
 }
 
 export function SkillCard({ skill, onAdd }: SkillCardProps) {
+  const { preferences } = usePreferences()
   const [showDialog, setShowDialog] = useState(false)
 
   const handleOpenDialog = () => {
@@ -57,7 +59,12 @@ export function SkillCard({ skill, onAdd }: SkillCardProps) {
         </button>
       </div>
 
-      <AddSkillDialog skill={skill} open={showDialog} onOpenChange={setShowDialog} />
+      <AddSkillDialog
+        skill={skill}
+        open={showDialog}
+        onOpenChange={setShowDialog}
+        defaultAgents={preferences.defaultAgents}
+      />
     </>
   )
 }
