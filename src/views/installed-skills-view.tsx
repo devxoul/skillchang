@@ -191,8 +191,10 @@ export default function InstalledSkillsView({
               {scope === 'global' ? 'Global Skills' : 'Project Skills'}
             </h1>
           </div>
-          <p className="mt-0.5 text-[12px] text-foreground/40">
-            {scope === 'project' && projectPath ? (
+          <p className="mt-0.5 flex h-[18px] items-center text-[12px] text-foreground/40">
+            {loading && skills.length === 0 ? (
+              <span className="h-2.5 w-24 animate-pulse rounded bg-foreground/10" />
+            ) : scope === 'project' && projectPath ? (
               <span className="flex items-center gap-1.5">
                 <span>{projectPath}</span>
                 {skills.length > 0 && (
@@ -204,12 +206,12 @@ export default function InstalledSkillsView({
                   </>
                 )}
               </span>
+            ) : skills.length > 0 ? (
+              <>
+                {skills.length} skill{skills.length !== 1 ? 's' : ''} installed
+              </>
             ) : (
-              skills.length > 0 && (
-                <>
-                  {skills.length} skill{skills.length !== 1 ? 's' : ''} installed
-                </>
-              )
+              <span className="text-foreground/30">No skills installed</span>
             )}
           </p>
         </div>
