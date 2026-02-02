@@ -51,43 +51,42 @@ function ProjectItem({ project, onRemove }: ProjectItemProps) {
   }
 
   return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      className={clsx(
-        'group flex items-center gap-1.5 rounded-md mx-2 px-2 py-1.5 text-[13px] transition-all duration-150 ease-[cubic-bezier(0.4,0,0.2,1)]',
-        isDragging
-          ? 'bg-white/[0.15] shadow-[0_4px_12px_rgba(0,0,0,0.15)] scale-[1.02] z-10'
-          : 'hover:bg-white/[0.06]',
-      )}
-    >
-      <button
-        type="button"
-        {...attributes}
-        {...listeners}
-        className="shrink-0 cursor-grab text-foreground/30 opacity-0 transition-opacity duration-150 hover:text-foreground/60 active:cursor-grabbing group-hover:opacity-100"
-        aria-label="Drag to reorder"
-      >
-        <DotsSixVertical size={14} weight="bold" />
-      </button>
-      <FolderOpen size={16} weight="duotone" className="shrink-0 text-foreground/50" />
+    <div ref={setNodeRef} style={style} className="mx-2">
       <Link
         to={`/project/${project.id}`}
-        className="flex-1 truncate text-foreground/70 transition-colors hover:text-foreground"
+        className={clsx(
+          'group flex items-center gap-1.5 rounded-md px-2 py-1.5 text-[13px] transition-all duration-150 ease-[cubic-bezier(0.4,0,0.2,1)]',
+          isDragging
+            ? 'bg-white/[0.15] shadow-[0_4px_12px_rgba(0,0,0,0.15)] scale-[1.02] z-10'
+            : 'hover:bg-white/[0.06]',
+        )}
       >
-        {project.name}
+        <button
+          type="button"
+          {...attributes}
+          {...listeners}
+          onClick={(e) => e.preventDefault()}
+          className="shrink-0 cursor-grab text-foreground/30 opacity-0 transition-opacity duration-150 hover:text-foreground/60 active:cursor-grabbing group-hover:opacity-100"
+          aria-label="Drag to reorder"
+        >
+          <DotsSixVertical size={14} weight="bold" />
+        </button>
+        <FolderOpen size={16} weight="duotone" className="shrink-0 text-foreground/50" />
+        <span className="flex-1 truncate text-foreground/70 transition-colors group-hover:text-foreground">
+          {project.name}
+        </span>
+        <button
+          type="button"
+          onClick={(e) => {
+            e.preventDefault()
+            onRemove(project.id)
+          }}
+          className="shrink-0 cursor-pointer text-foreground/30 opacity-0 transition-all duration-150 hover:text-red-400 group-hover:opacity-100"
+          aria-label="Remove project"
+        >
+          <X size={14} />
+        </button>
       </Link>
-      <button
-        type="button"
-        onClick={(e) => {
-          e.preventDefault()
-          onRemove(project.id)
-        }}
-        className="shrink-0 cursor-pointer text-foreground/30 opacity-0 transition-all duration-150 hover:text-red-400 group-hover:opacity-100"
-        aria-label="Remove project"
-      >
-        <X size={14} />
-      </button>
     </div>
   )
 }
