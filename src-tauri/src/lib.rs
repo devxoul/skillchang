@@ -1,3 +1,5 @@
+use tauri::Manager;
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -13,6 +15,9 @@ pub fn run() {
                         .level(log::LevelFilter::Info)
                         .build(),
                 )?;
+            }
+            if let Some(window) = app.get_webview_window("main") {
+                let _ = window.set_focus();
             }
             Ok(())
         })
