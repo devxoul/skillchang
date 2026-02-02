@@ -128,7 +128,6 @@ export function AddSkillDialog({
                     <Checkbox checked={includeGlobal} onCheckedChange={setIncludeGlobal} />
                     <Globe size={16} weight="duotone" className="text-foreground/50" />
                     <span>Global</span>
-                    <span className="text-foreground/30">(personal)</span>
                   </label>
 
                   {projects.length > 0 && <div className="mx-1 my-1.5 h-px bg-foreground/[0.06]" />}
