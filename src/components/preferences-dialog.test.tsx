@@ -21,6 +21,7 @@ describe('PreferencesDialog', () => {
     mockUsePreferences.mockReturnValue({
       preferences: {
         defaultAgents: ['opencode', 'claude-code'],
+        packageManager: 'bunx',
       },
       loading: false,
       savePreferences: mockSavePreferences,
@@ -133,9 +134,83 @@ describe('PreferencesDialog', () => {
     })
   })
 
+  it('displays package manager selection', () => {
+    render(<PreferencesDialog open={true} onOpenChange={vi.fn()} />)
+    expect(screen.getByText('Package Manager')).toBeInTheDocument()
+    expect(screen.getByText('Package runner used when adding skills')).toBeInTheDocument()
+  })
+
+  it('renders package manager options', () => {
+    render(<PreferencesDialog open={true} onOpenChange={vi.fn()} />)
+    expect(screen.getByRole('radio', { name: 'npx' })).toBeInTheDocument()
+    expect(screen.getByRole('radio', { name: 'pnpx' })).toBeInTheDocument()
+    expect(screen.getByRole('radio', { name: 'bunx' })).toBeInTheDocument()
+  })
+
+  it('pre-selects package manager from preferences', () => {
+    render(<PreferencesDialog open={true} onOpenChange={vi.fn()} />)
+    const bunxRadio = screen.getByRole('radio', { name: 'bunx' })
+    expect(bunxRadio).toHaveAttribute('data-checked', '')
+  })
+
+  it('changes package manager selection', async () => {
+    render(<PreferencesDialog open={true} onOpenChange={vi.fn()} />)
+    const npxRadio = screen.getByRole('radio', { name: 'npx' })
+
+    fireEvent.click(npxRadio)
+
+    await waitFor(() => {
+      expect(npxRadio).toHaveAttribute('data-checked', '')
+    })
+  })
+
+  it('saves package manager preference', async () => {
+    const onOpenChange = vi.fn()
+    render(<PreferencesDialog open={true} onOpenChange={onOpenChange} />)
+
+    const pnpxRadio = screen.getByRole('radio', { name: 'pnpx' })
+    fireEvent.click(pnpxRadio)
+
+    const saveButton = screen.getByRole('button', { name: /Save/i })
+    fireEvent.click(saveButton)
+
+    await waitFor(() => {
+      expect(mockSavePreferences).toHaveBeenCalled()
+      const call = mockSavePreferences.mock.calls[0]?.[0]
+      expect(call?.packageManager).toBe('pnpx')
+    })
+  })
+
   it('does not render when open is false', () => {
     const { container } = render(<PreferencesDialog open={false} onOpenChange={vi.fn()} />)
     const dialog = container.querySelector('[role="dialog"]')
     expect(dialog).not.toBeInTheDocument()
+  })
+
+  it('resets changes when cancel is clicked and dialog reopens', async () => {
+    const onOpenChange = vi.fn()
+    const { rerender } = render(<PreferencesDialog open={true} onOpenChange={onOpenChange} />)
+
+    // given - change package manager
+    const pnpxRadio = screen.getByRole('radio', { name: 'pnpx' })
+    fireEvent.click(pnpxRadio)
+
+    await waitFor(() => {
+      expect(pnpxRadio).toHaveAttribute('data-checked', '')
+    })
+
+    // when - click cancel
+    const cancelButton = screen.getByRole('button', { name: /Cancel/i })
+    fireEvent.click(cancelButton)
+
+    // then - close and reopen dialog
+    rerender(<PreferencesDialog open={false} onOpenChange={onOpenChange} />)
+    rerender(<PreferencesDialog open={true} onOpenChange={onOpenChange} />)
+
+    // should be reset to original value (bunx from mock)
+    await waitFor(() => {
+      const bunxRadio = screen.getByRole('radio', { name: 'bunx' })
+      expect(bunxRadio).toHaveAttribute('data-checked', '')
+    })
   })
 })

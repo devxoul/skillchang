@@ -1,10 +1,18 @@
 import { AgentIcon } from '@/components/agent-icon'
 import { AGENTS } from '@/data/agents'
 import { usePreferences } from '@/hooks/use-preferences'
+import type { PackageManager } from '@/types/preferences'
 import { Button } from '@/ui/button'
 import { Checkbox } from '@/ui/checkbox'
 import { DialogBackdrop, DialogContent, DialogPortal, DialogRoot, DialogTitle } from '@/ui/dialog'
+import { SegmentedControl } from '@/ui/segmented-control'
 import { useEffect, useState } from 'react'
+
+const PACKAGE_MANAGER_OPTIONS = [
+  { value: 'npx', label: 'npx' },
+  { value: 'pnpx', label: 'pnpx' },
+  { value: 'bunx', label: 'bunx' },
+]
 
 interface PreferencesDialogProps {
   open: boolean
@@ -14,10 +22,14 @@ interface PreferencesDialogProps {
 export function PreferencesDialog({ open, onOpenChange }: PreferencesDialogProps) {
   const { preferences, savePreferences } = usePreferences()
   const [selectedAgents, setSelectedAgents] = useState<string[]>([])
+  const [packageManager, setPackageManager] = useState<PackageManager>('bunx')
 
   useEffect(() => {
-    setSelectedAgents(preferences.defaultAgents)
-  }, [preferences.defaultAgents])
+    if (open) {
+      setSelectedAgents(preferences.defaultAgents)
+      setPackageManager(preferences.packageManager)
+    }
+  }, [open, preferences.defaultAgents, preferences.packageManager])
 
   const handleToggleAgent = (agent: string) => {
     setSelectedAgents((prev) =>
@@ -26,7 +38,7 @@ export function PreferencesDialog({ open, onOpenChange }: PreferencesDialogProps
   }
 
   const handleSave = async () => {
-    await savePreferences({ defaultAgents: selectedAgents })
+    await savePreferences({ defaultAgents: selectedAgents, packageManager })
     onOpenChange(false)
   }
 
@@ -38,6 +50,23 @@ export function PreferencesDialog({ open, onOpenChange }: PreferencesDialogProps
           <DialogTitle className="text-[15px]">Preferences</DialogTitle>
 
           <div className="space-y-4">
+            <div>
+              <span className="text-[11px] font-medium uppercase tracking-wide text-foreground/40">
+                Package Manager
+              </span>
+              <p className="mt-1 text-[12px] text-foreground/40">
+                Package runner used when adding skills
+              </p>
+              <div className="mt-3">
+                <SegmentedControl
+                  options={PACKAGE_MANAGER_OPTIONS}
+                  value={packageManager}
+                  onValueChange={(value) => setPackageManager(value as PackageManager)}
+                  aria-label="Package manager"
+                />
+              </div>
+            </div>
+
             <div>
               <span className="text-[11px] font-medium uppercase tracking-wide text-foreground/40">
                 Default Agents

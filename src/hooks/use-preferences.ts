@@ -1,9 +1,14 @@
-import { useState, useEffect } from 'react'
-import { Store } from '@tauri-apps/plugin-store'
 import type { Preferences } from '@/types/preferences'
+import { Store } from '@tauri-apps/plugin-store'
+import { useEffect, useState } from 'react'
 
 const STORE_KEY = 'preferences'
 let store: Store | null = null
+
+const DEFAULT_PREFERENCES: Preferences = {
+  defaultAgents: [],
+  packageManager: 'npx',
+}
 
 async function getStore() {
   if (!store) {
@@ -13,9 +18,7 @@ async function getStore() {
 }
 
 export function usePreferences() {
-  const [preferences, setPreferences] = useState<Preferences>({
-    defaultAgents: [],
-  })
+  const [preferences, setPreferences] = useState<Preferences>(DEFAULT_PREFERENCES)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -25,9 +28,9 @@ export function usePreferences() {
   async function loadPreferences() {
     setLoading(true)
     const s = await getStore()
-    const data = await s.get<Preferences>(STORE_KEY)
+    const data = await s.get<Partial<Preferences>>(STORE_KEY)
     if (data) {
-      setPreferences(data)
+      setPreferences({ ...DEFAULT_PREFERENCES, ...data })
     }
     setLoading(false)
   }
