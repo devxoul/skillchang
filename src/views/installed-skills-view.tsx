@@ -1,5 +1,5 @@
 import { InlineError } from '@/components/inline-error'
-import { type SkillInfo, listSkills, removeSkill } from '@/lib/cli'
+import { useInstalledSkills } from '@/contexts/skills-context'
 import {
   ArrowClockwise,
   Folder,
@@ -16,44 +16,21 @@ interface InstalledSkillsViewProps {
   projectPath?: string
 }
 
-export default function InstalledSkillsView({
-  scope = 'global',
-  projectPath,
-}: InstalledSkillsViewProps) {
-  const [skills, setSkills] = useState<SkillInfo[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+export default function InstalledSkillsView({ scope = 'global' }: InstalledSkillsViewProps) {
+  const { skills, loading, error, refresh, fetch, remove } = useInstalledSkills()
   const [actionError, setActionError] = useState<string | null>(null)
   const [removing, setRemoving] = useState<string | null>(null)
 
   useEffect(() => {
-    loadSkills()
-  }, [scope, projectPath])
-
-  async function loadSkills() {
-    setLoading(true)
-    setError(null)
-    setActionError(null)
-
-    try {
-      const isGlobal = scope === 'global'
-      const result = await listSkills(isGlobal)
-      setSkills(result)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load skills')
-    } finally {
-      setLoading(false)
-    }
-  }
+    fetch()
+  }, [fetch])
 
   async function handleRemove(skillName: string) {
     setRemoving(skillName)
     setActionError(null)
 
     try {
-      const isGlobal = scope === 'global'
-      await removeSkill(skillName, { global: isGlobal })
-      await loadSkills()
+      await remove(skillName, { global: scope === 'global' })
     } catch (err) {
       setActionError(err instanceof Error ? err.message : 'Failed to remove skill')
     } finally {
@@ -61,7 +38,7 @@ export default function InstalledSkillsView({
     }
   }
 
-  if (loading) {
+  if (loading && skills.length === 0) {
     return (
       <div className="flex h-full items-center justify-center">
         <SpinnerGap size={24} className="animate-spin text-foreground/30" />
@@ -69,11 +46,11 @@ export default function InstalledSkillsView({
     )
   }
 
-  if (error) {
+  if (error && skills.length === 0) {
     return (
       <div className="flex h-full items-center justify-center p-6">
         <div className="w-full max-w-md">
-          <InlineError message={error} onRetry={loadSkills} />
+          <InlineError message={error} onRetry={refresh} />
         </div>
       </div>
     )
@@ -103,11 +80,12 @@ export default function InstalledSkillsView({
         </div>
         <button
           type="button"
-          onClick={loadSkills}
-          className="rounded-md p-1.5 text-foreground/40 transition-colors hover:bg-white/[0.06] hover:text-foreground/70"
+          onClick={refresh}
+          disabled={loading}
+          className="rounded-md p-1.5 text-foreground/40 transition-colors hover:bg-white/[0.06] hover:text-foreground/70 disabled:opacity-50"
           aria-label="Refresh"
         >
-          <ArrowClockwise size={16} weight="bold" />
+          <ArrowClockwise size={16} weight="bold" className={loading ? 'animate-spin' : ''} />
         </button>
       </header>
 
