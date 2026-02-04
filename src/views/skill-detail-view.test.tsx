@@ -1,4 +1,5 @@
 import { ProjectsProvider } from '@/contexts/projects-context'
+import { ScrollRestorationProvider } from '@/contexts/scroll-context'
 import { SkillsProvider } from '@/contexts/skills-context'
 import { SkillDetailView } from '@/views/skill-detail-view'
 import { render, screen, waitFor } from '@testing-library/react'
@@ -54,9 +55,11 @@ function renderWithProviders(skillId: string) {
     <MemoryRouter initialEntries={[`/skill/${skillId}`]}>
       <ProjectsProvider>
         <SkillsProvider>
-          <Routes>
-            <Route path="/skill/*" element={<SkillDetailView />} />
-          </Routes>
+          <ScrollRestorationProvider>
+            <Routes>
+              <Route path="/skill/*" element={<SkillDetailView />} />
+            </Routes>
+          </ScrollRestorationProvider>
         </SkillsProvider>
       </ProjectsProvider>
     </MemoryRouter>,

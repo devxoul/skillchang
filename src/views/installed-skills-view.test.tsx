@@ -1,3 +1,4 @@
+import { ScrollRestorationProvider } from '@/contexts/scroll-context'
 import { SkillsProvider } from '@/contexts/skills-context'
 import * as cli from '@/lib/cli'
 import type { SkillInfo } from '@/lib/cli'
@@ -17,7 +18,9 @@ vi.mock('@/lib/cli', () => ({
 const renderWithProvider = (ui: React.ReactElement) => {
   return render(
     <MemoryRouter>
-      <SkillsProvider>{ui}</SkillsProvider>
+      <SkillsProvider>
+        <ScrollRestorationProvider>{ui}</ScrollRestorationProvider>
+      </SkillsProvider>
     </MemoryRouter>,
   )
 }

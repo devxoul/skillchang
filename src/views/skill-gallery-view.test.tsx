@@ -1,7 +1,9 @@
 import { ProjectsProvider } from '@/contexts/projects-context'
+import { ScrollRestorationProvider } from '@/contexts/scroll-context'
 import { SkillsProvider } from '@/contexts/skills-context'
 import { SkillGalleryView } from '@/views/skill-gallery-view'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { MemoryRouter } from 'react-router-dom'
 import { describe, expect, it, vi } from 'vitest'
 
 const mockApiSkills = [
@@ -38,11 +40,15 @@ vi.mock('@/lib/projects', () => ({
 
 function renderWithProviders() {
   return render(
-    <ProjectsProvider>
-      <SkillsProvider>
-        <SkillGalleryView />
-      </SkillsProvider>
-    </ProjectsProvider>,
+    <MemoryRouter>
+      <ProjectsProvider>
+        <SkillsProvider>
+          <ScrollRestorationProvider>
+            <SkillGalleryView />
+          </ScrollRestorationProvider>
+        </SkillsProvider>
+      </ProjectsProvider>
+    </MemoryRouter>,
   )
 }
 

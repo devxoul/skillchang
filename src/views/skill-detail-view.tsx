@@ -3,6 +3,7 @@ import { InlineError } from '@/components/inline-error'
 import { useProjects } from '@/contexts/projects-context'
 import { useGallerySkills, useSkills } from '@/contexts/skills-context'
 import { usePreferences } from '@/hooks/use-preferences'
+import { useScrollRestoration } from '@/hooks/use-scroll-restoration'
 import { fetchSkillReadme } from '@/lib/api'
 import type { Skill } from '@/types/skill'
 import {
@@ -45,6 +46,7 @@ export function SkillDetailView() {
   const { projects } = useProjects()
   const { installed, fetchInstalledSkills } = useSkills()
   const { preferences } = usePreferences()
+  const scrollRef = useScrollRestoration<HTMLDivElement>({ resetOnMount: true })
 
   const [readme, setReadme] = useState<string | null>(null)
   const [readmeLoading, setReadmeLoading] = useState(false)
@@ -171,7 +173,7 @@ export function SkillDetailView() {
         </div>
       ) : skill ? (
         <>
-          <div className="min-h-0 flex-1 overflow-y-auto px-5 py-4">
+          <div ref={scrollRef} className="min-h-0 flex-1 overflow-y-auto px-5 py-4">
             <div className="mb-6 space-y-4">
               <div className="flex items-center gap-2">
                 <h2 className="text-2xl font-bold text-foreground">{skill.name}</h2>

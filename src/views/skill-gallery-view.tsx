@@ -2,12 +2,14 @@ import { InlineError } from '@/components/inline-error'
 import { SearchInput } from '@/components/search-input'
 import { SkillCard } from '@/components/skill-card'
 import { useGallerySkills } from '@/contexts/skills-context'
+import { useScrollRestoration } from '@/hooks/use-scroll-restoration'
 import { ArrowClockwise, Books, SpinnerGap } from '@phosphor-icons/react'
 import { useEffect, useMemo, useState } from 'react'
 
 export function SkillGalleryView() {
   const { skills, loading, error, hasMore, refresh, loadMore, fetch } = useGallerySkills()
   const [searchQuery, setSearchQuery] = useState('')
+  const scrollRef = useScrollRestoration<HTMLDivElement>()
 
   useEffect(() => {
     fetch()
@@ -53,7 +55,7 @@ export function SkillGalleryView() {
         <SearchInput onSearch={handleSearch} placeholder="Search skills..." />
       </div>
 
-      <div className="min-h-0 flex-1 overflow-y-auto px-2">
+      <div ref={scrollRef} className="min-h-0 flex-1 overflow-y-auto px-2">
         {error ? (
           <div className="p-4">
             <InlineError message={error} onRetry={refresh} />

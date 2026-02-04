@@ -2,6 +2,7 @@ import { AgentIcon } from '@/components/agent-icon'
 import { InlineError } from '@/components/inline-error'
 import { SearchInput } from '@/components/search-input'
 import { useInstalledSkills } from '@/contexts/skills-context'
+import { useScrollRestoration } from '@/hooks/use-scroll-restoration'
 import type { SkillInfo } from '@/lib/cli'
 import type { SkillUpdateStatus } from '@/types/update-status'
 import * as Popover from '@/ui/popover'
@@ -180,6 +181,7 @@ export default function InstalledSkillsView({
     checkUpdates,
     updateAll,
   } = useInstalledSkills(scope, projectPath)
+  const scrollRef = useScrollRestoration<HTMLDivElement>()
   const [actionError, setActionError] = useState<string | null>(null)
   const [removing, setRemoving] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
@@ -288,7 +290,7 @@ export default function InstalledSkillsView({
           </div>
         )}
 
-        <div className="min-h-0 flex-1 overflow-y-auto px-2">
+        <div ref={scrollRef} className="min-h-0 flex-1 overflow-y-auto px-2">
           <div className="space-y-0.5 pb-2">
             {filteredSkills.map((skill) => (
               <InstalledSkillItem

@@ -2,6 +2,7 @@ import { BrowserRouter } from 'react-router-dom'
 import { ErrorBoundary } from './components/error-boundary'
 import { Layout } from './components/layout'
 import { ProjectsProvider } from './contexts/projects-context'
+import { ScrollRestorationProvider } from './contexts/scroll-context'
 import { SkillsProvider } from './contexts/skills-context'
 
 export default function App() {
@@ -10,7 +11,9 @@ export default function App() {
       <ProjectsProvider>
         <SkillsProvider>
           <BrowserRouter>
-            <Layout />
+            <ScrollRestorationProvider>
+              <Layout />
+            </ScrollRestorationProvider>
           </BrowserRouter>
         </SkillsProvider>
       </ProjectsProvider>
