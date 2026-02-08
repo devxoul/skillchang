@@ -1,9 +1,10 @@
-import type { SkillsResponse } from '@/types/api'
 import { ApiError } from '@/types/api'
 import type { Skill } from '@/types/skill'
 import { fetch } from '@tauri-apps/plugin-http'
 
 const API_BASE = 'https://skills.sh/api'
+const DEFAULT_BROWSE_QUERY = 'sk'
+const DEFAULT_LIMIT = 200
 
 interface ApiSkill {
   id: string
@@ -13,9 +14,9 @@ interface ApiSkill {
   source: string
 }
 
-export async function fetchSkills(page = 1): Promise<SkillsResponse> {
+export async function fetchSkills(): Promise<Skill[]> {
   try {
-    const url = `${API_BASE}/skills${page > 1 ? `?page=${page}` : ''}`
+    const url = `${API_BASE}/search?q=${DEFAULT_BROWSE_QUERY}&limit=${DEFAULT_LIMIT}`
     const response = await fetch(url)
 
     if (!response.ok) {
@@ -23,10 +24,7 @@ export async function fetchSkills(page = 1): Promise<SkillsResponse> {
     }
 
     const data = await response.json()
-    return {
-      skills: mapApiSkills(data.skills || []),
-      hasMore: data.hasMore || false,
-    }
+    return mapApiSkills(data.skills || [])
   } catch (error) {
     if (error instanceof ApiError) {
       throw error
@@ -72,13 +70,13 @@ function mapApiSkills(skills: ApiSkill[]): Skill[] {
   }))
 }
 
-export async function searchSkills(query: string): Promise<Skill[]> {
-  if (!query.trim()) {
+export async function searchSkills(query: string, limit = 20): Promise<Skill[]> {
+  if (!query.trim() || query.trim().length < 2) {
     return []
   }
 
   try {
-    const url = `${API_BASE}/skills?search=${encodeURIComponent(query)}`
+    const url = `${API_BASE}/search?q=${encodeURIComponent(query)}&limit=${limit}`
     const response = await fetch(url)
 
     if (!response.ok) {

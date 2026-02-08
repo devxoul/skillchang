@@ -27,7 +27,7 @@ const mockApiSkills = [
 vi.mock('@tauri-apps/plugin-http', () => ({
   fetch: vi.fn().mockResolvedValue({
     ok: true,
-    json: async () => ({ skills: mockApiSkills, hasMore: false }),
+    json: async () => ({ skills: mockApiSkills, count: mockApiSkills.length }),
   }),
 }))
 

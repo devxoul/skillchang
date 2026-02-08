@@ -17,7 +17,6 @@ interface GalleryState {
   skills: Skill[]
   loading: boolean
   error: string | null
-  hasMore: boolean
   lastFetched: number | null
 }
 
@@ -57,7 +56,6 @@ interface SkillsContextValue {
   checkingUpdatesScope: string | null
   updatingAll: boolean
   fetchGallerySkills: (force?: boolean) => Promise<void>
-  loadMoreGallerySkills: () => Promise<void>
   fetchInstalledSkills: (options?: FetchInstalledOptions) => Promise<void>
   removeInstalledSkill: (name: string, options?: RemoveSkillOptions) => Promise<void>
   invalidateInstalledCache: (scopes?: string[]) => void
@@ -74,7 +72,6 @@ export function SkillsProvider({ children }: { children: ReactNode }) {
     skills: [],
     loading: false,
     error: null,
-    hasMore: false,
     lastFetched: null,
   })
 
@@ -82,8 +79,6 @@ export function SkillsProvider({ children }: { children: ReactNode }) {
     cache: {},
     loadingScope: null,
   })
-
-  const [galleryPage, setGalleryPage] = useState(1)
 
   const [updateStatusCache, setUpdateStatusCache] = useState<Record<string, UpdateStatusCache>>({})
   const [checkingUpdatesScope, setCheckingUpdatesScope] = useState<string | null>(null)
@@ -99,15 +94,13 @@ export function SkillsProvider({ children }: { children: ReactNode }) {
       }
 
       setGallery((prev) => ({ ...prev, loading: true, error: null }))
-      setGalleryPage(1)
 
       try {
-        const response = await fetchSkills(1)
+        const skills = await fetchSkills()
         setGallery({
-          skills: response.skills,
+          skills,
           loading: false,
           error: null,
-          hasMore: response.hasMore,
           lastFetched: Date.now(),
         })
       } catch (err) {
@@ -120,31 +113,6 @@ export function SkillsProvider({ children }: { children: ReactNode }) {
     },
     [gallery.lastFetched, gallery.skills.length],
   )
-
-  const loadMoreGallerySkills = useCallback(async () => {
-    if (gallery.loading || !gallery.hasMore) return
-
-    const nextPage = galleryPage + 1
-    setGallery((prev) => ({ ...prev, loading: true }))
-
-    try {
-      const response = await fetchSkills(nextPage)
-      setGalleryPage(nextPage)
-      setGallery((prev) => ({
-        ...prev,
-        skills: [...prev.skills, ...response.skills],
-        loading: false,
-        hasMore: response.hasMore,
-        lastFetched: Date.now(),
-      }))
-    } catch (err) {
-      setGallery((prev) => ({
-        ...prev,
-        loading: false,
-        error: err instanceof Error ? err.message : 'Failed to load more skills',
-      }))
-    }
-  }, [gallery.loading, gallery.hasMore, galleryPage])
 
   const fetchInstalledSkills = useCallback(
     async (options: FetchInstalledOptions = {}) => {
@@ -319,7 +287,6 @@ export function SkillsProvider({ children }: { children: ReactNode }) {
       checkingUpdatesScope,
       updatingAll,
       fetchGallerySkills,
-      loadMoreGallerySkills,
       fetchInstalledSkills,
       removeInstalledSkill,
       invalidateInstalledCache,
@@ -333,7 +300,6 @@ export function SkillsProvider({ children }: { children: ReactNode }) {
       checkingUpdatesScope,
       updatingAll,
       fetchGallerySkills,
-      loadMoreGallerySkills,
       fetchInstalledSkills,
       removeInstalledSkill,
       invalidateInstalledCache,
@@ -354,11 +320,10 @@ export function useSkills() {
 }
 
 export function useGallerySkills() {
-  const { gallery, fetchGallerySkills, loadMoreGallerySkills } = useSkills()
+  const { gallery, fetchGallerySkills } = useSkills()
   return {
     ...gallery,
     refresh: () => fetchGallerySkills(true),
-    loadMore: loadMoreGallerySkills,
     fetch: fetchGallerySkills,
   }
 }

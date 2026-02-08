@@ -70,10 +70,10 @@ describe('SkillDetailView', () => {
   beforeEach(() => {
     mockFetch.mockReset()
     mockFetch.mockImplementation((url: string) => {
-      if (url.includes('skills.sh/api/skills')) {
+      if (url.includes('skills.sh/api/search')) {
         return Promise.resolve({
           ok: true,
-          json: async () => ({ skills: mockApiSkills, hasMore: false }),
+          json: async () => ({ skills: mockApiSkills, count: mockApiSkills.length }),
         })
       }
       if (url.includes('raw.githubusercontent.com')) {
@@ -157,10 +157,10 @@ describe('SkillDetailView', () => {
 
   it('handles README fetch error gracefully', async () => {
     mockFetch.mockImplementation((url: string) => {
-      if (url.includes('skills.sh/api/skills')) {
+      if (url.includes('skills.sh/api/search')) {
         return Promise.resolve({
           ok: true,
-          json: async () => ({ skills: mockApiSkills, hasMore: false }),
+          json: async () => ({ skills: mockApiSkills, count: mockApiSkills.length }),
         })
       }
       if (url.includes('raw.githubusercontent.com')) {

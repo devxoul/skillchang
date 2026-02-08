@@ -7,7 +7,7 @@ import { ArrowClockwise, Books, SpinnerGap } from '@phosphor-icons/react'
 import { useEffect, useMemo, useState } from 'react'
 
 export function SkillGalleryView() {
-  const { skills, loading, error, hasMore, refresh, loadMore, fetch } = useGallerySkills()
+  const { skills, loading, error, refresh, fetch } = useGallerySkills()
   const [searchQuery, setSearchQuery] = useState('')
   const scrollRef = useScrollRestoration<HTMLDivElement>()
 
@@ -75,19 +75,6 @@ export function SkillGalleryView() {
             {filteredSkills.map((skill) => (
               <SkillCard key={skill.id} skill={skill} />
             ))}
-
-            {hasMore && !searchQuery && (
-              <div className="flex justify-center pt-4">
-                <button
-                  type="button"
-                  onClick={loadMore}
-                  disabled={loading}
-                  className="cursor-pointer rounded-md px-3 py-1.5 text-[12px] font-medium text-foreground/50 transition-colors hover:bg-white/[0.06] hover:text-foreground/70 disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  {loading ? 'Loading...' : 'Load more'}
-                </button>
-              </div>
-            )}
           </div>
         )}
       </div>

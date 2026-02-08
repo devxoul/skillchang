@@ -13,13 +13,13 @@ beforeEach(() => {
   vi.clearAllMocks()
 })
 
-test('fetchSkills returns skills and hasMore flag', async () => {
+test('fetchSkills returns skills from search endpoint', async () => {
   const mockResponse = {
     skills: [
       { id: '1', skillId: 'react', name: 'React', installs: 1000, source: 'opencode/skills' },
       { id: '2', skillId: 'vue', name: 'Vue', installs: 800, source: 'opencode/skills' },
     ],
-    hasMore: true,
+    count: 2,
   }
   mockFetch.mockResolvedValueOnce({
     ok: true,
@@ -28,30 +28,10 @@ test('fetchSkills returns skills and hasMore flag', async () => {
 
   const result = await fetchSkills()
 
-  expect(result.skills).toHaveLength(2)
-  expect(result.skills[0]?.name).toBe('React')
-  expect(result.skills[0]?.topSource).toBe('opencode/skills')
-  expect(result.hasMore).toBe(true)
-  expect(mockFetch).toHaveBeenCalledWith('https://skills.sh/api/skills')
-})
-
-test('fetchSkills with pagination', async () => {
-  const mockResponse = {
-    skills: [
-      { id: '3', skillId: 'angular', name: 'Angular', installs: 600, source: 'opencode/skills' },
-    ],
-    hasMore: false,
-  }
-  mockFetch.mockResolvedValueOnce({
-    ok: true,
-    json: async () => mockResponse,
-  })
-
-  const result = await fetchSkills(2)
-
-  expect(result.skills).toHaveLength(1)
-  expect(result.hasMore).toBe(false)
-  expect(mockFetch).toHaveBeenCalledWith('https://skills.sh/api/skills?page=2')
+  expect(result).toHaveLength(2)
+  expect(result[0]?.name).toBe('React')
+  expect(result[0]?.topSource).toBe('opencode/skills')
+  expect(mockFetch).toHaveBeenCalledWith('https://skills.sh/api/search?q=sk&limit=200')
 })
 
 test('fetchSkills handles HTTP errors', async () => {
@@ -82,6 +62,17 @@ test('fetchSkills handles network errors', async () => {
   }
 })
 
+test('fetchSkills handles empty response', async () => {
+  mockFetch.mockResolvedValueOnce({
+    ok: true,
+    json: async () => ({}),
+  })
+
+  const result = await fetchSkills()
+
+  expect(result).toEqual([])
+})
+
 test('searchSkills returns matching skills', async () => {
   const mockResponse = {
     skills: [
@@ -97,7 +88,7 @@ test('searchSkills returns matching skills', async () => {
 
   expect(result).toHaveLength(1)
   expect(result[0]?.name).toBe('React')
-  expect(mockFetch).toHaveBeenCalledWith('https://skills.sh/api/skills?search=React')
+  expect(mockFetch).toHaveBeenCalledWith('https://skills.sh/api/search?q=React&limit=20')
 })
 
 test('searchSkills encodes query parameters', async () => {
@@ -109,7 +100,7 @@ test('searchSkills encodes query parameters', async () => {
 
   await searchSkills('React Native')
 
-  expect(mockFetch).toHaveBeenCalledWith('https://skills.sh/api/skills?search=React%20Native')
+  expect(mockFetch).toHaveBeenCalledWith('https://skills.sh/api/search?q=React%20Native&limit=20')
 })
 
 test('searchSkills returns empty array for empty query', async () => {
@@ -121,6 +112,13 @@ test('searchSkills returns empty array for empty query', async () => {
 
 test('searchSkills returns empty array for whitespace-only query', async () => {
   const result = await searchSkills('   ')
+
+  expect(result).toEqual([])
+  expect(mockFetch).not.toHaveBeenCalled()
+})
+
+test('searchSkills returns empty array for single character query', async () => {
+  const result = await searchSkills('a')
 
   expect(result).toEqual([])
   expect(mockFetch).not.toHaveBeenCalled()
@@ -152,16 +150,4 @@ test('searchSkills handles network errors', async () => {
     expect(error).toBeInstanceOf(ApiError)
     expect((error as Error).message).toContain('Network error: Connection refused')
   }
-})
-
-test('fetchSkills handles empty response', async () => {
-  mockFetch.mockResolvedValueOnce({
-    ok: true,
-    json: async () => ({}),
-  })
-
-  const result = await fetchSkills()
-
-  expect(result.skills).toEqual([])
-  expect(result.hasMore).toBe(false)
 })
