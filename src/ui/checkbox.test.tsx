@@ -1,5 +1,6 @@
 import { describe, expect, it, mock } from 'bun:test'
 import { fireEvent, render } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { Checkbox, CheckboxIndicator, CheckboxRoot } from '@/ui/checkbox'
 
 describe('Checkbox', () => {
@@ -14,24 +15,26 @@ describe('Checkbox', () => {
     expect(getByRole('checkbox')).toBeInTheDocument()
   })
 
-  it('toggles checked state on click', () => {
+  it('toggles checked state on click', async () => {
+    const user = userEvent.setup()
     const { getByRole } = render(<Checkbox label="Toggle me" />)
     const checkbox = getByRole('checkbox')
 
     expect(checkbox).not.toBeChecked()
 
-    fireEvent.click(checkbox)
+    await user.click(checkbox)
     expect(checkbox).toBeChecked()
 
-    fireEvent.click(checkbox)
+    await user.click(checkbox)
     expect(checkbox).not.toBeChecked()
   })
 
-  it('supports controlled checked state', () => {
+  it('supports controlled checked state', async () => {
+    const user = userEvent.setup()
     const onCheckedChange = mock(() => {})
     const { getByRole } = render(<Checkbox checked={false} onCheckedChange={onCheckedChange} />)
 
-    fireEvent.click(getByRole('checkbox'))
+    await user.click(getByRole('checkbox'))
     expect(onCheckedChange).toHaveBeenCalled()
     expect(onCheckedChange.mock.calls[0]?.[0]).toBe(true)
   })
@@ -61,11 +64,12 @@ describe('Checkbox', () => {
     expect(getByRole('checkbox')).toBeChecked()
   })
 
-  it('clicking label toggles checkbox', () => {
+  it('clicking label toggles checkbox', async () => {
+    const user = userEvent.setup()
     const { getByRole, getByText } = render(<Checkbox label="Click label" />)
     const label = getByText('Click label')
 
-    fireEvent.click(label)
+    await user.click(label)
     expect(getByRole('checkbox')).toBeChecked()
   })
 })

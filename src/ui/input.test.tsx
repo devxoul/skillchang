@@ -1,5 +1,6 @@
 import { describe, expect, it, mock } from 'bun:test'
 import { fireEvent, render } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { Input } from '@/ui/input'
 
 describe('Input', () => {
@@ -13,12 +14,13 @@ describe('Input', () => {
     expect(getByDisplayValue('Hello')).toBeInTheDocument()
   })
 
-  it('handles controlled value', () => {
+  it('handles controlled value', async () => {
+    const user = userEvent.setup()
     const onChange = mock(() => {})
     const { getByDisplayValue } = render(<Input value="test" onChange={onChange} />)
 
     const input = getByDisplayValue('test')
-    fireEvent.change(input, { target: { value: 'new value' } })
+    await user.type(input, 'x')
     expect(onChange).toHaveBeenCalled()
   })
 
