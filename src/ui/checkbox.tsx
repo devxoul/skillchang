@@ -1,9 +1,8 @@
 import { Checkbox as BaseCheckbox } from '@base-ui-components/react/checkbox'
 import { clsx } from 'clsx'
-import { type ComponentPropsWithoutRef, type ReactNode, forwardRef } from 'react'
+import { type ComponentPropsWithoutRef, forwardRef, type ReactNode } from 'react'
 
-export interface CheckboxProps
-  extends Omit<ComponentPropsWithoutRef<typeof BaseCheckbox.Root>, 'children'> {
+export interface CheckboxProps extends Omit<ComponentPropsWithoutRef<typeof BaseCheckbox.Root>, 'children'> {
   label?: ReactNode
 }
 
@@ -20,35 +19,33 @@ function CheckIcon(props: React.ComponentProps<'svg'>) {
   )
 }
 
-export const Checkbox = forwardRef<HTMLButtonElement, CheckboxProps>(
-  ({ className, label, ...props }, ref) => {
-    return (
-      <label className="inline-flex cursor-pointer items-center gap-2 select-none">
-        <BaseCheckbox.Root
-          ref={ref}
-          className={clsx(
-            'flex items-center justify-center',
-            'h-5 w-5 rounded border border-foreground/20',
-            'bg-foreground/[0.04] text-foreground',
-            'transition-colors duration-150',
-            'hover:border-foreground/30',
-            'focus-visible:ring-1 focus-visible:ring-brand-400/30 focus-visible:outline-none',
-            'data-[checked]:border-brand-500/80 data-[checked]:bg-brand-500/90 data-[checked]:text-white',
-            'data-[indeterminate]:border-brand-500/80 data-[indeterminate]:bg-brand-500/90 data-[indeterminate]:text-white',
-            'disabled:cursor-not-allowed disabled:opacity-50',
-            className,
-          )}
-          {...props}
-        >
-          <BaseCheckbox.Indicator className="flex items-center justify-center">
-            <CheckIcon className="h-3.5 w-3.5" />
-          </BaseCheckbox.Indicator>
-        </BaseCheckbox.Root>
-        {label && <span className="text-foreground">{label}</span>}
-      </label>
-    )
-  },
-)
+export const Checkbox = forwardRef<HTMLButtonElement, CheckboxProps>(({ className, label, ...props }, ref) => {
+  return (
+    <label className="inline-flex cursor-pointer items-center gap-2 select-none">
+      <BaseCheckbox.Root
+        ref={ref}
+        className={clsx(
+          'flex items-center justify-center',
+          'h-5 w-5 rounded border border-foreground/20',
+          'bg-foreground/[0.04] text-foreground',
+          'transition-colors duration-150',
+          'hover:border-foreground/30',
+          'focus-visible:ring-1 focus-visible:ring-brand-400/30 focus-visible:outline-none',
+          'data-[checked]:border-brand-500/80 data-[checked]:bg-brand-500/90 data-[checked]:text-white',
+          'data-[indeterminate]:border-brand-500/80 data-[indeterminate]:bg-brand-500/90 data-[indeterminate]:text-white',
+          'disabled:cursor-not-allowed disabled:opacity-50',
+          className,
+        )}
+        {...props}
+      >
+        <BaseCheckbox.Indicator className="flex items-center justify-center">
+          <CheckIcon className="h-3.5 w-3.5" />
+        </BaseCheckbox.Indicator>
+      </BaseCheckbox.Root>
+      {label && <span className="text-foreground">{label}</span>}
+    </label>
+  )
+})
 
 Checkbox.displayName = 'Checkbox'
 

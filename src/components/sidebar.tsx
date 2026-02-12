@@ -1,13 +1,13 @@
-import { useProjects } from '@/contexts/projects-context'
-import type { Project } from '@/types/project'
-import { DndContext, PointerSensor, closestCenter, useSensor, useSensors } from '@dnd-kit/core'
 import type { DragEndEvent } from '@dnd-kit/core'
+import { closestCenter, DndContext, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
 import { SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { Books, FolderOpen, Gear, Globe, Plus, X } from '@phosphor-icons/react'
 import { clsx } from 'clsx'
 import { useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
+import { useProjects } from '@/contexts/projects-context'
+import type { Project } from '@/types/project'
 
 function useModifierKey() {
   const [isPressed, setIsPressed] = useState(false)
@@ -55,14 +55,7 @@ interface NavLinkProps {
   modifierSymbol?: string
 }
 
-function NavLink({
-  to,
-  children,
-  exact = false,
-  shortcut,
-  showShortcut,
-  modifierSymbol,
-}: NavLinkProps) {
+function NavLink({ to, children, exact = false, shortcut, showShortcut, modifierSymbol }: NavLinkProps) {
   const location = useLocation()
   const isActive = exact
     ? location.pathname === to
@@ -72,9 +65,9 @@ function NavLink({
     <Link
       to={to}
       className={clsx(
-        'flex items-center gap-2.5 rounded-md mx-2 px-2.5 py-1.5 text-[13px] transition-all duration-150 ease-[cubic-bezier(0.4,0,0.2,1)]',
+        'mx-2 flex items-center gap-2.5 rounded-md px-2.5 py-1.5 text-[13px] transition-all duration-150 ease-[cubic-bezier(0.4,0,0.2,1)]',
         isActive
-          ? 'bg-white/[0.12] text-foreground font-medium shadow-[0_1px_3px_rgba(0,0,0,0.08)]'
+          ? 'bg-white/[0.12] font-medium text-foreground shadow-[0_1px_3px_rgba(0,0,0,0.08)]'
           : 'text-foreground/70 hover:bg-white/[0.06] hover:text-foreground',
       )}
     >
@@ -97,13 +90,7 @@ interface ProjectItemProps {
   modifierSymbol?: string
 }
 
-function ProjectItem({
-  project,
-  onRemove,
-  shortcut,
-  showShortcut,
-  modifierSymbol,
-}: ProjectItemProps) {
+function ProjectItem({ project, onRemove, shortcut, showShortcut, modifierSymbol }: ProjectItemProps) {
   const location = useLocation()
   const isActive = location.pathname === `/project/${project.id}`
   const [disableClick, setDisableClick] = useState(false)
@@ -136,21 +123,14 @@ function ProjectItem({
   }
 
   return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      className="mx-2"
-      {...attributes}
-      {...listeners}
-      tabIndex={-1}
-    >
+    <div ref={setNodeRef} style={style} className="mx-2" {...attributes} {...listeners} tabIndex={-1}>
       <Link
         to={`/project/${project.id}`}
         style={disableClick ? { pointerEvents: 'none' } : undefined}
         className={clsx(
           'group flex items-center gap-1.5 rounded-md px-2 py-1.5 text-[13px] transition-all duration-150 ease-[cubic-bezier(0.4,0,0.2,1)]',
           isDragging
-            ? 'bg-white/[0.15] shadow-[0_4px_12px_rgba(0,0,0,0.15)] scale-[1.02] z-10 cursor-grabbing'
+            ? 'z-10 scale-[1.02] cursor-grabbing bg-white/[0.15] shadow-[0_4px_12px_rgba(0,0,0,0.15)]'
             : isActive
               ? 'bg-white/[0.12] shadow-[0_1px_3px_rgba(0,0,0,0.08)]'
               : 'hover:bg-white/[0.06]',
@@ -164,7 +144,7 @@ function ProjectItem({
         <span
           className={clsx(
             'flex-1 truncate transition-colors group-hover:text-foreground',
-            isActive ? 'text-foreground font-medium' : 'text-foreground/70',
+            isActive ? 'font-medium text-foreground' : 'text-foreground/70',
           )}
         >
           {project.name}
@@ -267,22 +247,11 @@ export function Sidebar({ onOpenPreferences }: SidebarProps) {
       <div data-tauri-drag-region className="h-13 shrink-0" />
       <nav className="flex flex-1 flex-col gap-1 pb-3">
         <div className="space-y-0.5">
-          <NavLink
-            to="/"
-            exact
-            shortcut="1"
-            showShortcut={showShortcuts}
-            modifierSymbol={modifierSymbol}
-          >
+          <NavLink to="/" exact shortcut="1" showShortcut={showShortcuts} modifierSymbol={modifierSymbol}>
             <Books size={18} weight="duotone" className="text-foreground/60" />
             <span>Skills Directory</span>
           </NavLink>
-          <NavLink
-            to="/global"
-            shortcut="2"
-            showShortcut={showShortcuts}
-            modifierSymbol={modifierSymbol}
-          >
+          <NavLink to="/global" shortcut="2" showShortcut={showShortcuts} modifierSymbol={modifierSymbol}>
             <Globe size={18} weight="duotone" className="text-foreground/60" />
             <span>Global Skills</span>
           </NavLink>
@@ -292,9 +261,7 @@ export function Sidebar({ onOpenPreferences }: SidebarProps) {
 
         <div className="flex flex-1 flex-col">
           <div className="mb-1 flex items-center justify-between px-3">
-            <span className="text-[11px] font-medium uppercase tracking-wide text-foreground/40">
-              Projects
-            </span>
+            <span className="text-[11px] font-medium tracking-wide text-foreground/40 uppercase">Projects</span>
             <button
               type="button"
               onClick={importProject}
@@ -309,19 +276,10 @@ export function Sidebar({ onOpenPreferences }: SidebarProps) {
             {loading ? (
               <div className="px-3 py-6 text-center text-[12px] text-foreground/40">Loading...</div>
             ) : projects.length === 0 ? (
-              <div className="px-3 py-6 text-center text-[12px] text-foreground/30">
-                No projects
-              </div>
+              <div className="px-3 py-6 text-center text-[12px] text-foreground/30">No projects</div>
             ) : (
-              <DndContext
-                sensors={sensors}
-                collisionDetection={closestCenter}
-                onDragEnd={handleDragEnd}
-              >
-                <SortableContext
-                  items={projects.map((p) => p.id)}
-                  strategy={verticalListSortingStrategy}
-                >
+              <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+                <SortableContext items={projects.map((p) => p.id)} strategy={verticalListSortingStrategy}>
                   <div className="space-y-0.5">
                     {projects.map((project, index) => (
                       <ProjectItem
@@ -354,9 +312,7 @@ export function Sidebar({ onOpenPreferences }: SidebarProps) {
             >
               <Gear size={18} weight="duotone" className="text-foreground/60" />
               <span>Preferences</span>
-              {showShortcuts && (
-                <span className="ml-auto text-[11px] text-foreground/30">{modifierSymbol},</span>
-              )}
+              {showShortcuts && <span className="ml-auto text-[11px] text-foreground/30">{modifierSymbol},</span>}
             </button>
           </div>
         </div>

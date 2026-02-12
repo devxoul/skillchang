@@ -1,5 +1,5 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
 import { getCurrentWindow } from '@tauri-apps/api/window'
+import { createContext, type ReactNode, useContext, useEffect, useState } from 'react'
 
 type Theme = 'light' | 'dark'
 
@@ -31,11 +31,9 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     // Listen for system theme changes
     let unlistenPromise: Promise<() => void> | null = null
     try {
-      unlistenPromise = getCurrentWindow().onThemeChanged(
-        ({ payload: newTheme }: { payload: Theme }) => {
-          setTheme(newTheme)
-        },
-      )
+      unlistenPromise = getCurrentWindow().onThemeChanged(({ payload: newTheme }: { payload: Theme }) => {
+        setTheme(newTheme)
+      })
     } catch {
       // Tauri not available, skip listener
     }

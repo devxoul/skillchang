@@ -1,15 +1,15 @@
-import { describe, it, expect, vi } from 'vitest'
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { describe, expect, it, vi } from 'vitest'
 import {
   Dialog,
-  DialogRoot,
-  DialogTrigger,
-  DialogPortal,
   DialogBackdrop,
-  DialogContent,
-  DialogTitle,
-  DialogDescription,
   DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogPortal,
+  DialogRoot,
+  DialogTitle,
+  DialogTrigger,
 } from '@/ui/dialog'
 
 describe('Dialog', () => {

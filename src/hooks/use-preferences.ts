@@ -1,6 +1,6 @@
-import type { Preferences } from '@/types/preferences'
 import { Store } from '@tauri-apps/plugin-store'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
+import type { Preferences } from '@/types/preferences'
 
 const STORE_KEY = 'preferences'
 let store: Store | null = null
@@ -21,11 +21,7 @@ export function usePreferences() {
   const [preferences, setPreferences] = useState<Preferences>(DEFAULT_PREFERENCES)
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    loadPreferences()
-  }, [])
-
-  async function loadPreferences() {
+  const loadPreferences = useCallback(async () => {
     setLoading(true)
     const s = await getStore()
     const data = await s.get<Partial<Preferences>>(STORE_KEY)
@@ -33,7 +29,11 @@ export function usePreferences() {
       setPreferences({ ...DEFAULT_PREFERENCES, ...data })
     }
     setLoading(false)
-  }
+  }, [])
+
+  useEffect(() => {
+    loadPreferences()
+  }, [loadPreferences])
 
   async function savePreferences(newPrefs: Preferences) {
     const s = await getStore()

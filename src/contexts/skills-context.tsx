@@ -1,17 +1,15 @@
+import { createContext, type ReactNode, useCallback, useContext, useMemo, useState } from 'react'
 import { fetchSkills } from '@/lib/api'
 import {
-  type CheckUpdatesApiResult,
-  type ListSkillsOptions,
-  type RemoveSkillOptions,
-  type SkillInfo,
   checkUpdatesApi,
   listSkills,
+  type RemoveSkillOptions,
   removeSkill,
+  type SkillInfo,
   updateSkills,
 } from '@/lib/cli'
 import type { Skill } from '@/types/skill'
 import type { UpdateStatusMap } from '@/types/update-status'
-import { type ReactNode, createContext, useCallback, useContext, useMemo, useState } from 'react'
 
 interface GalleryState {
   skills: Skill[]
@@ -213,8 +211,7 @@ export function SkillsProvider({ children }: { children: ReactNode }) {
         }
 
         for (const err of result.errors || []) {
-          const isCacheMiss =
-            err.error.includes('No cached hash') || err.error.includes('may need reinstall')
+          const isCacheMiss = err.error.includes('No cached hash') || err.error.includes('may need reinstall')
           if (!isCacheMiss) {
             newStatuses[err.name] = {
               status: 'error',
@@ -356,14 +353,10 @@ export function useInstalledSkills(scope: 'global' | 'project' = 'global', proje
     [fetchInstalledSkills, isGlobal, projectPath],
   )
   const checkUpdates = useCallback(
-    (force = false) =>
-      checkForUpdates({ scope: expectedScope, skills: cached?.skills ?? [], force }),
+    (force = false) => checkForUpdates({ scope: expectedScope, skills: cached?.skills ?? [], force }),
     [checkForUpdates, expectedScope, cached?.skills],
   )
-  const updateAll = useCallback(
-    () => handleUpdateAll(expectedScope),
-    [handleUpdateAll, expectedScope],
-  )
+  const updateAll = useCallback(() => handleUpdateAll(expectedScope), [handleUpdateAll, expectedScope])
 
   return {
     skills: cached?.skills ?? [],

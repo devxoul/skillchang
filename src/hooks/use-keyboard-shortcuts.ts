@@ -7,11 +7,7 @@ interface UseKeyboardShortcutsOptions {
   projects?: Array<{ id: string }>
 }
 
-export function useKeyboardShortcuts({
-  onOpenPreferences,
-  onFocusSearch,
-  projects = [],
-}: UseKeyboardShortcutsOptions) {
+export function useKeyboardShortcuts({ onOpenPreferences, onFocusSearch, projects = [] }: UseKeyboardShortcutsOptions) {
   const navigate = useNavigate()
   const location = useLocation()
 
@@ -30,7 +26,7 @@ export function useKeyboardShortcuts({
       if (exactIndex !== -1) return exactIndex
 
       if (path.startsWith('/project/')) {
-        return routes.findIndex((r) => r === path)
+        return routes.indexOf(path)
       }
       return 0
     }
@@ -83,7 +79,7 @@ export function useKeyboardShortcuts({
       }
 
       // Cmd/Ctrl + 3-9: Projects
-      const num = Number.parseInt(event.key)
+      const num = Number.parseInt(event.key, 10)
       if (num >= 3 && num <= 9) {
         event.preventDefault()
         const projectIndex = num - 3

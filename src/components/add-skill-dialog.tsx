@@ -1,3 +1,5 @@
+import { FolderOpen, Globe } from '@phosphor-icons/react'
+import { useEffect, useState } from 'react'
 import { AgentIcon } from '@/components/agent-icon'
 import { useProjects } from '@/contexts/projects-context'
 import { useSkills } from '@/contexts/skills-context'
@@ -7,8 +9,6 @@ import type { Skill } from '@/types/skill'
 import { Button } from '@/ui/button'
 import { Checkbox } from '@/ui/checkbox'
 import { DialogBackdrop, DialogContent, DialogPortal, DialogRoot, DialogTitle } from '@/ui/dialog'
-import { FolderOpen, Globe } from '@phosphor-icons/react'
-import { useEffect, useState } from 'react'
 
 interface AddSkillDialogProps {
   skill: Skill
@@ -17,12 +17,7 @@ interface AddSkillDialogProps {
   defaultAgents?: string[]
 }
 
-export function AddSkillDialog({
-  skill,
-  open,
-  onOpenChange,
-  defaultAgents = [],
-}: AddSkillDialogProps) {
+export function AddSkillDialog({ skill, open, onOpenChange, defaultAgents = [] }: AddSkillDialogProps) {
   const { projects, loading: projectsLoading } = useProjects()
   const { invalidateInstalledCache } = useSkills()
   const [includeGlobal, setIncludeGlobal] = useState(true)
@@ -49,9 +44,7 @@ export function AddSkillDialog({
   }
 
   const handleToggleAgent = (agent: string) => {
-    setSelectedAgents((prev) =>
-      prev.includes(agent) ? prev.filter((a) => a !== agent) : [...prev, agent],
-    )
+    setSelectedAgents((prev) => (prev.includes(agent) ? prev.filter((a) => a !== agent) : [...prev, agent]))
   }
 
   const handleAdd = async () => {
@@ -143,9 +136,7 @@ export function AddSkillDialog({
                   {projects.length > 0 && <div className="mx-1 my-1.5 h-px bg-foreground/[0.06]" />}
 
                   {projectsLoading ? (
-                    <div className="px-2 py-1.5 text-[12px] text-foreground/40">
-                      Loading projects...
-                    </div>
+                    <div className="px-2 py-1.5 text-[12px] text-foreground/40">Loading projects...</div>
                   ) : (
                     projects.map((project) => (
                       <label

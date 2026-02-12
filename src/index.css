@@ -89,5 +89,7 @@ body {
   color: var(--color-foreground);
   margin: 0;
   font-family: system-ui, -apple-system, sans-serif;
-  transition: background-color 0.2s, color 0.2s;
+  transition:
+    background-color 0.2s,
+    color 0.2s;
 }

@@ -34,10 +34,7 @@ export function SegmentedControl({
       onValueChange={(newValue) => onValueChange?.(newValue as string)}
       disabled={disabled}
       aria-label={ariaLabel}
-      className={clsx(
-        'inline-flex rounded-lg border border-foreground/10 bg-foreground/[0.04] p-0.5',
-        className,
-      )}
+      className={clsx('inline-flex rounded-lg border border-foreground/10 bg-foreground/[0.04] p-0.5', className)}
     >
       {options.map((option) => (
         <Radio.Root
@@ -46,7 +43,7 @@ export function SegmentedControl({
           className={clsx(
             'relative cursor-pointer rounded-md px-3 py-1.5 text-[13px] font-medium',
             'transition-all duration-150 ease-[cubic-bezier(0.4,0,0.2,1)]',
-            'select-none outline-none',
+            'outline-none select-none',
             'text-foreground/60',
             'hover:text-foreground/80',
             'focus-visible:ring-1 focus-visible:ring-foreground/20',

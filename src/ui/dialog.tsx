@@ -1,111 +1,98 @@
 import { Dialog as BaseDialog } from '@base-ui-components/react/dialog'
 import { clsx } from 'clsx'
-import { type ComponentPropsWithoutRef, type ReactNode, forwardRef } from 'react'
+import { type ComponentPropsWithoutRef, forwardRef, type ReactNode } from 'react'
 
 export const DialogRoot = BaseDialog.Root
 
-export const DialogTrigger = forwardRef<
-  HTMLButtonElement,
-  ComponentPropsWithoutRef<typeof BaseDialog.Trigger>
->(({ className, ...props }, ref) => (
-  <BaseDialog.Trigger
-    ref={ref}
-    className={clsx(
-      'inline-flex items-center justify-center font-medium select-none',
-      'h-10 rounded-md px-4 text-base',
-      'border border-foreground/10 bg-foreground/[0.04] text-foreground',
-      'hover:bg-foreground/[0.08] active:bg-foreground/[0.12]',
-      'focus-visible:ring-1 focus-visible:ring-foreground/20 focus-visible:outline-none',
-      'transition-colors duration-150',
-      className,
-    )}
-    {...props}
-  />
-))
+export const DialogTrigger = forwardRef<HTMLButtonElement, ComponentPropsWithoutRef<typeof BaseDialog.Trigger>>(
+  ({ className, ...props }, ref) => (
+    <BaseDialog.Trigger
+      ref={ref}
+      className={clsx(
+        'inline-flex items-center justify-center font-medium select-none',
+        'h-10 rounded-md px-4 text-base',
+        'border border-foreground/10 bg-foreground/[0.04] text-foreground',
+        'hover:bg-foreground/[0.08] active:bg-foreground/[0.12]',
+        'focus-visible:ring-1 focus-visible:ring-foreground/20 focus-visible:outline-none',
+        'transition-colors duration-150',
+        className,
+      )}
+      {...props}
+    />
+  ),
+)
 DialogTrigger.displayName = 'DialogTrigger'
 
 export const DialogPortal = BaseDialog.Portal
 
-export const DialogBackdrop = forwardRef<
-  HTMLDivElement,
-  ComponentPropsWithoutRef<typeof BaseDialog.Backdrop>
->(({ className, ...props }, ref) => (
-  <BaseDialog.Backdrop
-    ref={ref}
-    className={clsx(
-      'fixed inset-0 min-h-dvh bg-black/30 backdrop-blur-sm dark:bg-black/50',
-      'transition-opacity duration-150',
-      'data-[ending-style]:opacity-0 data-[starting-style]:opacity-0',
-      className,
-    )}
-    {...props}
-  />
-))
+export const DialogBackdrop = forwardRef<HTMLDivElement, ComponentPropsWithoutRef<typeof BaseDialog.Backdrop>>(
+  ({ className, ...props }, ref) => (
+    <BaseDialog.Backdrop
+      ref={ref}
+      className={clsx(
+        'fixed inset-0 min-h-dvh bg-black/30 backdrop-blur-sm dark:bg-black/50',
+        'transition-opacity duration-150',
+        'data-[ending-style]:opacity-0 data-[starting-style]:opacity-0',
+        className,
+      )}
+      {...props}
+    />
+  ),
+)
 DialogBackdrop.displayName = 'DialogBackdrop'
 
-export const DialogContent = forwardRef<
-  HTMLDivElement,
-  ComponentPropsWithoutRef<typeof BaseDialog.Popup>
->(({ className, ...props }, ref) => (
-  <BaseDialog.Popup
-    ref={ref}
-    className={clsx(
-      'fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2',
-      'w-96 max-w-[calc(100vw-3rem)] p-6',
-      'rounded-xl bg-background/95 backdrop-blur-xl text-foreground',
-      'border border-foreground/10 shadow-[0_8px_32px_rgba(0,0,0,0.12),0_0_0_1px_rgba(0,0,0,0.05)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.4),0_0_0_1px_rgba(255,255,255,0.05)]',
-      'transition-all duration-150',
-      'data-[starting-style]:scale-95 data-[starting-style]:opacity-0',
-      'data-[ending-style]:scale-95 data-[ending-style]:opacity-0',
-      className,
-    )}
-    {...props}
-  />
-))
+export const DialogContent = forwardRef<HTMLDivElement, ComponentPropsWithoutRef<typeof BaseDialog.Popup>>(
+  ({ className, ...props }, ref) => (
+    <BaseDialog.Popup
+      ref={ref}
+      className={clsx(
+        'fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2',
+        'w-96 max-w-[calc(100vw-3rem)] p-6',
+        'rounded-xl bg-background/95 text-foreground backdrop-blur-xl',
+        'border border-foreground/10 shadow-[0_8px_32px_rgba(0,0,0,0.12),0_0_0_1px_rgba(0,0,0,0.05)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.4),0_0_0_1px_rgba(255,255,255,0.05)]',
+        'transition-all duration-150',
+        'data-[starting-style]:scale-95 data-[starting-style]:opacity-0',
+        'data-[ending-style]:scale-95 data-[ending-style]:opacity-0',
+        className,
+      )}
+      {...props}
+    />
+  ),
+)
 DialogContent.displayName = 'DialogContent'
 
-export const DialogTitle = forwardRef<
-  HTMLHeadingElement,
-  ComponentPropsWithoutRef<typeof BaseDialog.Title>
->(({ className, ...props }, ref) => (
-  <BaseDialog.Title
-    ref={ref}
-    className={clsx('mb-2 text-lg font-semibold text-foreground', className)}
-    {...props}
-  />
-))
+export const DialogTitle = forwardRef<HTMLHeadingElement, ComponentPropsWithoutRef<typeof BaseDialog.Title>>(
+  ({ className, ...props }, ref) => (
+    <BaseDialog.Title ref={ref} className={clsx('mb-2 text-lg font-semibold text-foreground', className)} {...props} />
+  ),
+)
 DialogTitle.displayName = 'DialogTitle'
 
 export const DialogDescription = forwardRef<
   HTMLParagraphElement,
   ComponentPropsWithoutRef<typeof BaseDialog.Description>
 >(({ className, ...props }, ref) => (
-  <BaseDialog.Description
-    ref={ref}
-    className={clsx('mb-6 text-base text-muted-foreground', className)}
-    {...props}
-  />
+  <BaseDialog.Description ref={ref} className={clsx('mb-6 text-base text-muted-foreground', className)} {...props} />
 ))
 DialogDescription.displayName = 'DialogDescription'
 
-export const DialogClose = forwardRef<
-  HTMLButtonElement,
-  ComponentPropsWithoutRef<typeof BaseDialog.Close>
->(({ className, ...props }, ref) => (
-  <BaseDialog.Close
-    ref={ref}
-    className={clsx(
-      'inline-flex items-center justify-center font-medium select-none',
-      'h-10 rounded-md px-4 text-base',
-      'border border-foreground/10 bg-foreground/[0.04] text-foreground',
-      'hover:bg-foreground/[0.08] active:bg-foreground/[0.12]',
-      'focus-visible:ring-1 focus-visible:ring-foreground/20 focus-visible:outline-none',
-      'transition-colors duration-150',
-      className,
-    )}
-    {...props}
-  />
-))
+export const DialogClose = forwardRef<HTMLButtonElement, ComponentPropsWithoutRef<typeof BaseDialog.Close>>(
+  ({ className, ...props }, ref) => (
+    <BaseDialog.Close
+      ref={ref}
+      className={clsx(
+        'inline-flex items-center justify-center font-medium select-none',
+        'h-10 rounded-md px-4 text-base',
+        'border border-foreground/10 bg-foreground/[0.04] text-foreground',
+        'hover:bg-foreground/[0.08] active:bg-foreground/[0.12]',
+        'focus-visible:ring-1 focus-visible:ring-foreground/20 focus-visible:outline-none',
+        'transition-colors duration-150',
+        className,
+      )}
+      {...props}
+    />
+  ),
+)
 DialogClose.displayName = 'DialogClose'
 
 export interface DialogProps {

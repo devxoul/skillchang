@@ -1,6 +1,3 @@
-import { Robot } from '@phosphor-icons/react'
-import type { ReactElement } from 'react'
-
 import Claude from '@lobehub/icons/es/Claude/components/Mono'
 import Cline from '@lobehub/icons/es/Cline/components/Mono'
 import Cursor from '@lobehub/icons/es/Cursor/components/Mono'
@@ -10,6 +7,8 @@ import GithubCopilot from '@lobehub/icons/es/GithubCopilot/components/Mono'
 import OpenAI from '@lobehub/icons/es/OpenAI/components/Mono'
 import Replit from '@lobehub/icons/es/Replit/components/Mono'
 import Windsurf from '@lobehub/icons/es/Windsurf/components/Mono'
+import { Robot } from '@phosphor-icons/react'
+import type { ReactElement } from 'react'
 
 interface AgentIconProps {
   agent: string

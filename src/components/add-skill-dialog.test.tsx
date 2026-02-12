@@ -1,10 +1,10 @@
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { AddSkillDialog } from '@/components/add-skill-dialog'
 import { ProjectsProvider } from '@/contexts/projects-context'
 import { SkillsProvider } from '@/contexts/skills-context'
 import { addSkill } from '@/lib/cli'
 import type { Skill } from '@/types/skill'
-import { fireEvent, render, screen, waitFor } from '@testing-library/react'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 vi.mock('@/lib/cli', () => ({
   addSkill: vi.fn(),
@@ -157,14 +157,8 @@ describe('AddSkillDialog', () => {
 
     await waitFor(() => {
       expect(addSkill).toHaveBeenCalledTimes(2)
-      expect(addSkill).toHaveBeenCalledWith(
-        'github:test/skill',
-        expect.objectContaining({ global: true }),
-      )
-      expect(addSkill).toHaveBeenCalledWith(
-        'github:test/skill',
-        expect.objectContaining({ cwd: '/path/to/project-a' }),
-      )
+      expect(addSkill).toHaveBeenCalledWith('github:test/skill', expect.objectContaining({ global: true }))
+      expect(addSkill).toHaveBeenCalledWith('github:test/skill', expect.objectContaining({ cwd: '/path/to/project-a' }))
     })
 
     expect(await screen.findByText(/added to 2 target/i)).toBeInTheDocument()

@@ -1,12 +1,12 @@
+import { render, screen, waitFor } from '@testing-library/react'
+import { MemoryRouter } from 'react-router-dom'
+import { describe, expect, it, vi } from 'vitest'
 import { Layout } from '@/components/layout'
 import { MainContent } from '@/components/main-content'
 import { Sidebar } from '@/components/sidebar'
 import { ProjectsProvider } from '@/contexts/projects-context'
 import { ScrollRestorationProvider } from '@/contexts/scroll-context'
 import { SkillsProvider } from '@/contexts/skills-context'
-import { render, screen, waitFor } from '@testing-library/react'
-import { MemoryRouter } from 'react-router-dom'
-import { describe, expect, it, vi } from 'vitest'
 
 vi.mock('@/lib/cli', () => ({
   listSkills: vi.fn().mockResolvedValue([]),

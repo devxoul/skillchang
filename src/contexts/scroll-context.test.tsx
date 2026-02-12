@@ -1,6 +1,6 @@
-import { ScrollRestorationProvider, useScrollRestorationContext } from '@/contexts/scroll-context'
 import { render } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
+import { ScrollRestorationProvider, useScrollRestorationContext } from '@/contexts/scroll-context'
 
 describe('ScrollRestorationContext', () => {
   it('provides scroll restoration context to children', () => {

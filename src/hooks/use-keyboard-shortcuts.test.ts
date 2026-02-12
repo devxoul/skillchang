@@ -1,6 +1,6 @@
-import { useKeyboardShortcuts } from '@/hooks/use-keyboard-shortcuts'
 import { renderHook } from '@testing-library/react'
 import { describe, expect, test, vi } from 'vitest'
+import { useKeyboardShortcuts } from '@/hooks/use-keyboard-shortcuts'
 
 vi.mock('react-router-dom', () => ({
   useNavigate: () => vi.fn(),
@@ -39,9 +39,7 @@ describe('useKeyboardShortcuts', () => {
   })
 
   test('hook handles Cmd+3-9 shortcut keys for Projects', () => {
-    const { result } = renderHook(() =>
-      useKeyboardShortcuts({ projects: [{ id: 'proj1' }, { id: 'proj2' }] }),
-    )
+    const { result } = renderHook(() => useKeyboardShortcuts({ projects: [{ id: 'proj1' }, { id: 'proj2' }] }))
     expect(result.current).toBeUndefined()
   })
 

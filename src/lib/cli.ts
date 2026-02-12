@@ -1,8 +1,8 @@
-import type { PackageManager, Preferences } from '@/types/preferences'
 import { homeDir } from '@tauri-apps/api/path'
 import { fetch } from '@tauri-apps/plugin-http'
 import { Command } from '@tauri-apps/plugin-shell'
 import { Store } from '@tauri-apps/plugin-store'
+import type { PackageManager, Preferences } from '@/types/preferences'
 import { stripAnsi } from './ansi'
 
 let store: Store | null = null
@@ -198,9 +198,7 @@ export async function checkUpdatesApi(): Promise<CheckUpdatesApiResult> {
       errors: data.errors ?? [],
     }
   } catch (error) {
-    throw new Error(
-      `Failed to check updates via API: ${error instanceof Error ? error.message : String(error)}`,
-    )
+    throw new Error(`Failed to check updates via API: ${error instanceof Error ? error.message : String(error)}`)
   }
 }
 
@@ -218,8 +216,7 @@ function parseSkillList(output: string): SkillInfo[] {
     const isAgentsLine = trimmed.startsWith('Agents:')
     if (isAgentsLine && currentSkill) {
       const agentsStr = trimmed.replace('Agents:', '').trim()
-      currentSkill.agents =
-        agentsStr && agentsStr !== 'not linked' ? agentsStr.split(',').map((a) => a.trim()) : []
+      currentSkill.agents = agentsStr && agentsStr !== 'not linked' ? agentsStr.split(',').map((a) => a.trim()) : []
       if (currentSkill.name && currentSkill.path) {
         skills.push(currentSkill as SkillInfo)
       }
@@ -230,8 +227,7 @@ function parseSkillList(output: string): SkillInfo[] {
     const skillLineMatch = trimmed.match(/^(\S+)\s+(.+)$/)
     if (skillLineMatch) {
       const [, name, path] = skillLineMatch
-      const isInfoMessage =
-        name === 'No' || name === 'Try' || (!path?.startsWith('/') && !path?.startsWith('~'))
+      const isInfoMessage = name === 'No' || name === 'Try' || (!path?.startsWith('/') && !path?.startsWith('~'))
       if (isInfoMessage) continue
 
       if (currentSkill?.name && currentSkill?.path) {

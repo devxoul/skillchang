@@ -1,6 +1,6 @@
-import { describe, it, expect, vi } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
-import { Checkbox, CheckboxRoot, CheckboxIndicator } from '@/ui/checkbox'
+import { fireEvent, render, screen } from '@testing-library/react'
+import { describe, expect, it, vi } from 'vitest'
+import { Checkbox, CheckboxIndicator, CheckboxRoot } from '@/ui/checkbox'
 
 describe('Checkbox', () => {
   it('renders checkbox', () => {

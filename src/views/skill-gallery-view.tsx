@@ -1,10 +1,10 @@
+import { ArrowClockwise, Books, SpinnerGap } from '@phosphor-icons/react'
+import { useEffect, useMemo, useState } from 'react'
 import { InlineError } from '@/components/inline-error'
 import { SearchInput } from '@/components/search-input'
 import { SkillCard } from '@/components/skill-card'
 import { useGallerySkills } from '@/contexts/skills-context'
 import { useScrollRestoration } from '@/hooks/use-scroll-restoration'
-import { ArrowClockwise, Books, SpinnerGap } from '@phosphor-icons/react'
-import { useEffect, useMemo, useState } from 'react'
 
 export function SkillGalleryView() {
   const { skills, loading, error, refresh, fetch } = useGallerySkills()
@@ -36,9 +36,7 @@ export function SkillGalleryView() {
             <Books size={18} weight="duotone" className="text-foreground/50" />
             <h1 className="text-[15px] font-semibold text-foreground">Skills Directory</h1>
           </div>
-          <p className="mt-0.5 text-[12px] text-foreground/40">
-            Browse and discover available skills
-          </p>
+          <p className="mt-0.5 text-[12px] text-foreground/40">Browse and discover available skills</p>
         </div>
         <button
           type="button"

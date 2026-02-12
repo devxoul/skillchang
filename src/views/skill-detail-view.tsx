@@ -1,3 +1,9 @@
+import { ArrowLeft, FolderOpen, GithubLogo, Globe, Plus, SpinnerGap, Warning } from '@phosphor-icons/react'
+import { open } from '@tauri-apps/plugin-shell'
+import { useEffect, useState } from 'react'
+import Markdown from 'react-markdown'
+import { useNavigate, useParams } from 'react-router-dom'
+import remarkGfm from 'remark-gfm'
 import { AddSkillDialog } from '@/components/add-skill-dialog'
 import { InlineError } from '@/components/inline-error'
 import { useProjects } from '@/contexts/projects-context'
@@ -5,23 +11,6 @@ import { useGallerySkills, useSkills } from '@/contexts/skills-context'
 import { usePreferences } from '@/hooks/use-preferences'
 import { useScrollRestoration } from '@/hooks/use-scroll-restoration'
 import { fetchSkillReadme } from '@/lib/api'
-import type { Skill } from '@/types/skill'
-import {
-  ArrowLeft,
-  FolderOpen,
-  GithubLogo,
-  Globe,
-  LinkSimple,
-  Plus,
-  SpinnerGap,
-  Warning,
-} from '@phosphor-icons/react'
-import { open } from '@tauri-apps/plugin-shell'
-import clsx from 'clsx'
-import { useEffect, useState } from 'react'
-import Markdown from 'react-markdown'
-import { useNavigate, useParams } from 'react-router-dom'
-import remarkGfm from 'remark-gfm'
 
 function formatInstalls(count: number): string {
   if (count >= 1000000) return `${(count / 1000000).toFixed(1)}M`
@@ -194,16 +183,10 @@ export function SkillDetailView() {
             {(getInstallationStatus('global').installed ||
               projects.some((p) => getInstallationStatus(p.path).installed)) && (
               <div className="mb-8">
-                <h3 className="mb-3 text-[11px] font-medium uppercase tracking-wide text-foreground/40">
-                  Installed
-                </h3>
+                <h3 className="mb-3 text-[11px] font-medium tracking-wide text-foreground/40 uppercase">Installed</h3>
                 <div className="flex flex-wrap gap-2">
                   {getInstallationStatus('global').installed && (
-                    <InstallationStatusItem
-                      scopeName="Global"
-                      isGlobal={true}
-                      {...getInstallationStatus('global')}
-                    />
+                    <InstallationStatusItem scopeName="Global" isGlobal={true} {...getInstallationStatus('global')} />
                   )}
                   {projects
                     .filter((project) => getInstallationStatus(project.path).installed)
@@ -220,9 +203,7 @@ export function SkillDetailView() {
             )}
 
             <div className="mb-8">
-              <h3 className="mb-3 text-[11px] font-medium uppercase tracking-wide text-foreground/40">
-                About
-              </h3>
+              <h3 className="mb-3 text-[11px] font-medium tracking-wide text-foreground/40 uppercase">About</h3>
               {readmeLoading ? (
                 <div className="flex items-center justify-center py-8">
                   <SpinnerGap size={24} className="animate-spin text-foreground/30" />
@@ -230,7 +211,7 @@ export function SkillDetailView() {
               ) : readmeError ? (
                 <InlineError message={readmeError} />
               ) : readme ? (
-                <div className="prose prose-invert prose-sm max-w-none text-foreground/80 prose-headings:text-foreground prose-a:text-emerald-400 prose-code:rounded prose-code:bg-white/[0.08] prose-code:px-1.5 prose-code:py-0.5 prose-code:text-[12px] prose-code:font-normal prose-code:before:content-none prose-code:after:content-none prose-pre:rounded-lg prose-pre:bg-black/[0.4] prose-pre:border prose-pre:border-white/[0.08] prose-pre:p-4 prose-pre:overflow-x-auto prose-pre:text-[12px] prose-pre:leading-relaxed [&_pre_code]:bg-transparent [&_pre_code]:p-0 prose-table:w-full prose-table:border-collapse prose-table:text-[13px] prose-th:border prose-th:border-white/[0.1] prose-th:bg-white/[0.05] prose-th:px-3 prose-th:py-2 prose-th:text-left prose-th:font-medium prose-td:border prose-td:border-white/[0.1] prose-td:px-3 prose-td:py-2">
+                <div className="prose prose-sm max-w-none text-foreground/80 prose-invert prose-headings:text-foreground prose-a:text-emerald-400 prose-code:rounded prose-code:bg-white/[0.08] prose-code:px-1.5 prose-code:py-0.5 prose-code:text-[12px] prose-code:font-normal prose-code:before:content-none prose-code:after:content-none prose-pre:overflow-x-auto prose-pre:rounded-lg prose-pre:border prose-pre:border-white/[0.08] prose-pre:bg-black/[0.4] prose-pre:p-4 prose-pre:text-[12px] prose-pre:leading-relaxed prose-table:w-full prose-table:border-collapse prose-table:text-[13px] prose-th:border prose-th:border-white/[0.1] prose-th:bg-white/[0.05] prose-th:px-3 prose-th:py-2 prose-th:text-left prose-th:font-medium prose-td:border prose-td:border-white/[0.1] prose-td:px-3 prose-td:py-2 [&_pre_code]:bg-transparent [&_pre_code]:p-0">
                   <Markdown remarkPlugins={[remarkGfm]}>{stripFrontmatter(readme)}</Markdown>
                 </div>
               ) : null}
@@ -257,12 +238,7 @@ interface InstallationStatusItemProps {
   loading?: boolean
 }
 
-function InstallationStatusItem({
-  scopeName,
-  isGlobal,
-  agents,
-  loading,
-}: InstallationStatusItemProps) {
+function InstallationStatusItem({ scopeName, isGlobal, agents, loading }: InstallationStatusItemProps) {
   return (
     <div className="flex items-center gap-3 rounded-lg border border-white/[0.03] bg-white/[0.03] px-3 py-2.5">
       {isGlobal ? (

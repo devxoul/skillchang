@@ -1,4 +1,4 @@
-import { type ReactNode, createContext, useContext, useRef } from 'react'
+import { createContext, type ReactNode, useContext, useRef } from 'react'
 
 interface ScrollRestorationContextValue {
   saveScrollPosition: (pathname: string, scrollTop: number) => void
@@ -24,9 +24,7 @@ export function ScrollRestorationProvider({ children }: { children: ReactNode })
   }
 
   return (
-    <ScrollRestorationContext.Provider
-      value={{ saveScrollPosition, getScrollPosition, clearScrollPosition }}
-    >
+    <ScrollRestorationContext.Provider value={{ saveScrollPosition, getScrollPosition, clearScrollPosition }}>
       {children}
     </ScrollRestorationContext.Provider>
   )

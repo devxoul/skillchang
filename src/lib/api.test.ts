@@ -1,12 +1,13 @@
+import { beforeEach, expect, test, vi } from 'vitest'
 import { fetchSkills, searchSkills } from '@/lib/api'
 import { ApiError } from '@/types/api'
-import { beforeEach, expect, test, vi } from 'vitest'
 
 vi.mock('@tauri-apps/plugin-http', () => ({
   fetch: vi.fn(),
 }))
 
 import { fetch as tauriFetch } from '@tauri-apps/plugin-http'
+
 const mockFetch = tauriFetch as ReturnType<typeof vi.fn>
 
 beforeEach(() => {
@@ -75,9 +76,7 @@ test('fetchSkills handles empty response', async () => {
 
 test('searchSkills returns matching skills', async () => {
   const mockResponse = {
-    skills: [
-      { id: '1', skillId: 'react', name: 'React', installs: 1000, source: 'opencode/skills' },
-    ],
+    skills: [{ id: '1', skillId: 'react', name: 'React', installs: 1000, source: 'opencode/skills' }],
   }
   mockFetch.mockResolvedValueOnce({
     ok: true,

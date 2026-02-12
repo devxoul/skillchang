@@ -1,5 +1,5 @@
-import { describe, it, expect, vi } from 'vitest'
 import { render, waitFor } from '@testing-library/react'
+import { describe, expect, it, vi } from 'vitest'
 import { ThemeProvider, useTheme } from '@/contexts/theme-context'
 
 vi.mock('@tauri-apps/api/window', () => ({

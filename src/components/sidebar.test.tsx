@@ -1,7 +1,7 @@
-import { ProjectsProvider } from '@/contexts/projects-context'
 import { render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { describe, expect, it, vi } from 'vitest'
+import { ProjectsProvider } from '@/contexts/projects-context'
 import { Sidebar } from './sidebar'
 
 vi.mock('@/lib/projects', () => ({

@@ -1,6 +1,6 @@
-import { PreferencesDialog } from '@/components/preferences-dialog'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { PreferencesDialog } from '@/components/preferences-dialog'
 
 vi.mock('@/hooks/use-preferences', () => ({
   usePreferences: vi.fn(),
@@ -39,9 +39,7 @@ describe('PreferencesDialog', () => {
 
   it('displays default agents description', () => {
     render(<PreferencesDialog open={true} onOpenChange={vi.fn()} />)
-    expect(
-      screen.getByText('These agents will be pre-selected when adding skills'),
-    ).toBeInTheDocument()
+    expect(screen.getByText('These agents will be pre-selected when adding skills')).toBeInTheDocument()
   })
 
   it('renders all agents as checkboxes', () => {

@@ -1,15 +1,7 @@
-import { AgentIcon } from '@/components/agent-icon'
-import { InlineError } from '@/components/inline-error'
-import { SearchInput } from '@/components/search-input'
-import { useInstalledSkills } from '@/contexts/skills-context'
-import { useScrollRestoration } from '@/hooks/use-scroll-restoration'
-import type { SkillInfo } from '@/lib/cli'
-import type { SkillUpdateStatus } from '@/types/update-status'
-import * as Popover from '@/ui/popover'
 import {
   ArrowClockwise,
-  ArrowUp,
   ArrowsClockwise,
+  ArrowUp,
   CheckCircle,
   Folder,
   FolderOpen,
@@ -23,6 +15,14 @@ import {
 import { clsx } from 'clsx'
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { AgentIcon } from '@/components/agent-icon'
+import { InlineError } from '@/components/inline-error'
+import { SearchInput } from '@/components/search-input'
+import { useInstalledSkills } from '@/contexts/skills-context'
+import { useScrollRestoration } from '@/hooks/use-scroll-restoration'
+import type { SkillInfo } from '@/lib/cli'
+import type { SkillUpdateStatus } from '@/types/update-status'
+import * as Popover from '@/ui/popover'
 
 interface InstalledSkillsViewProps {
   scope?: 'global' | 'project'
@@ -162,10 +162,7 @@ function InstalledSkillItem({ skill, onRemove, removing, updateStatus }: Install
   )
 }
 
-export default function InstalledSkillsView({
-  scope = 'global',
-  projectPath,
-}: InstalledSkillsViewProps) {
+export default function InstalledSkillsView({ scope = 'global', projectPath }: InstalledSkillsViewProps) {
   const {
     skills,
     loading,
@@ -194,7 +191,7 @@ export default function InstalledSkillsView({
     if (skills.length > 0) {
       checkUpdates()
     }
-  }, [skills.length > 0, checkUpdates])
+  }, [checkUpdates, skills.length])
 
   const filteredSkills = useMemo(() => {
     if (!searchQuery.trim()) {
@@ -221,9 +218,7 @@ export default function InstalledSkillsView({
   }
 
   const hasUpdates = Object.values(updateStatuses).some((s) => s.status === 'update-available')
-  const updateCount = Object.values(updateStatuses).filter(
-    (s) => s.status === 'update-available',
-  ).length
+  const updateCount = Object.values(updateStatuses).filter((s) => s.status === 'update-available').length
   const isAllUpToDate =
     skills.length > 0 &&
     !isCheckingUpdates &&
@@ -366,14 +361,10 @@ export default function InstalledSkillsView({
                     <Popover.Positioner side="bottom" align="start" sideOffset={8}>
                       <Popover.Content className="max-h-[200px] w-72 overflow-y-auto">
                         <div className="space-y-2">
-                          <div className="text-[12px] font-medium text-amber-500">
-                            Failed to check updates
-                          </div>
+                          <div className="text-[12px] font-medium text-amber-500">Failed to check updates</div>
                           {checkErrors.map((error, i) => (
                             <div key={i} className="flex flex-col gap-0.5">
-                              <span className="text-[12px] font-medium text-foreground/80">
-                                {error.name}
-                              </span>
+                              <span className="text-[12px] font-medium text-foreground/80">{error.name}</span>
                               <span className="text-[11px] text-foreground/50">{error.error}</span>
                             </div>
                           ))}
@@ -410,11 +401,7 @@ export default function InstalledSkillsView({
             className="cursor-pointer rounded-md p-1.5 text-foreground/40 transition-colors hover:bg-white/[0.06] hover:text-foreground/70 disabled:cursor-not-allowed disabled:opacity-50"
             aria-label="Check for updates"
           >
-            <ArrowsClockwise
-              size={16}
-              weight="bold"
-              className={isCheckingUpdates ? 'animate-spin' : ''}
-            />
+            <ArrowsClockwise size={16} weight="bold" className={isCheckingUpdates ? 'animate-spin' : ''} />
           </button>
           <button
             type="button"
@@ -423,11 +410,7 @@ export default function InstalledSkillsView({
             className="cursor-pointer rounded-md p-1.5 text-foreground/40 transition-colors hover:bg-white/[0.06] hover:text-foreground/70 disabled:cursor-not-allowed disabled:opacity-50"
             aria-label="Refresh"
           >
-            <ArrowClockwise
-              size={16}
-              weight="bold"
-              className={loading || refetching ? 'animate-spin' : ''}
-            />
+            <ArrowClockwise size={16} weight="bold" className={loading || refetching ? 'animate-spin' : ''} />
           </button>
         </div>
       </header>

@@ -1,8 +1,8 @@
+import { Route, Routes, useParams } from 'react-router-dom'
 import { useProjects } from '@/contexts/projects-context'
 import InstalledSkillsView from '@/views/installed-skills-view'
 import { SkillDetailView } from '@/views/skill-detail-view'
 import { SkillGalleryView } from '@/views/skill-gallery-view'
-import { Route, Routes, useParams } from 'react-router-dom'
 
 function ProjectPage() {
   const { id } = useParams<{ id: string }>()

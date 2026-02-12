@@ -1,20 +1,17 @@
-import { useScrollRestorationContext } from '@/contexts/scroll-context'
 import { type RefObject, useEffect, useRef } from 'react'
 import { useLocation, useNavigationType } from 'react-router-dom'
+import { useScrollRestorationContext } from '@/contexts/scroll-context'
 
 interface UseScrollRestorationOptions {
   resetOnMount?: boolean
 }
 
-export function useScrollRestoration<T extends HTMLElement>(
-  options: UseScrollRestorationOptions = {},
-): RefObject<T> {
+export function useScrollRestoration<T extends HTMLElement>(options: UseScrollRestorationOptions = {}): RefObject<T> {
   const { resetOnMount = false } = options
   const scrollRef = useRef<T>(null!)
   const location = useLocation()
   const navigationType = useNavigationType()
-  const { saveScrollPosition, getScrollPosition, clearScrollPosition } =
-    useScrollRestorationContext()
+  const { saveScrollPosition, getScrollPosition, clearScrollPosition } = useScrollRestorationContext()
 
   useEffect(() => {
     const element = scrollRef.current

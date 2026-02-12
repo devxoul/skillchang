@@ -1,12 +1,12 @@
+// @vitest-environment jsdom
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { MemoryRouter } from 'react-router-dom'
+import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest'
 import { ScrollRestorationProvider } from '@/contexts/scroll-context'
 import { SkillsProvider } from '@/contexts/skills-context'
-import * as cli from '@/lib/cli'
 import type { SkillInfo } from '@/lib/cli'
+import * as cli from '@/lib/cli'
 import InstalledSkillsView from '@/views/installed-skills-view'
-// @vitest-environment jsdom
-import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
-import { MemoryRouter } from 'react-router-dom'
-import { type Mock, afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 vi.mock('@/lib/cli', () => ({
   listSkills: vi.fn(),
@@ -395,9 +395,7 @@ describe('InstalledSkillItem click-twice-to-delete', () => {
 
   it('second click within 2s calls onRemove', async () => {
     // given: skill is rendered
-    ;(cli.listSkills as Mock)
-      .mockResolvedValueOnce([mockSkills[0]])
-      .mockResolvedValueOnce([mockSkills[1]!])
+    ;(cli.listSkills as Mock).mockResolvedValueOnce([mockSkills[0]]).mockResolvedValueOnce([mockSkills[1]!])
     ;(cli.removeSkill as Mock).mockResolvedValue(undefined)
     renderWithProvider(<InstalledSkillsView scope="global" />)
     await waitFor(() => expect(screen.getByText('skill-1')).toBeInTheDocument())

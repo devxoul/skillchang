@@ -1,14 +1,6 @@
+import { createContext, type ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { getProjects, importProject, removeProject, reorderProjects } from '@/lib/projects'
 import type { Project } from '@/types/project'
-import {
-  type ReactNode,
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react'
 
 interface ProjectsContextValue {
   projects: Project[]

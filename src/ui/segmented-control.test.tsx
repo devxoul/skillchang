@@ -33,12 +33,7 @@ describe('SegmentedControl', () => {
   it('calls onValueChange when selection changes', () => {
     const onValueChange = vi.fn()
     render(
-      <SegmentedControl
-        options={options}
-        defaultValue="global"
-        onValueChange={onValueChange}
-        aria-label="Scope"
-      />,
+      <SegmentedControl options={options} defaultValue="global" onValueChange={onValueChange} aria-label="Scope" />,
     )
 
     fireEvent.click(screen.getByRole('radio', { name: 'Project' }))
@@ -49,14 +44,7 @@ describe('SegmentedControl', () => {
   it('works as controlled component', () => {
     function ControlledTest() {
       const [value, setValue] = useState('global')
-      return (
-        <SegmentedControl
-          options={options}
-          value={value}
-          onValueChange={setValue}
-          aria-label="Scope"
-        />
-      )
+      return <SegmentedControl options={options} value={value} onValueChange={setValue} aria-label="Scope" />
     }
 
     render(<ControlledTest />)

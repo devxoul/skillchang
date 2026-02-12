@@ -1,10 +1,10 @@
+import { render, screen, waitFor } from '@testing-library/react'
+import { MemoryRouter, Route, Routes } from 'react-router-dom'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { ProjectsProvider } from '@/contexts/projects-context'
 import { ScrollRestorationProvider } from '@/contexts/scroll-context'
 import { SkillsProvider } from '@/contexts/skills-context'
 import { SkillDetailView } from '@/views/skill-detail-view'
-import { render, screen, waitFor } from '@testing-library/react'
-import { MemoryRouter, Route, Routes } from 'react-router-dom'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 const mockApiSkills = [
   {

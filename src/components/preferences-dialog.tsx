@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { AgentIcon } from '@/components/agent-icon'
 import { AGENTS } from '@/data/agents'
 import { usePreferences } from '@/hooks/use-preferences'
@@ -6,7 +7,6 @@ import { Button } from '@/ui/button'
 import { Checkbox } from '@/ui/checkbox'
 import { DialogBackdrop, DialogContent, DialogPortal, DialogRoot, DialogTitle } from '@/ui/dialog'
 import { SegmentedControl } from '@/ui/segmented-control'
-import { useEffect, useState } from 'react'
 
 const PACKAGE_MANAGER_OPTIONS = [
   { value: 'npx', label: 'npx' },
@@ -32,9 +32,7 @@ export function PreferencesDialog({ open, onOpenChange }: PreferencesDialogProps
   }, [open, preferences.defaultAgents, preferences.packageManager])
 
   const handleToggleAgent = (agent: string) => {
-    setSelectedAgents((prev) =>
-      prev.includes(agent) ? prev.filter((a) => a !== agent) : [...prev, agent],
-    )
+    setSelectedAgents((prev) => (prev.includes(agent) ? prev.filter((a) => a !== agent) : [...prev, agent]))
   }
 
   const handleSave = async () => {
@@ -51,12 +49,10 @@ export function PreferencesDialog({ open, onOpenChange }: PreferencesDialogProps
 
           <div className="space-y-4">
             <div>
-              <span className="text-[11px] font-medium uppercase tracking-wide text-foreground/40">
+              <span className="text-[11px] font-medium tracking-wide text-foreground/40 uppercase">
                 Package Manager
               </span>
-              <p className="mt-1 text-[12px] text-foreground/40">
-                Package runner used when adding skills
-              </p>
+              <p className="mt-1 text-[12px] text-foreground/40">Package runner used when adding skills</p>
               <div className="mt-3">
                 <SegmentedControl
                   options={PACKAGE_MANAGER_OPTIONS}
@@ -68,9 +64,7 @@ export function PreferencesDialog({ open, onOpenChange }: PreferencesDialogProps
             </div>
 
             <div>
-              <span className="text-[11px] font-medium uppercase tracking-wide text-foreground/40">
-                Default Agents
-              </span>
+              <span className="text-[11px] font-medium tracking-wide text-foreground/40 uppercase">Default Agents</span>
               <p className="mt-1 text-[12px] text-foreground/40">
                 These agents will be pre-selected when adding skills
               </p>

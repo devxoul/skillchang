@@ -1,8 +1,8 @@
-import { ErrorBoundary } from '@/components/error-boundary'
-import { InlineError } from '@/components/inline-error'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { expect, test, vi } from 'vitest'
+import { expect, test } from 'vitest'
+import { ErrorBoundary } from '@/components/error-boundary'
+import { InlineError } from '@/components/inline-error'
 
 // Test component that throws an error
 const ThrowError = () => {
@@ -19,7 +19,7 @@ test('ErrorBoundary catches errors and displays fallback UI', () => {
   // When: Component throws an error
   // Then: ErrorBoundary should catch it and display error UI
 
-  const { container } = render(
+  render(
     <ErrorBoundary>
       <ThrowError />
     </ErrorBoundary>,
@@ -35,7 +35,7 @@ test('ErrorBoundary displays error message from caught error', () => {
   // When: Error is caught
   // Then: Error message should be displayed
 
-  const { container } = render(
+  render(
     <ErrorBoundary>
       <ThrowError />
     </ErrorBoundary>,

@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+
 // @vitest-environment jsdom
 
 const mockExecute = vi.fn()
@@ -21,14 +22,7 @@ vi.mock('@tauri-apps/api/path', () => ({
 }))
 
 import { fetch } from '@tauri-apps/plugin-http'
-import {
-  addSkill,
-  checkUpdates,
-  checkUpdatesApi,
-  listSkills,
-  parseUpdateCheckOutput,
-  removeSkill,
-} from './cli'
+import { addSkill, checkUpdates, checkUpdatesApi, listSkills, parseUpdateCheckOutput, removeSkill } from './cli'
 
 const mockFetch = fetch as ReturnType<typeof vi.fn>
 
@@ -74,11 +68,7 @@ describe('cli', () => {
       await listSkills({ agents: ['agent1', 'agent2'] })
 
       const { Command } = await import('@tauri-apps/plugin-shell')
-      expect(Command.create).toHaveBeenCalledWith(
-        'npx',
-        ['-y', 'skills', 'list', '-a', 'agent1,agent2'],
-        undefined,
-      )
+      expect(Command.create).toHaveBeenCalledWith('npx', ['-y', 'skills', 'list', '-a', 'agent1,agent2'], undefined)
     })
 
     it('calls npx skills list with cwd option', async () => {
@@ -166,11 +156,7 @@ my-skill    /Users/test/.skills/my-skill
       await addSkill('github:user/repo')
 
       const { Command } = await import('@tauri-apps/plugin-shell')
-      expect(Command.create).toHaveBeenCalledWith(
-        'npx',
-        ['-y', 'skills', 'add', 'github:user/repo'],
-        undefined,
-      )
+      expect(Command.create).toHaveBeenCalledWith('npx', ['-y', 'skills', 'add', 'github:user/repo'], undefined)
     })
 
     it('calls npx skills add with all options', async () => {
@@ -190,18 +176,7 @@ my-skill    /Users/test/.skills/my-skill
       const { Command } = await import('@tauri-apps/plugin-shell')
       expect(Command.create).toHaveBeenCalledWith(
         'npx',
-        [
-          '-y',
-          'skills',
-          'add',
-          'github:user/repo',
-          '-g',
-          '-a',
-          'agent1',
-          '-s',
-          'skill1,skill2',
-          '-y',
-        ],
+        ['-y', 'skills', 'add', 'github:user/repo', '-g', '-a', 'agent1', '-s', 'skill1,skill2', '-y'],
         undefined,
       )
     })
@@ -249,11 +224,7 @@ my-skill    /Users/test/.skills/my-skill
       await removeSkill('skill-name')
 
       const { Command } = await import('@tauri-apps/plugin-shell')
-      expect(Command.create).toHaveBeenCalledWith(
-        'npx',
-        ['-y', 'skills', 'remove', 'skill-name', '-y'],
-        undefined,
-      )
+      expect(Command.create).toHaveBeenCalledWith('npx', ['-y', 'skills', 'remove', 'skill-name', '-y'], undefined)
     })
 
     it('calls npx skills remove with options', async () => {
@@ -286,11 +257,9 @@ my-skill    /Users/test/.skills/my-skill
       await removeSkill('skill-name', { cwd: '/path/to/project' })
 
       const { Command } = await import('@tauri-apps/plugin-shell')
-      expect(Command.create).toHaveBeenCalledWith(
-        'npx',
-        ['-y', 'skills', 'remove', 'skill-name', '-y'],
-        { cwd: '/path/to/project' },
-      )
+      expect(Command.create).toHaveBeenCalledWith('npx', ['-y', 'skills', 'remove', 'skill-name', '-y'], {
+        cwd: '/path/to/project',
+      })
     })
 
     it('throws error on non-zero exit code', async () => {

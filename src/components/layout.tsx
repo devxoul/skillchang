@@ -1,6 +1,6 @@
+import { useState } from 'react'
 import { useProjects } from '@/contexts/projects-context'
 import { useKeyboardShortcuts } from '@/hooks/use-keyboard-shortcuts'
-import { useState } from 'react'
 import { MainContent } from './main-content'
 import { PreferencesDialog } from './preferences-dialog'
 import { Sidebar } from './sidebar'

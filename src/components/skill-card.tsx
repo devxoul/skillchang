@@ -1,9 +1,9 @@
-import { AddSkillDialog } from '@/components/add-skill-dialog'
-import { usePreferences } from '@/hooks/use-preferences'
-import type { Skill } from '@/types/skill'
 import { GithubLogo, Plus } from '@phosphor-icons/react'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { AddSkillDialog } from '@/components/add-skill-dialog'
+import { usePreferences } from '@/hooks/use-preferences'
+import type { Skill } from '@/types/skill'
 
 interface SkillCardProps {
   skill: Skill
@@ -59,7 +59,7 @@ export function SkillCard({ skill, onAdd }: SkillCardProps) {
         <button
           type="button"
           onClick={handleOpenDialog}
-          className="shrink-0 cursor-pointer rounded-md p-1.5 text-foreground/40 opacity-0 transition-all duration-150 hover:bg-white/[0.1] hover:text-foreground/70 group-hover:opacity-100"
+          className="shrink-0 cursor-pointer rounded-md p-1.5 text-foreground/40 opacity-0 transition-all duration-150 group-hover:opacity-100 hover:bg-white/[0.1] hover:text-foreground/70"
           aria-label="Add skill"
         >
           <Plus size={16} weight="bold" />

@@ -1,5 +1,5 @@
 import { clsx } from 'clsx'
-import { type InputHTMLAttributes, forwardRef } from 'react'
+import { forwardRef, type InputHTMLAttributes } from 'react'
 
 type InputSize = 'sm' | 'md' | 'lg'
 

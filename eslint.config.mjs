@@ -1,5 +1,5 @@
-import betterTailwindcss from 'eslint-plugin-better-tailwindcss'
 import { defineConfig } from 'eslint/config'
+import betterTailwindcss from 'eslint-plugin-better-tailwindcss'
 import tseslint from 'typescript-eslint'
 
 export default defineConfig(

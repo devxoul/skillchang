@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, type Mock } from 'vitest'
+import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest'
 
 const mockStore = {
   get: vi.fn(),
@@ -17,13 +17,7 @@ vi.mock('@tauri-apps/plugin-store', () => ({
 }))
 
 import { open } from '@tauri-apps/plugin-dialog'
-import {
-  getProjects,
-  addProject,
-  removeProject,
-  reorderProjects,
-  importProject,
-} from '@/lib/projects'
+import { addProject, getProjects, importProject, removeProject, reorderProjects } from '@/lib/projects'
 
 describe('projects', () => {
   beforeEach(() => {
