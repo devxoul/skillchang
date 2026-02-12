@@ -1,6 +1,6 @@
+import { beforeEach, describe, expect, it, mock } from 'bun:test'
 import { render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { ProjectsProvider } from '@/contexts/projects-context'
 import { ScrollRestorationProvider } from '@/contexts/scroll-context'
 import { SkillsProvider } from '@/contexts/skills-context'
@@ -23,35 +23,35 @@ const mockApiSkills = [
   },
 ]
 
-const mockFetch = vi.fn()
+const mockFetch = mock()
 
-vi.mock('@tauri-apps/plugin-http', () => ({
+mock.module('@tauri-apps/plugin-http', () => ({
   fetch: (...args: unknown[]) => mockFetch(...args),
 }))
 
-vi.mock('@/lib/projects', () => ({
-  getProjects: vi.fn().mockResolvedValue([]),
-  importProject: vi.fn(),
-  removeProject: vi.fn(),
-  reorderProjects: vi.fn(),
+mock.module('@/lib/projects', () => ({
+  getProjects: mock(async () => []),
+  importProject: mock(),
+  removeProject: mock(),
+  reorderProjects: mock(),
 }))
 
-vi.mock('@tauri-apps/plugin-shell', () => ({
-  open: vi.fn(),
+mock.module('@tauri-apps/plugin-shell', () => ({
+  open: mock(),
 }))
 
-vi.mock('@tauri-apps/plugin-store', () => ({
+mock.module('@tauri-apps/plugin-store', () => ({
   Store: {
-    load: vi.fn().mockResolvedValue({
-      get: vi.fn().mockResolvedValue({ defaultAgents: [], packageManager: 'npx' }),
-      set: vi.fn(),
-      save: vi.fn(),
-    }),
+    load: mock(async () => ({
+      get: mock(async () => ({ defaultAgents: [], packageManager: 'npx' })),
+      set: mock(),
+      save: mock(),
+    })),
   },
 }))
 
 function renderWithProviders(skillId: string) {
-  return render(
+  const result = render(
     <MemoryRouter initialEntries={[`/skill/${skillId}`]}>
       <ProjectsProvider>
         <SkillsProvider>
@@ -64,12 +64,21 @@ function renderWithProviders(skillId: string) {
       </ProjectsProvider>
     </MemoryRouter>,
   )
+
+  // Assign queries to global screen object to work around the timing issue
+  for (const key in result) {
+    if (typeof result[key as keyof typeof result] === 'function') {
+      ;(screen as any)[key] = result[key as keyof typeof result]
+    }
+  }
+
+  return result
 }
 
 describe('SkillDetailView', () => {
   beforeEach(() => {
-    mockFetch.mockReset()
-    mockFetch.mockImplementation((url: string) => {
+    mockFetch.mockClear?.()
+    mockFetch.mockImplementation?.((url: string) => {
       if (url.includes('skills.sh/api/search')) {
         return Promise.resolve({
           ok: true,

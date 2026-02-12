@@ -1,6 +1,6 @@
+import { describe, expect, it, mock } from 'bun:test'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
-import { describe, expect, it, vi } from 'vitest'
 import { ProjectsProvider } from '@/contexts/projects-context'
 import { ScrollRestorationProvider } from '@/contexts/scroll-context'
 import { SkillsProvider } from '@/contexts/skills-context'
@@ -24,22 +24,22 @@ const mockApiSkills = [
   },
 ]
 
-vi.mock('@tauri-apps/plugin-http', () => ({
-  fetch: vi.fn().mockResolvedValue({
+mock.module('@tauri-apps/plugin-http', () => ({
+  fetch: mock(async () => ({
     ok: true,
-    json: async () => ({ skills: mockApiSkills, count: mockApiSkills.length }),
-  }),
+    json: mock(async () => ({ skills: mockApiSkills, count: mockApiSkills.length })),
+  })),
 }))
 
-vi.mock('@/lib/projects', () => ({
-  getProjects: vi.fn().mockResolvedValue([]),
-  importProject: vi.fn(),
-  removeProject: vi.fn(),
-  reorderProjects: vi.fn(),
+mock.module('@/lib/projects', () => ({
+  getProjects: mock(async () => []),
+  importProject: mock(),
+  removeProject: mock(),
+  reorderProjects: mock(),
 }))
 
 function renderWithProviders() {
-  return render(
+  const result = render(
     <MemoryRouter>
       <ProjectsProvider>
         <SkillsProvider>
@@ -50,6 +50,15 @@ function renderWithProviders() {
       </ProjectsProvider>
     </MemoryRouter>,
   )
+
+  // Assign queries to global screen object to work around the timing issue
+  for (const key in result) {
+    if (typeof result[key as keyof typeof result] === 'function') {
+      ;(screen as any)[key] = result[key as keyof typeof result]
+    }
+  }
+
+  return result
 }
 
 describe('SkillGalleryView', () => {
