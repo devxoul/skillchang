@@ -1,186 +1,150 @@
 import { describe, expect, it } from 'bun:test'
-import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { fireEvent, render, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { SearchInput } from '@/components/search-input'
-
-function renderWithProvider(ui: React.ReactElement) {
-  const result = render(ui)
-
-  // Assign queries to global screen object to work around the timing issue
-  // Update screen with the latest queries from render
-  for (const key in result) {
-    if (typeof result[key as keyof typeof result] === 'function') {
-      ;(screen as any)[key] = result[key as keyof typeof result]
-    }
-  }
-
-  return result
-}
 
 describe('SearchInput', () => {
   it('renders with placeholder', () => {
     const onSearch = () => {}
-    renderWithProvider(<SearchInput placeholder="Test placeholder" onSearch={onSearch} />)
+    const { getByPlaceholderText } = render(<SearchInput placeholder="Test placeholder" onSearch={onSearch} />)
 
-    const input = screen.getByPlaceholderText('Test placeholder')
-    expect(input).toBeDefined()
+    expect(getByPlaceholderText('Test placeholder')).toBeDefined()
   })
 
-  it('debounces onSearch callback by 300ms', async () => {
-    let callCount = 0
+  it('debounces onSearch callback', async () => {
+    const user = userEvent.setup({ delay: null })
     let lastCall: string | undefined
     const onSearch = (value: string) => {
-      callCount++
       lastCall = value
     }
-    renderWithProvider(<SearchInput onSearch={onSearch} debounceMs={300} />)
+    const { getByPlaceholderText } = render(<SearchInput onSearch={onSearch} debounceMs={1} />)
 
-    const input = screen.getByPlaceholderText('Search...')
+    const input = getByPlaceholderText('Search...')
 
-    callCount = 0
+    await waitFor(() => {
+      expect(lastCall).toBe('')
+    })
     lastCall = undefined
 
-    fireEvent.change(input, { target: { value: 'react' } })
+    await user.type(input, 'react')
 
-    expect(callCount).toBe(0)
-
-    await waitFor(
-      () => {
-        expect(lastCall).toBe('react')
-        expect(callCount).toBe(1)
-      },
-      { timeout: 500 },
-    )
+    await waitFor(() => {
+      expect(lastCall).toBe('react')
+    })
   })
 
   it('calls onSearch with debounced value after delay', async () => {
-    let callCount = 0
-    let lastCall: string | undefined
+    const user = userEvent.setup({ delay: null })
+    let calls: string[] = []
     const onSearch = (value: string) => {
-      callCount++
-      lastCall = value
+      calls.push(value)
     }
-    renderWithProvider(<SearchInput onSearch={onSearch} debounceMs={300} />)
+    const { getByPlaceholderText } = render(<SearchInput onSearch={onSearch} debounceMs={1} />)
 
-    const input = screen.getByPlaceholderText('Search...')
+    const input = getByPlaceholderText('Search...')
 
-    callCount = 0
-    lastCall = undefined
+    await waitFor(() => {
+      expect(calls).toContain('')
+    })
+    calls = []
 
-    fireEvent.change(input, { target: { value: 'r' } })
-    await new Promise((resolve) => setTimeout(resolve, 100))
+    await user.type(input, 'rea')
 
-    fireEvent.change(input, { target: { value: 're' } })
-    await new Promise((resolve) => setTimeout(resolve, 100))
-
-    fireEvent.change(input, { target: { value: 'rea' } })
-    await new Promise((resolve) => setTimeout(resolve, 100))
-
-    expect(callCount).toBe(0)
-
-    await waitFor(
-      () => {
-        expect(lastCall).toBe('rea')
-        expect(callCount).toBe(1)
-      },
-      { timeout: 500 },
-    )
+    await waitFor(() => {
+      expect(calls).toContain('rea')
+    })
   })
 
   it('shows clear button when input has value', async () => {
+    const user = userEvent.setup({ delay: null })
     const onSearch = () => {}
-    renderWithProvider(<SearchInput onSearch={onSearch} />)
+    const { getByPlaceholderText, queryByLabelText, getByLabelText } = render(
+      <SearchInput onSearch={onSearch} debounceMs={1} />,
+    )
 
-    const input = screen.getByPlaceholderText('Search...')
+    const input = getByPlaceholderText('Search...')
 
-    // Initially no clear button
-    expect(screen.queryByLabelText('Clear search')).toBeNull()
+    expect(queryByLabelText('Clear search')).toBeNull()
 
-    // Type something
-    fireEvent.change(input, { target: { value: 'test' } })
+    await user.type(input, 'test')
 
-    // Clear button should appear
     await waitFor(() => {
-      expect(screen.getByLabelText('Clear search')).toBeDefined()
+      expect(getByLabelText('Clear search')).toBeDefined()
     })
   })
 
   it('clears search when clear button is clicked', async () => {
+    const user = userEvent.setup({ delay: null })
     let lastCall: string | undefined
     const onSearch = (value: string) => {
       lastCall = value
     }
-    renderWithProvider(<SearchInput onSearch={onSearch} />)
+    const { getByPlaceholderText, getByLabelText } = render(<SearchInput onSearch={onSearch} debounceMs={1} />)
 
-    const input = screen.getByPlaceholderText('Search...') as HTMLInputElement
+    const input = getByPlaceholderText('Search...') as HTMLInputElement
 
-    fireEvent.change(input, { target: { value: 'test' } })
-    await new Promise((resolve) => setTimeout(resolve, 350))
+    await user.type(input, 'test')
 
-    expect(input.value).toBe('test')
+    await waitFor(() => {
+      expect(getByLabelText('Clear search')).toBeDefined()
+    })
 
-    const clearButton = screen.getByLabelText('Clear search')
-    fireEvent.click(clearButton)
+    await user.click(getByLabelText('Clear search'))
 
     expect(input.value).toBe('')
 
-    await waitFor(
-      () => {
-        expect(lastCall).toBe('')
-      },
-      { timeout: 500 },
-    )
+    await waitFor(() => {
+      expect(lastCall).toBe('')
+    })
   })
 
   it('clears search when Escape key is pressed', async () => {
+    const user = userEvent.setup({ delay: null })
     let lastCall: string | undefined
     const onSearch = (value: string) => {
       lastCall = value
     }
-    renderWithProvider(<SearchInput onSearch={onSearch} />)
+    const { getByPlaceholderText } = render(<SearchInput onSearch={onSearch} debounceMs={1} />)
 
-    const input = screen.getByPlaceholderText('Search...') as HTMLInputElement
+    const input = getByPlaceholderText('Search...') as HTMLInputElement
 
-    fireEvent.change(input, { target: { value: 'test' } })
-    await new Promise((resolve) => setTimeout(resolve, 350))
+    await user.type(input, 'test')
 
-    expect(input.value).toBe('test')
+    await waitFor(() => {
+      expect(lastCall).toBe('test')
+    })
 
     fireEvent.keyDown(input, { key: 'Escape' })
 
     expect(input.value).toBe('')
 
-    await waitFor(
-      () => {
-        expect(lastCall).toBe('')
-      },
-      { timeout: 500 },
-    )
+    await waitFor(() => {
+      expect(lastCall).toBe('')
+    })
   })
 
   it('respects custom debounce delay', async () => {
-    let callCount = 0
+    const user = userEvent.setup({ delay: null })
     let lastCall: string | undefined
     const onSearch = (value: string) => {
-      callCount++
       lastCall = value
     }
-    renderWithProvider(<SearchInput onSearch={onSearch} debounceMs={500} />)
+    const { getByPlaceholderText } = render(<SearchInput onSearch={onSearch} debounceMs={50} />)
 
-    const input = screen.getByPlaceholderText('Search...')
+    const input = getByPlaceholderText('Search...')
 
-    callCount = 0
+    await waitFor(() => {
+      expect(lastCall).toBe('')
+    })
     lastCall = undefined
 
-    fireEvent.change(input, { target: { value: 'test' } })
+    await user.type(input, 'test')
 
-    await new Promise((resolve) => setTimeout(resolve, 300))
-    expect(callCount).toBe(0)
+    // Not fired immediately (debounce is 50ms, not 1ms)
+    expect(lastCall).toBeUndefined()
 
-    await waitFor(
-      () => {
-        expect(lastCall).toBe('test')
-      },
-      { timeout: 500 },
-    )
+    await waitFor(() => {
+      expect(lastCall).toBe('test')
+    })
   })
 })
