@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "tauri dev",
     "build": "tauri build",
+    "dev:vite": "vite",
+    "build:vite": "vite build",
     "typecheck": "tsc --noEmit",
     "lint": "biome check . & eslint .",
     "lint:fix": "biome check --write --unsafe . & eslint --fix .",
