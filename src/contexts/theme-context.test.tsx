@@ -1,13 +1,14 @@
-import { render, waitFor } from '@testing-library/react'
-import { describe, expect, it, vi } from 'vitest'
-import { ThemeProvider, useTheme } from '@/contexts/theme-context'
+import { describe, expect, it, mock } from 'bun:test'
 
-vi.mock('@tauri-apps/api/window', () => ({
+mock.module('@tauri-apps/api/window', () => ({
   getCurrentWindow: () => ({
-    theme: vi.fn().mockResolvedValue('light'),
-    onThemeChanged: vi.fn().mockResolvedValue(() => {}),
+    theme: mock(() => Promise.resolve('light')),
+    onThemeChanged: mock(() => Promise.resolve(() => {})),
   }),
 }))
+
+import { render, waitFor } from '@testing-library/react'
+import { ThemeProvider, useTheme } from '@/contexts/theme-context'
 
 describe('ThemeContext', () => {
   it('provides theme context to children', async () => {
