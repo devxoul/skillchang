@@ -1,6 +1,8 @@
 import { Layout } from '@/components/layout'
 import { MainContent } from '@/components/main-content'
 import { Sidebar } from '@/components/sidebar'
+import { ProjectsProvider } from '@/contexts/projects-context'
+import { ScrollRestorationProvider } from '@/contexts/scroll-context'
 import { SkillsProvider } from '@/contexts/skills-context'
 import { render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
@@ -10,21 +12,29 @@ vi.mock('@/lib/cli', () => ({
   listSkills: vi.fn().mockResolvedValue([]),
 }))
 
-vi.mock('@/hooks/use-projects', () => ({
-  useProjects: vi.fn(() => ({
-    projects: [],
-    loading: false,
-    importProject: vi.fn(),
-    removeProject: vi.fn(),
-    reorderProjects: vi.fn(),
-  })),
+vi.mock('@/lib/projects', () => ({
+  getProjects: vi.fn().mockResolvedValue([]),
+  importProject: vi.fn(),
+  removeProject: vi.fn(),
+  reorderProjects: vi.fn(),
+}))
+
+vi.mock('@tauri-apps/plugin-http', () => ({
+  fetch: vi.fn().mockResolvedValue({
+    ok: true,
+    json: vi.fn().mockResolvedValue([]),
+  }),
 }))
 
 const renderWithProviders = (ui: React.ReactElement, { route = '/' } = {}) => {
   return render(
-    <SkillsProvider>
-      <MemoryRouter initialEntries={[route]}>{ui}</MemoryRouter>
-    </SkillsProvider>,
+    <ProjectsProvider>
+      <SkillsProvider>
+        <ScrollRestorationProvider>
+          <MemoryRouter initialEntries={[route]}>{ui}</MemoryRouter>
+        </ScrollRestorationProvider>
+      </SkillsProvider>
+    </ProjectsProvider>,
   )
 }
 
