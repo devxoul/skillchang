@@ -1,6 +1,6 @@
 import { ArrowLeft, FolderOpen, GithubLogo, Globe, Plus, SpinnerGap, Warning } from '@phosphor-icons/react'
 import { open } from '@tauri-apps/plugin-shell'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import Markdown from 'react-markdown'
 import { useNavigate, useParams } from 'react-router-dom'
 import remarkGfm from 'remark-gfm'
@@ -11,6 +11,8 @@ import { useGallerySkills, useSkills } from '@/contexts/skills-context'
 import { usePreferences } from '@/hooks/use-preferences'
 import { useScrollRestoration } from '@/hooks/use-scroll-restoration'
 import { fetchSkillReadme } from '@/lib/api'
+import { readLocalSkillMd, type SkillInfo } from '@/lib/cli'
+import type { Skill } from '@/types/skill'
 
 function formatInstalls(count: number): string {
   if (count >= 1000000) return `${(count / 1000000).toFixed(1)}M`
@@ -28,6 +30,15 @@ function getSourceOrg(source: string | undefined): string {
   return source.split('/')[0] || source
 }
 
+function installedSkillToSkill(info: SkillInfo): Skill {
+  return {
+    id: info.name,
+    name: info.name,
+    installs: 0,
+    topSource: '',
+  }
+}
+
 export function SkillDetailView() {
   const { '*': skillId } = useParams()
   const navigate = useNavigate()
@@ -42,26 +53,40 @@ export function SkillDetailView() {
   const [readmeError, setReadmeError] = useState<string | null>(null)
   const [showDialog, setShowDialog] = useState(false)
 
-  const skill = gallerySkills.find((s) => s.id === skillId || s.name === skillId)
+  const gallerySkill = gallerySkills.find((s) => s.id === skillId || s.name === skillId)
+
+  const installedSkill = useMemo(() => {
+    const allInstalled = Object.values(installed.cache).flatMap((entry) => entry.skills)
+    return allInstalled.find((s) => s.name === skillId || skillId?.endsWith(s.name)) ?? null
+  }, [installed.cache, skillId])
+
+  const skill = gallerySkill ?? (installedSkill ? installedSkillToSkill(installedSkill) : null)
 
   useEffect(() => {
-    if (!skill && !galleryLoading && gallerySkills.length === 0) {
+    if (!gallerySkill && !galleryLoading && gallerySkills.length === 0) {
       fetchGallery()
     }
-  }, [skill, galleryLoading, gallerySkills.length, fetchGallery])
+  }, [gallerySkill, galleryLoading, gallerySkills.length, fetchGallery])
 
   useEffect(() => {
-    if (skill?.topSource && skill?.name) {
-      setReadmeLoading(true)
-      setReadmeError(null)
-      fetchSkillReadme(skill.topSource, skill.name)
-        .then(setReadme)
-        .catch((err) => {
-          setReadmeError(err instanceof Error ? err.message : 'Failed to load SKILL.md')
-        })
-        .finally(() => setReadmeLoading(false))
-    }
-  }, [skill?.topSource, skill?.name])
+    if (!skill?.name) return
+    setReadmeLoading(true)
+    setReadmeError(null)
+
+    const fetchRemote = skill.topSource
+      ? fetchSkillReadme(skill.topSource, skill.name)
+      : Promise.reject(new Error('No remote source'))
+
+    fetchRemote
+      .catch(() =>
+        installedSkill ? readLocalSkillMd(installedSkill.path) : Promise.reject(new Error('Failed to load SKILL.md')),
+      )
+      .then(setReadme)
+      .catch((err) => {
+        setReadmeError(err instanceof Error ? err.message : 'Failed to load SKILL.md')
+      })
+      .finally(() => setReadmeLoading(false))
+  }, [skill?.topSource, skill?.name, installedSkill])
 
   useEffect(() => {
     fetchInstalledSkills({ global: true })
@@ -102,7 +127,7 @@ export function SkillDetailView() {
     navigate(-1)
   }
 
-  const isLoading = !skill && (galleryLoading || gallerySkills.length === 0)
+  const isLoading = !skill && (galleryLoading || gallerySkills.length === 0) && !installedSkill
   const isNotFound = !skill && !isLoading
 
   return (
@@ -130,8 +155,10 @@ export function SkillDetailView() {
           <p className="mt-0.5 h-[18px] text-[12px] text-foreground/40">
             {isLoading ? (
               <span className="inline-block h-2.5 w-20 animate-pulse rounded bg-foreground/10" />
-            ) : skill ? (
+            ) : skill?.topSource ? (
               <>from {getSourceOrg(skill.topSource)}</>
+            ) : installedSkill ? (
+              <>installed locally</>
             ) : null}
           </p>
         </div>
@@ -166,18 +193,22 @@ export function SkillDetailView() {
             <div className="mb-6 space-y-4">
               <div className="flex items-center gap-2">
                 <h2 className="text-2xl font-bold text-foreground">{skill.name}</h2>
-                <span className="rounded-full bg-white/[0.08] px-2 py-0.5 text-[12px] font-medium text-foreground/50">
-                  {formatInstalls(skill.installs)} installs
-                </span>
+                {skill.installs > 0 && (
+                  <span className="rounded-full bg-white/[0.08] px-2 py-0.5 text-[12px] font-medium text-foreground/50">
+                    {formatInstalls(skill.installs)} installs
+                  </span>
+                )}
               </div>
-              <button
-                type="button"
-                onClick={() => open(`https://github.com/${skill.topSource}`)}
-                className="inline-flex cursor-pointer items-center gap-2 rounded-lg bg-white/[0.03] px-3 py-2 text-[13px] text-foreground/70 transition-colors hover:bg-white/[0.06] hover:text-foreground"
-              >
-                <GithubLogo size={16} weight="fill" />
-                <span>{skill.topSource}</span>
-              </button>
+              {skill.topSource && (
+                <button
+                  type="button"
+                  onClick={() => open(`https://github.com/${skill.topSource}`)}
+                  className="inline-flex cursor-pointer items-center gap-2 rounded-lg bg-white/[0.03] px-3 py-2 text-[13px] text-foreground/70 transition-colors hover:bg-white/[0.06] hover:text-foreground"
+                >
+                  <GithubLogo size={16} weight="fill" />
+                  <span>{skill.topSource}</span>
+                </button>
+              )}
             </div>
 
             {(getInstallationStatus('global').installed ||

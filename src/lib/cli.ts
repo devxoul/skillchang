@@ -355,6 +355,21 @@ export function parseUpdateOutput(output: string): UpdateSkillsResult {
   return result
 }
 
+export async function readLocalSkillMd(skillPath: string): Promise<string> {
+  const paths = [`${skillPath}/SKILL.md`, skillPath]
+
+  for (const path of paths) {
+    try {
+      const result = await Command.create('cat', [path]).execute()
+      if (result.code === 0 && result.stdout.trim()) {
+        return result.stdout
+      }
+    } catch {}
+  }
+
+  throw new Error(`No local SKILL.md found at ${skillPath}`)
+}
+
 export function parseUpdateCheckOutput(output: string): UpdateCheckResult {
   const result: UpdateCheckResult = {
     totalChecked: 0,
