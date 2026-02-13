@@ -4,6 +4,7 @@
   "description": "A Tauri v2 desktop application built with React, TypeScript, and Bun",
   "type": "module",
   "scripts": {
+    "clean": "cargo clean --manifest-path src-tauri/Cargo.toml && rm -rf dist node_modules/.vite",
     "dev": "tauri dev",
     "build": "tauri build",
     "dev:vite": "vite",
