@@ -5,6 +5,7 @@ import { ProjectsProvider } from '@/contexts/projects-context'
 import { ScrollRestorationProvider } from '@/contexts/scroll-context'
 import { SkillsProvider } from '@/contexts/skills-context'
 import * as api from '@/lib/api'
+import * as cli from '@/lib/cli'
 import { SkillDetailView } from '@/views/skill-detail-view'
 
 const mockApiSkills = [
@@ -26,6 +27,8 @@ const mockApiSkills = [
 
 let fetchSkillsSpy: ReturnType<typeof spyOn>
 let fetchSkillReadmeSpy: ReturnType<typeof spyOn>
+let readLocalSkillMdSpy: ReturnType<typeof spyOn>
+let listSkillsSpy: ReturnType<typeof spyOn>
 
 function renderWithProviders(skillId: string) {
   const result = render(
@@ -63,11 +66,15 @@ describe('SkillDetailView', () => {
       })),
     )
     fetchSkillReadmeSpy = spyOn(api, 'fetchSkillReadme').mockResolvedValue('# Test Skill\n\nThis is a test README.')
+    readLocalSkillMdSpy = spyOn(cli, 'readLocalSkillMd').mockRejectedValue(new Error('No local SKILL.md'))
+    listSkillsSpy = spyOn(cli, 'listSkills').mockResolvedValue([])
   })
 
   afterEach(() => {
     fetchSkillsSpy.mockRestore()
     fetchSkillReadmeSpy.mockRestore()
+    readLocalSkillMdSpy.mockRestore()
+    listSkillsSpy.mockRestore()
   })
 
   it('renders loading state initially', () => {
@@ -149,7 +156,27 @@ describe('SkillDetailView', () => {
     })
 
     await waitFor(() => {
-      expect(screen.getByText(/Failed to fetch SKILL.md/)).toBeInTheDocument()
+      expect(screen.getByText(/Failed to load SKILL.md/)).toBeInTheDocument()
+    })
+  })
+
+  it('falls back to local SKILL.md when remote fetch fails', async () => {
+    // given - skill exists in gallery but README fetch fails, local installed copy exists
+    fetchSkillReadmeSpy.mockRejectedValue(new Error('Network error'))
+    readLocalSkillMdSpy.mockResolvedValue('# Local Skill\n\nLocal content.')
+    listSkillsSpy.mockResolvedValue([
+      { name: 'test-skill', path: '/home/.agents/skills/test-skill', agents: ['claude'] },
+    ])
+
+    renderWithProviders('vercel-labs/skills/test-skill')
+
+    await waitFor(() => {
+      expect(screen.getAllByText('test-skill').length).toBeGreaterThan(0)
+    })
+
+    await waitFor(() => {
+      expect(screen.getByText('Local Skill')).toBeInTheDocument()
+      expect(screen.getByText('Local content.')).toBeInTheDocument()
     })
   })
 
@@ -162,5 +189,69 @@ describe('SkillDetailView', () => {
 
     const githubButton = screen.getByRole('button', { name: /owner\/repo/i })
     expect(githubButton).toBeInTheDocument()
+  })
+
+  describe('local fallback', () => {
+    it('renders local-only skill when gallery has no match', async () => {
+      // given - gallery returns skills but none match, installed cache has the skill
+      fetchSkillsSpy.mockResolvedValue([])
+      listSkillsSpy.mockResolvedValue([
+        { name: 'local-skill', path: '/home/.agents/skills/local-skill', agents: ['claude'] },
+      ])
+      readLocalSkillMdSpy.mockResolvedValue('# Local Only\n\nLocal description.')
+
+      renderWithProviders('local-skill')
+
+      await waitFor(() => {
+        expect(screen.getAllByText('local-skill').length).toBeGreaterThan(0)
+      })
+
+      await waitFor(() => {
+        expect(screen.getByText('Local Only')).toBeInTheDocument()
+      })
+    })
+
+    it('hides installs badge for local-only skill', async () => {
+      // given - local-only skill has 0 installs
+      fetchSkillsSpy.mockResolvedValue([])
+      listSkillsSpy.mockResolvedValue([{ name: 'local-skill', path: '/home/.agents/skills/local-skill', agents: [] }])
+      readLocalSkillMdSpy.mockResolvedValue('# Local Skill')
+
+      renderWithProviders('local-skill')
+
+      await waitFor(() => {
+        expect(screen.getAllByText('local-skill').length).toBeGreaterThan(0)
+      })
+
+      expect(screen.queryByText(/installs/)).not.toBeInTheDocument()
+    })
+
+    it('hides GitHub button for local-only skill', async () => {
+      // given - local-only skill has no topSource
+      fetchSkillsSpy.mockResolvedValue([])
+      listSkillsSpy.mockResolvedValue([{ name: 'local-skill', path: '/home/.agents/skills/local-skill', agents: [] }])
+      readLocalSkillMdSpy.mockResolvedValue('# Local Skill')
+
+      renderWithProviders('local-skill')
+
+      await waitFor(() => {
+        expect(screen.getAllByText('local-skill').length).toBeGreaterThan(0)
+      })
+
+      expect(screen.queryByRole('button', { name: /github/i })).not.toBeInTheDocument()
+    })
+
+    it('shows "installed locally" subtitle for local-only skill', async () => {
+      // given - local-only skill with no remote source
+      fetchSkillsSpy.mockResolvedValue([])
+      listSkillsSpy.mockResolvedValue([{ name: 'local-skill', path: '/home/.agents/skills/local-skill', agents: [] }])
+      readLocalSkillMdSpy.mockResolvedValue('# Local Skill')
+
+      renderWithProviders('local-skill')
+
+      await waitFor(() => {
+        expect(screen.getByText('installed locally')).toBeInTheDocument()
+      })
+    })
   })
 })

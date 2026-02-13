@@ -50,7 +50,15 @@ mock.module('@tauri-apps/api/path', () => ({
 }))
 
 import { fetch } from '@tauri-apps/plugin-http'
-import { addSkill, checkUpdates, checkUpdatesApi, listSkills, parseUpdateCheckOutput, removeSkill } from './cli'
+import {
+  addSkill,
+  checkUpdates,
+  checkUpdatesApi,
+  listSkills,
+  parseUpdateCheckOutput,
+  readLocalSkillMd,
+  removeSkill,
+} from './cli'
 
 describe('cli', () => {
   beforeEach(() => {
@@ -59,9 +67,29 @@ describe('cli', () => {
     mockExecuteCalls = []
     mockFetchCalls = []
     mockCreateCalls = []
-    mockExecute.mockClear()
-    mockCreate.mockClear()
-    mockFetch.mockClear()
+    mockExecute.mockReset()
+    mockExecute.mockImplementation(async (...args: any[]) => {
+      mockExecuteCalls.push(args)
+      if (mockExecuteQueue.length > 0) {
+        const response = mockExecuteQueue.shift()
+        if (response instanceof Error) throw response
+        return response
+      }
+    })
+    mockCreate.mockReset()
+    mockCreate.mockImplementation((...args: any[]) => {
+      mockCreateCalls.push(args)
+      return { execute: mockExecute }
+    })
+    mockFetch.mockReset()
+    mockFetch.mockImplementation(async (...args: any[]) => {
+      mockFetchCalls.push(args)
+      if (mockFetchQueue.length > 0) {
+        const response = mockFetchQueue.shift()
+        if (response instanceof Error) throw response
+        return response
+      }
+    })
   })
 
   describe('listSkills', () => {
@@ -562,6 +590,57 @@ Could not check 5 skill(s) (may need reinstall)`
       })
 
       await expect(checkUpdatesApi()).rejects.toThrow('Failed to check updates via API')
+    })
+  })
+
+  describe('readLocalSkillMd', () => {
+    it('reads SKILL.md from skill directory', async () => {
+      mockExecuteQueue.push({
+        code: 0,
+        stdout: '# My Skill\n\nDescription here.',
+        stderr: '',
+      })
+
+      const result = await readLocalSkillMd('/home/.agents/skills/my-skill')
+
+      expect(mockCreateCalls[mockCreateCalls.length - 1]).toEqual(['cat', ['/home/.agents/skills/my-skill/SKILL.md']])
+      expect(result).toBe('# My Skill\n\nDescription here.')
+    })
+
+    it('falls back to skillPath directly when SKILL.md subpath fails', async () => {
+      // given - first attempt (path/SKILL.md) fails, second attempt (path itself) succeeds
+      mockExecuteQueue.push({ code: 1, stdout: '', stderr: 'No such file' })
+      mockExecuteQueue.push({
+        code: 0,
+        stdout: '# Direct Path Skill',
+        stderr: '',
+      })
+
+      const result = await readLocalSkillMd('/home/.agents/skills/my-skill/SKILL.md')
+
+      expect(result).toBe('# Direct Path Skill')
+    })
+
+    it('throws when no path yields content', async () => {
+      mockExecuteQueue.push({ code: 1, stdout: '', stderr: 'No such file' })
+      mockExecuteQueue.push({ code: 1, stdout: '', stderr: 'No such file' })
+
+      await expect(readLocalSkillMd('/nonexistent/path')).rejects.toThrow(
+        'No local SKILL.md found at /nonexistent/path',
+      )
+    })
+
+    it('skips empty stdout even on code 0', async () => {
+      mockExecuteQueue.push({ code: 0, stdout: '   ', stderr: '' })
+      mockExecuteQueue.push({
+        code: 0,
+        stdout: '# Fallback Content',
+        stderr: '',
+      })
+
+      const result = await readLocalSkillMd('/home/.agents/skills/my-skill')
+
+      expect(result).toBe('# Fallback Content')
     })
   })
 })
