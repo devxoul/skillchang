@@ -13,7 +13,8 @@
     "lint": "biome check . & eslint .",
     "lint:fix": "biome check --write --unsafe . & eslint --fix .",
     "format": "biome format --write .",
-    "test": "bun test"
+    "test": "bun test",
+    "test:e2e": "bunx playwright test"
   },
   "dependencies": {
     "@base-ui-components/react": "^1.0.0-alpha.12",
@@ -33,6 +34,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.3.15",
+    "@playwright/test": "^1.58.2",
     "@sinonjs/fake-timers": "^15.1.0",
     "@tailwindcss/vite": "^4.0.0",
     "@tauri-apps/cli": "^2.9.6",

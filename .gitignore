@@ -20,3 +20,7 @@ Thumbs.db
 
 # Sisyphus
 .sisyphus
+
+# Playwright
+test-results/
+playwright-report/
