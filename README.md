@@ -1,18 +1,25 @@
 # Skillchang (스킬창)
 
+![skillchang](https://github.com/user-attachments/assets/f2f2abe8-7408-41e2-a612-5ceb157ffde8)
+
 A desktop GUI wrapper for the [skills.sh](https://skills.sh) CLI tool. The name comes from Korean gaming terminology meaning "skill window/panel" where players manage their character skills.
+
+## Motivation
+
+Agent skills are powerful, and the skills CLI works well — but not everyone lives in the terminal. Skillchang gives you a visual way to browse, install, and manage skills without touching the command line.
 
 ## Features
 
-- 📦 Browse skills from skills.sh gallery
-- 🔍 Search skills with debounced filtering
-- ➕ Install skills to selected agents (global or project scope)
-- 🗑️ Remove installed skills
-- 📁 Manage multiple projects
-- ⚙️ Configure default agents in preferences
-- ⌨️ Keyboard shortcuts for navigation
-- 🌓 Automatic dark/light theme (follows system preference)
-- 💾 Window state persistence
+- Browse skills from skills.sh gallery
+- Search skills with debounced filtering
+- View skill details with markdown rendering
+- Install skills to selected agents (global or project scope)
+- Remove installed skills
+- Manage multiple projects with drag-to-reorder
+- Configure default agents in preferences
+- Keyboard shortcuts for navigation
+- Automatic dark/light theme (follows system preference)
+- Window state persistence
 
 ## Installation
 
@@ -33,7 +40,7 @@ cd skillchang
 bun install
 
 # Run in development mode
-bun run tauri dev
+bun run dev
 ```
 
 ## Usage
@@ -47,9 +54,11 @@ bun run tauri dev
 ### Keyboard Shortcuts
 
 - `Cmd/Ctrl + K` - Focus search
-- `Cmd/Ctrl + 0` - Navigate to Gallery
-- `Cmd/Ctrl + 1` - Navigate to Global Skills
-- `Cmd/Ctrl + 2-9` - Navigate to projects (1st-8th)
+- `Cmd/Ctrl + 1` - Navigate to Gallery
+- `Cmd/Ctrl + 2` - Navigate to Global Skills
+- `Cmd/Ctrl + 3-9` - Navigate to projects (1st-7th)
+- `Cmd/Ctrl + Shift + [` - Previous tab
+- `Cmd/Ctrl + Shift + ]` - Next tab
 - `Cmd/Ctrl + ,` - Open Preferences
 
 ### Adding Skills
@@ -72,7 +81,7 @@ bun run tauri dev
 ### Development
 
 ```bash
-bun run tauri dev
+bun run dev
 ```
 
 ### Production Build
@@ -85,24 +94,16 @@ bun run tauri build --target universal-apple-darwin
 bun run tauri build --target x86_64-pc-windows-msvc
 ```
 
-## Tech Stack
-
-- **Runtime**: Bun
-- **Desktop Framework**: Tauri v2
-- **Frontend**: React 18 + TypeScript
-- **Routing**: React Router v7
-- **Styling**: Tailwind CSS v4
-- **UI Components**: @base-ui/react (headless)
-- **Testing**: Bun Test + React Testing Library
-- **Formatting**: Biome
-- **Linting**: ESLint (Tailwind class sorting only)
-
 ## Development
 
 ### Running Tests
 
 ```bash
-bun test
+# Unit tests
+bun run test
+
+# E2E tests
+bun run test:e2e
 ```
 
 ### Type Checking
@@ -111,10 +112,18 @@ bun test
 bun run typecheck
 ```
 
-### Formatting
+### Linting & Formatting
 
 ```bash
+bun run lint
+bun run lint:fix
 bun run format
+```
+
+### Clean Build Artifacts
+
+```bash
+bun run clean
 ```
 
 ## License
