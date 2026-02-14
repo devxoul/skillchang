@@ -5,6 +5,7 @@ import Markdown from 'react-markdown'
 import { useNavigate, useParams } from 'react-router-dom'
 import remarkGfm from 'remark-gfm'
 import { AddSkillDialog } from '@/components/add-skill-dialog'
+import { CodeBlock } from '@/components/code-block'
 import { InlineError } from '@/components/inline-error'
 import { useProjects } from '@/contexts/projects-context'
 import { useGallerySkills, useSkills } from '@/contexts/skills-context'
@@ -243,7 +244,28 @@ export function SkillDetailView() {
                 <InlineError message={readmeError} />
               ) : readme ? (
                 <div className="prose prose-sm max-w-none text-foreground/80 prose-invert prose-headings:text-foreground prose-a:text-emerald-400 prose-code:rounded prose-code:bg-white/[0.08] prose-code:px-1.5 prose-code:py-0.5 prose-code:text-[12px] prose-code:font-normal prose-code:before:content-none prose-code:after:content-none prose-pre:overflow-x-auto prose-pre:rounded-lg prose-pre:border prose-pre:border-white/[0.08] prose-pre:bg-black/[0.4] prose-pre:p-4 prose-pre:text-[12px] prose-pre:leading-relaxed prose-table:w-full prose-table:border-collapse prose-table:text-[13px] prose-th:border prose-th:border-white/[0.1] prose-th:bg-white/[0.05] prose-th:px-3 prose-th:py-2 prose-th:text-left prose-th:font-medium prose-td:border prose-td:border-white/[0.1] prose-td:px-3 prose-td:py-2 [&_pre_code]:bg-transparent [&_pre_code]:p-0">
-                  <Markdown remarkPlugins={[remarkGfm]}>{stripFrontmatter(readme)}</Markdown>
+                  <Markdown
+                    remarkPlugins={[remarkGfm]}
+                    components={{
+                      pre({ children, node }) {
+                        const codeChild = node?.children?.[0]
+                        if (
+                          codeChild?.type === 'element' &&
+                          codeChild.tagName === 'code' &&
+                          Array.isArray(codeChild.properties?.className) &&
+                          codeChild.properties.className.some(
+                            (c: unknown) => typeof c === 'string' && c.startsWith('language-'),
+                          )
+                        ) {
+                          return <>{children}</>
+                        }
+                        return <pre>{children}</pre>
+                      },
+                      code: CodeBlock,
+                    }}
+                  >
+                    {stripFrontmatter(readme)}
+                  </Markdown>
                 </div>
               ) : null}
             </div>
