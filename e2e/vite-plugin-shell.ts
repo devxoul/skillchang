@@ -16,6 +16,10 @@ export function shellProxy(): Plugin {
 
   return {
     name: 'e2e-shell-proxy',
+    transformIndexHtml(html) {
+      const style = `<style>html,body,#root{background:#1c1c1e !important}@media(prefers-color-scheme:light){html,body,#root{background:#fafafa !important}}</style>`
+      return html.replace('</head>', `${style}</head>`)
+    },
     configureServer(server) {
       server.middlewares.use('/__api/exec', (req, res) => {
         if (req.method !== 'POST') {

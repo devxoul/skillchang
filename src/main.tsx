@@ -19,7 +19,6 @@ async function initWindowState() {
   appWindow.onResized(() => saveWindowState())
 }
 
-// Initialize before rendering
 initWindowState().catch(console.error)
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
