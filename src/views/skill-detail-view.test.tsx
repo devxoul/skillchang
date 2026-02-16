@@ -156,7 +156,13 @@ describe('SkillDetailView', () => {
     })
 
     await waitFor(() => {
-      expect(screen.getByText(/Failed to load SKILL.md/)).toBeInTheDocument()
+      expect(screen.getByText("Couldn't load skill content")).toBeInTheDocument()
+      expect(
+        screen.getByText(
+          "This skill may be part of a multi-skill repository where content can't be located automatically.",
+        ),
+      ).toBeInTheDocument()
+      expect(screen.getByText('View on GitHub')).toBeInTheDocument()
     })
   })
 

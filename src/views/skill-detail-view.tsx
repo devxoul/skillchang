@@ -1,4 +1,4 @@
-import { ArrowLeft, FolderOpen, GithubLogo, Globe, Plus, SpinnerGap, Warning } from '@phosphor-icons/react'
+import { ArrowLeft, FileText, FolderOpen, GithubLogo, Globe, Plus, SpinnerGap, Warning } from '@phosphor-icons/react'
 import { open } from '@tauri-apps/plugin-shell'
 import { useEffect, useMemo, useState } from 'react'
 import Markdown from 'react-markdown'
@@ -6,7 +6,6 @@ import { useNavigate, useParams } from 'react-router-dom'
 import remarkGfm from 'remark-gfm'
 import { AddSkillDialog } from '@/components/add-skill-dialog'
 import { CodeBlock } from '@/components/code-block'
-import { InlineError } from '@/components/inline-error'
 import { useProjects } from '@/contexts/projects-context'
 import { useGallerySkills, useSkills } from '@/contexts/skills-context'
 import { usePreferences } from '@/hooks/use-preferences'
@@ -241,7 +240,23 @@ export function SkillDetailView() {
                   <SpinnerGap size={24} className="animate-spin text-foreground/30" />
                 </div>
               ) : readmeError ? (
-                <InlineError message={readmeError} />
+                <div className="flex flex-col items-center justify-center rounded-lg border border-overlay-border bg-overlay-3 py-12 text-center">
+                  <FileText size={32} weight="duotone" className="mb-3 text-foreground/40" />
+                  <p className="text-[13px] font-medium text-foreground">Couldn't load skill content</p>
+                  <p className="mt-1 max-w-[280px] text-[12px] text-foreground/40">
+                    This skill may be part of a multi-skill repository where content can't be located automatically.
+                  </p>
+                  {skill.topSource && (
+                    <button
+                      type="button"
+                      onClick={() => open(`https://github.com/${skill.topSource}`)}
+                      className="mt-4 inline-flex cursor-pointer items-center gap-1.5 rounded-md bg-overlay-6 px-3 py-1.5 text-[12px] font-medium text-foreground transition-colors hover:bg-overlay-8"
+                    >
+                      <GithubLogo size={14} weight="fill" />
+                      <span>View on GitHub</span>
+                    </button>
+                  )}
+                </div>
               ) : readme ? (
                 <div className="prose prose-sm max-w-none text-foreground/80 dark:prose-invert prose-headings:text-foreground prose-a:text-brand-600 dark:prose-a:text-emerald-400 prose-strong:text-foreground prose-code:rounded prose-code:bg-overlay-8 prose-code:px-1.5 prose-code:py-0.5 prose-code:text-[12px] prose-code:font-normal prose-code:text-foreground/80 prose-code:before:content-none prose-code:after:content-none prose-pre:overflow-x-auto prose-pre:rounded-lg prose-pre:border prose-pre:border-overlay-border prose-pre:bg-overlay-4 dark:prose-pre:bg-black/[0.4] prose-pre:p-4 prose-pre:text-[12px] prose-pre:leading-relaxed prose-table:w-full prose-table:border-collapse prose-table:text-[13px] prose-th:border prose-th:border-overlay-border prose-th:bg-overlay-5 prose-th:px-3 prose-th:py-2 prose-th:text-left prose-th:font-medium prose-td:border prose-td:border-overlay-border prose-td:px-3 prose-td:py-2 [&_pre_code]:bg-transparent [&_pre_code]:p-0">
                   <Markdown
