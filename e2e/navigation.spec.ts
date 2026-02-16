@@ -1,9 +1,4 @@
 import { expect, test } from '@playwright/test'
-import { mockApiRoutes } from './helpers'
-
-test.beforeEach(async ({ page }) => {
-  await mockApiRoutes(page)
-})
 
 test('sidebar renders navigation items', async ({ page }) => {
   // given
@@ -55,8 +50,13 @@ test('active state highlights current route', async ({ page }) => {
 test('navigate back to gallery from detail', async ({ page }) => {
   // given
   await page.goto('/')
-  await page.getByRole('link', { name: /git-master/ }).click()
-  await expect(page).toHaveURL(/\/skill\/\d+/)
+  await expect(page.getByRole('link').first()).toBeVisible()
+  await page
+    .getByRole('link')
+    .filter({ hasText: /skills/ })
+    .first()
+    .click()
+  await expect(page).toHaveURL(/\/skill\//)
 
   // when
   await page.getByRole('link', { name: 'Skills Directory' }).click()

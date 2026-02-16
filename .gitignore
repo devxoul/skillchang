@@ -24,3 +24,6 @@ Thumbs.db
 # Playwright
 test-results/
 playwright-report/
+
+# E2E sandbox
+e2e/home/
