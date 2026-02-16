@@ -43,7 +43,7 @@ test('active state highlights current route', async ({ page }) => {
 
   // then
   const globalLink = page.getByRole('link', { name: 'Global Skills' })
-  await expect(globalLink).toHaveClass(/bg-white\/\[0\.12\]/)
+  await expect(globalLink).toHaveClass(/bg-overlay-12/)
   await expect(globalLink).toHaveClass(/font-medium/)
 })
 
