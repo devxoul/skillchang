@@ -20,29 +20,32 @@ function useModifierKey() {
     const mac = navigator.platform.toUpperCase().indexOf('MAC') >= 0
     setIsMac(mac)
 
-    function handleKeyDown(event: KeyboardEvent) {
-      if (mac ? event.metaKey : event.ctrlKey) {
-        setIsPressed(true)
-      }
+    function hasModifier(e: { metaKey: boolean; ctrlKey: boolean }) {
+      return mac ? e.metaKey : e.ctrlKey
     }
 
-    function handleKeyUp(event: KeyboardEvent) {
-      if (mac ? event.key === 'Meta' : event.key === 'Control') {
-        setIsPressed(false)
-      }
+    function onKeyDown(e: KeyboardEvent) {
+      setIsPressed(hasModifier(e))
     }
-
-    function handleBlur() {
+    function onKeyUp(e: KeyboardEvent) {
+      if (e.key === (mac ? 'Meta' : 'Control')) setIsPressed(false)
+    }
+    function onMouseMove(e: MouseEvent) {
+      if (!hasModifier(e)) setIsPressed(false)
+    }
+    function onBlur() {
       setIsPressed(false)
     }
 
-    window.addEventListener('keydown', handleKeyDown)
-    window.addEventListener('keyup', handleKeyUp)
-    window.addEventListener('blur', handleBlur)
+    window.addEventListener('keydown', onKeyDown)
+    window.addEventListener('keyup', onKeyUp)
+    window.addEventListener('mousemove', onMouseMove)
+    window.addEventListener('blur', onBlur)
     return () => {
-      window.removeEventListener('keydown', handleKeyDown)
-      window.removeEventListener('keyup', handleKeyUp)
-      window.removeEventListener('blur', handleBlur)
+      window.removeEventListener('keydown', onKeyDown)
+      window.removeEventListener('keyup', onKeyUp)
+      window.removeEventListener('mousemove', onMouseMove)
+      window.removeEventListener('blur', onBlur)
     }
   }, [])
 
