@@ -71,7 +71,7 @@ export function PreferencesDialog({ open, onOpenChange }: PreferencesDialogProps
               </span>
               <p className="mt-1 text-[12px] text-foreground/40">Check for new versions when the app starts</p>
               <div className="mt-3">
-                <label className="flex cursor-pointer items-center gap-2.5 rounded-md px-2 py-1.5 text-[13px] transition-colors hover:bg-white/[0.06]">
+                <label className="flex cursor-pointer items-center gap-2.5 rounded-md px-2 py-1.5 text-[13px] transition-colors hover:bg-overlay-6">
                   <Checkbox
                     checked={autoCheckUpdates}
                     onCheckedChange={(checked) => setAutoCheckUpdates(checked as boolean)}
@@ -86,11 +86,11 @@ export function PreferencesDialog({ open, onOpenChange }: PreferencesDialogProps
               <p className="mt-1 text-[12px] text-foreground/40">
                 These agents will be pre-selected when adding skills
               </p>
-              <div className="mt-3 max-h-64 space-y-0.5 overflow-y-auto rounded-lg border border-white/[0.06] bg-white/[0.04] p-2">
+              <div className="mt-3 max-h-64 space-y-0.5 overflow-y-auto rounded-lg border border-overlay-border-muted bg-overlay-4 p-2">
                 {AGENTS.map((agent) => (
                   <label
                     key={agent.id}
-                    className="flex cursor-pointer items-center gap-2.5 rounded-md px-2 py-1.5 text-[13px] transition-colors hover:bg-white/[0.06]"
+                    className="flex cursor-pointer items-center gap-2.5 rounded-md px-2 py-1.5 text-[13px] transition-colors hover:bg-overlay-6"
                   >
                     <Checkbox
                       checked={selectedAgents.includes(agent.id)}

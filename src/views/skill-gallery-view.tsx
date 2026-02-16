@@ -27,7 +27,7 @@ export function SkillGalleryView() {
 
   return (
     <div className="flex h-full flex-col">
-      <header className="flex shrink-0 items-center justify-between border-b border-white/[0.06] px-5 pb-4">
+      <header className="flex shrink-0 items-center justify-between border-b border-overlay-border-muted px-5 pb-4">
         <div>
           <div className="flex items-center gap-2">
             <Books size={18} weight="duotone" className="text-foreground/50" />
@@ -39,7 +39,7 @@ export function SkillGalleryView() {
           type="button"
           onClick={refresh}
           disabled={loading}
-          className="cursor-pointer rounded-md p-1.5 text-foreground/40 transition-colors hover:bg-white/[0.06] hover:text-foreground/70 disabled:cursor-not-allowed disabled:opacity-50"
+          className="cursor-pointer rounded-md p-1.5 text-foreground/40 transition-colors hover:bg-overlay-6 hover:text-foreground/70 disabled:cursor-not-allowed disabled:opacity-50"
           aria-label="Refresh"
         >
           <ArrowClockwise size={16} weight="bold" className={loading ? 'animate-spin' : ''} />

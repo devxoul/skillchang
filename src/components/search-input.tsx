@@ -44,7 +44,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(functi
         onChange={(e) => setQuery(e.target.value)}
         onKeyDown={handleKeyDown}
         placeholder={placeholder}
-        className="w-full rounded-lg bg-white/[0.06] py-2 pr-8 pl-8 text-[13px] text-foreground transition-all duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] placeholder:text-foreground/30 hover:bg-white/[0.08] focus:bg-white/[0.08] focus:ring-1 focus:ring-white/[0.15] focus:outline-none"
+        className="w-full rounded-lg bg-overlay-6 py-2 pr-8 pl-8 text-[13px] text-foreground transition-all duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] placeholder:text-foreground/30 hover:bg-overlay-8 focus:bg-overlay-8 focus:ring-1 focus:ring-overlay-ring focus:outline-none"
       />
       {query && (
         <button

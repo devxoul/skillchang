@@ -50,7 +50,7 @@ function InstalledSkillItem({ skill, onRemove, removing, updateStatus }: Install
   return (
     <Link
       to={`/skill/${skill.name}`}
-      className="group flex items-start gap-3 rounded-lg px-3 py-2.5 transition-all duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] hover:bg-white/[0.06]"
+      className="group flex items-start gap-3 rounded-lg px-3 py-2.5 transition-all duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] hover:bg-overlay-6"
     >
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
@@ -66,7 +66,7 @@ function InstalledSkillItem({ skill, onRemove, removing, updateStatus }: Install
             </span>
           )}
           {updateStatus?.status === 'checking' && (
-            <span className="flex shrink-0 items-center gap-1 rounded-full bg-white/[0.06] px-1.5 py-0.5 text-[10px] font-medium text-foreground/40">
+            <span className="flex shrink-0 items-center gap-1 rounded-full bg-overlay-6 px-1.5 py-0.5 text-[10px] font-medium text-foreground/40">
               <SpinnerGap size={10} className="animate-spin" />
               Checking...
             </span>
@@ -100,7 +100,7 @@ function InstalledSkillItem({ skill, onRemove, removing, updateStatus }: Install
               {skill.agents.map((agent) => (
                 <span
                   key={agent}
-                  className="flex items-center gap-1 rounded bg-white/[0.08] px-1.5 py-0.5 text-[10px] text-foreground/60"
+                  className="flex items-center gap-1 rounded bg-overlay-8 px-1.5 py-0.5 text-[10px] text-foreground/60"
                 >
                   <AgentIcon agent={agent} size={12} />
                   {agent}
@@ -298,7 +298,7 @@ export default function InstalledSkillsView({ scope = 'global', projectPath }: I
 
   return (
     <div className="flex h-full flex-col">
-      <header className="flex shrink-0 items-center justify-between border-b border-white/[0.06] px-5 pb-4">
+      <header className="flex shrink-0 items-center justify-between border-b border-overlay-border-muted px-5 pb-4">
         <div>
           <div className="flex items-center gap-2">
             {scope === 'global' ? (
@@ -392,7 +392,7 @@ export default function InstalledSkillsView({ scope = 'global', projectPath }: I
             type="button"
             onClick={() => checkUpdates(true)}
             disabled={isCheckingUpdates}
-            className="cursor-pointer rounded-md p-1.5 text-foreground/40 transition-colors hover:bg-white/[0.06] hover:text-foreground/70 disabled:cursor-not-allowed disabled:opacity-50"
+            className="cursor-pointer rounded-md p-1.5 text-foreground/40 transition-colors hover:bg-overlay-6 hover:text-foreground/70 disabled:cursor-not-allowed disabled:opacity-50"
             aria-label="Check for updates"
           >
             <ArrowsClockwise size={16} weight="bold" className={isCheckingUpdates ? 'animate-spin' : ''} />
@@ -401,7 +401,7 @@ export default function InstalledSkillsView({ scope = 'global', projectPath }: I
             type="button"
             onClick={refresh}
             disabled={loading || refetching}
-            className="cursor-pointer rounded-md p-1.5 text-foreground/40 transition-colors hover:bg-white/[0.06] hover:text-foreground/70 disabled:cursor-not-allowed disabled:opacity-50"
+            className="cursor-pointer rounded-md p-1.5 text-foreground/40 transition-colors hover:bg-overlay-6 hover:text-foreground/70 disabled:cursor-not-allowed disabled:opacity-50"
             aria-label="Refresh"
           >
             <ArrowClockwise size={16} weight="bold" className={loading || refetching ? 'animate-spin' : ''} />

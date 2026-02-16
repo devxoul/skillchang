@@ -15,7 +15,7 @@ export function UpdateBanner({ state, onDownload, onRestart, onRetry }: UpdateBa
   }
 
   return (
-    <div className="mx-2 mb-2 rounded-md bg-white/[0.06] px-2.5 py-2 backdrop-blur-sm">
+    <div className="mx-2 mb-2 rounded-md bg-overlay-6 px-2.5 py-2 backdrop-blur-sm">
       <div className="flex items-center justify-between gap-2">
         <span className="truncate text-[12px] font-medium text-foreground/60">
           {state.status === 'available' && `v${state.version} available`}
@@ -58,7 +58,7 @@ export function UpdateBanner({ state, onDownload, onRestart, onRetry }: UpdateBa
             onClick={onRetry}
             className={clsx(
               'shrink-0 rounded px-1.5 py-0.5 text-[11px] font-medium text-foreground/40',
-              'transition-colors hover:bg-white/[0.08] hover:text-foreground/70',
+              'transition-colors hover:bg-overlay-8 hover:text-foreground/70',
             )}
           >
             Retry
