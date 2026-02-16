@@ -25,6 +25,20 @@
   --color-border-muted: rgba(0, 0, 0, 0.05);
   --color-ring: rgba(14, 165, 233, 0.4);
 
+  /* Translucent overlay system for light mode */
+  --color-overlay-2: rgba(0, 0, 0, 0.02);
+  --color-overlay-3: rgba(0, 0, 0, 0.03);
+  --color-overlay-4: rgba(0, 0, 0, 0.04);
+  --color-overlay-5: rgba(0, 0, 0, 0.05);
+  --color-overlay-6: rgba(0, 0, 0, 0.05);
+  --color-overlay-8: rgba(0, 0, 0, 0.06);
+  --color-overlay-10: rgba(0, 0, 0, 0.08);
+  --color-overlay-12: rgba(0, 0, 0, 0.1);
+  --color-overlay-15: rgba(0, 0, 0, 0.12);
+  --color-overlay-border: rgba(0, 0, 0, 0.08);
+  --color-overlay-border-muted: rgba(0, 0, 0, 0.05);
+  --color-overlay-ring: rgba(0, 0, 0, 0.12);
+
   /* Native shadow system */
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
@@ -46,8 +60,7 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  @theme {
-    /* Semantic colors for dark mode - Native macOS inspired */
+  :root {
     --color-background: transparent;
     --color-foreground: #f5f5f7;
     --color-surface: rgba(44, 44, 46, 0.8);
@@ -58,12 +71,23 @@
     --color-border-muted: rgba(255, 255, 255, 0.06);
     --color-ring: rgba(56, 189, 248, 0.4);
 
-    /* Native shadow system for dark mode */
+    --color-overlay-2: rgba(255, 255, 255, 0.02);
+    --color-overlay-3: rgba(255, 255, 255, 0.03);
+    --color-overlay-4: rgba(255, 255, 255, 0.04);
+    --color-overlay-5: rgba(255, 255, 255, 0.05);
+    --color-overlay-6: rgba(255, 255, 255, 0.06);
+    --color-overlay-8: rgba(255, 255, 255, 0.08);
+    --color-overlay-10: rgba(255, 255, 255, 0.1);
+    --color-overlay-12: rgba(255, 255, 255, 0.12);
+    --color-overlay-15: rgba(255, 255, 255, 0.15);
+    --color-overlay-border: rgba(255, 255, 255, 0.08);
+    --color-overlay-border-muted: rgba(255, 255, 255, 0.06);
+    --color-overlay-ring: rgba(255, 255, 255, 0.15);
+
     --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.3);
     --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05);
 
-    /* Status colors for dark mode */
     --color-success: #34d399;
     --color-success-muted: rgba(52, 211, 153, 0.15);
     --color-success-foreground: #6ee7b7;
