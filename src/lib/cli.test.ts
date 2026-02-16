@@ -5,6 +5,7 @@ let mockFetchQueue: any[] = []
 let mockExecuteCalls: any[] = []
 let mockFetchCalls: any[] = []
 let mockCreateCalls: any[] = []
+let mockStorePreferences: any = null
 
 const mockExecute = mock(async (...args: any[]) => {
   mockExecuteCalls.push(args)
@@ -35,6 +36,11 @@ const mockFetch = mock(async (...args: any[]) => {
   }
 })
 
+const mockStoreGet = mock(async (key: string) => {
+  if (key === 'preferences') return mockStorePreferences
+  return null
+})
+
 mock.module('@tauri-apps/plugin-shell', () => ({
   Command: {
     create: mockCreate,
@@ -47,6 +53,16 @@ mock.module('@tauri-apps/plugin-http', () => ({
 
 mock.module('@tauri-apps/api/path', () => ({
   homeDir: mock(async () => '/Users/test'),
+}))
+
+mock.module('@tauri-apps/plugin-store', () => ({
+  Store: {
+    load: mock(async () => ({
+      get: mockStoreGet,
+      set: mock(async () => {}),
+      save: mock(async () => {}),
+    })),
+  },
 }))
 
 import { fetch } from '@tauri-apps/plugin-http'
@@ -67,6 +83,7 @@ describe('cli', () => {
     mockExecuteCalls = []
     mockFetchCalls = []
     mockCreateCalls = []
+    mockStorePreferences = null
     mockExecute.mockReset()
     mockExecute.mockImplementation(async (...args: any[]) => {
       mockExecuteCalls.push(args)
@@ -341,6 +358,52 @@ my-skill    /Users/test/.skills/my-skill
       })
 
       await expect(removeSkill('skill-name')).rejects.toThrow('Failed to remove skill: Error')
+    })
+  })
+
+  describe('package manager selection', () => {
+    it('uses bunx without -y flag', async () => {
+      mockStorePreferences = { packageManager: 'bunx' }
+      mockExecuteQueue.push({ code: 0, stdout: '', stderr: '' })
+
+      await listSkills()
+
+      expect(mockCreateCalls[mockCreateCalls.length - 1]).toEqual(['bunx', ['skills', 'list'], undefined])
+    })
+
+    it('uses pnpx without -y flag', async () => {
+      mockStorePreferences = { packageManager: 'pnpx' }
+      mockExecuteQueue.push({ code: 0, stdout: '', stderr: '' })
+
+      await addSkill('user/repo', { global: true, yes: true })
+
+      expect(mockCreateCalls[mockCreateCalls.length - 1]).toEqual([
+        'pnpx',
+        ['skills', 'add', 'user/repo', '-g', '-y'],
+        undefined,
+      ])
+    })
+
+    it('uses npx with -y flag', async () => {
+      mockStorePreferences = { packageManager: 'npx' }
+      mockExecuteQueue.push({ code: 0, stdout: '', stderr: '' })
+
+      await removeSkill('my-skill', { global: true })
+
+      expect(mockCreateCalls[mockCreateCalls.length - 1]).toEqual([
+        'npx',
+        ['-y', 'skills', 'remove', 'my-skill', '-y', '-g'],
+        undefined,
+      ])
+    })
+
+    it('defaults to npx when no preference set', async () => {
+      mockStorePreferences = null
+      mockExecuteQueue.push({ code: 0, stdout: '', stderr: '' })
+
+      await listSkills()
+
+      expect(mockCreateCalls[mockCreateCalls.length - 1]).toEqual(['npx', ['-y', 'skills', 'list'], undefined])
     })
   })
 
