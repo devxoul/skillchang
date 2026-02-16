@@ -14,7 +14,7 @@ function ProjectPage() {
 
 export function MainContent() {
   return (
-    <main className="flex flex-1 flex-col overflow-hidden bg-background">
+    <main className="flex flex-1 flex-col overflow-hidden bg-white/[0.4] backdrop-blur-2xl dark:bg-black/[0.55]">
       <div data-tauri-drag-region className="h-13 shrink-0" />
       <div className="min-h-0 flex-1">
         <Routes>

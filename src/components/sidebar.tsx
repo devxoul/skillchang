@@ -73,8 +73,8 @@ function NavLink({ to, children, exact = false, shortcut, showShortcut, modifier
       className={clsx(
         'mx-2 flex items-center gap-2.5 rounded-md px-2.5 py-1.5 text-[13px] transition-all duration-150 ease-[cubic-bezier(0.4,0,0.2,1)]',
         isActive
-          ? 'bg-white/[0.12] font-medium text-foreground shadow-[0_1px_3px_rgba(0,0,0,0.08)]'
-          : 'text-foreground/70 hover:bg-white/[0.06] hover:text-foreground',
+          ? 'bg-overlay-12 font-medium text-foreground shadow-[0_1px_3px_rgba(0,0,0,0.08)]'
+          : 'text-foreground/70 hover:bg-overlay-6 hover:text-foreground',
       )}
     >
       {children}
@@ -136,10 +136,10 @@ function ProjectItem({ project, onRemove, shortcut, showShortcut, modifierSymbol
         className={clsx(
           'group flex items-center gap-1.5 rounded-md px-2 py-1.5 text-[13px] transition-all duration-150 ease-[cubic-bezier(0.4,0,0.2,1)]',
           isDragging
-            ? 'z-10 scale-[1.02] cursor-grabbing bg-white/[0.15] shadow-[0_4px_12px_rgba(0,0,0,0.15)]'
+            ? 'z-10 scale-[1.02] cursor-grabbing bg-overlay-15 shadow-[0_4px_12px_rgba(0,0,0,0.15)]'
             : isActive
-              ? 'bg-white/[0.12] shadow-[0_1px_3px_rgba(0,0,0,0.08)]'
-              : 'hover:bg-white/[0.06]',
+              ? 'bg-overlay-12 shadow-[0_1px_3px_rgba(0,0,0,0.08)]'
+              : 'hover:bg-overlay-6',
         )}
       >
         <FolderOpen
@@ -258,7 +258,7 @@ export function Sidebar({ onOpenPreferences }: SidebarProps) {
   }
 
   return (
-    <aside className="flex h-full w-56 shrink-0 flex-col border-r border-white/[0.08] bg-black/[0.03] backdrop-blur-2xl backdrop-saturate-[1.8] dark:bg-white/[0.03]">
+    <aside className="flex h-full w-56 shrink-0 flex-col border-r border-black/[0.06] bg-white/[0.25] backdrop-blur-2xl backdrop-saturate-[1.8] dark:border-white/[0.08] dark:bg-black/[0.35]">
       <div data-tauri-drag-region className="h-13 shrink-0" />
       <nav className="flex flex-1 flex-col gap-1 pb-3">
         <div className="space-y-0.5">
@@ -280,7 +280,7 @@ export function Sidebar({ onOpenPreferences }: SidebarProps) {
             <button
               type="button"
               onClick={importProject}
-              className="cursor-pointer rounded p-0.5 text-foreground/40 transition-colors hover:bg-white/[0.08] hover:text-foreground/70"
+              className="cursor-pointer rounded p-0.5 text-foreground/40 transition-colors hover:bg-overlay-8 hover:text-foreground/70"
               aria-label="Import project"
             >
               <Plus size={14} weight="bold" />
@@ -328,7 +328,7 @@ export function Sidebar({ onOpenPreferences }: SidebarProps) {
               className={clsx(
                 'flex w-full cursor-pointer items-center gap-2.5 rounded-md px-2.5 py-1.5 text-[13px]',
                 'transition-all duration-150 ease-[cubic-bezier(0.4,0,0.2,1)]',
-                'text-foreground/70 hover:bg-white/[0.06] hover:text-foreground',
+                'text-foreground/70 hover:bg-overlay-6 hover:text-foreground',
               )}
             >
               <Gear size={18} weight="duotone" className="text-foreground/60" />

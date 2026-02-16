@@ -78,9 +78,9 @@ describe('Sidebar Component', () => {
     renderWithProviders(<Sidebar />, { route: '/global' })
 
     const globalLink = screen.getByText('Global Skills').closest('a')
-    expect(globalLink?.classList.contains('bg-white/[0.12]')).toBe(true)
+    expect(globalLink?.classList.contains('bg-overlay-12')).toBe(true)
 
     const galleryLink = screen.getByText('Skills Directory').closest('a')
-    expect(galleryLink?.classList.contains('bg-white/[0.12]')).toBe(false)
+    expect(galleryLink?.classList.contains('bg-overlay-12')).toBe(false)
   })
 })
