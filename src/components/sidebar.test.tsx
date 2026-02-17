@@ -4,8 +4,8 @@ import { MemoryRouter } from 'react-router-dom'
 import { ProjectsProvider } from '@/contexts/projects-context'
 import * as projects from '@/lib/projects'
 
-mock.module('@/hooks/use-app-update', () => ({
-  useAppUpdate: mock(() => ({
+mock.module('@/contexts/app-update-context', () => ({
+  useAppUpdateContext: mock(() => ({
     state: { status: 'idle' as const },
     checkForUpdate: mock(() => Promise.resolve(false)),
     downloadUpdate: mock(() => Promise.resolve()),

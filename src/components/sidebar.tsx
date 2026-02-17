@@ -7,9 +7,8 @@ import { clsx } from 'clsx'
 import { useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { UpdateBanner } from '@/components/update-banner'
+import { useAppUpdateContext } from '@/contexts/app-update-context'
 import { useProjects } from '@/contexts/projects-context'
-import { useAppUpdate } from '@/hooks/use-app-update'
-import { usePreferences } from '@/hooks/use-preferences'
 import type { Project } from '@/types/project'
 
 function useModifierKey() {
@@ -216,15 +215,7 @@ interface SidebarProps {
 export function Sidebar({ onOpenPreferences }: SidebarProps) {
   const { projects, loading, importProject, removeProject, reorderProjects } = useProjects()
   const { isPressed: showShortcuts, modifierSymbol } = useModifierKey()
-  const { preferences } = usePreferences()
-  const {
-    state: updateState,
-    checkForUpdate,
-    downloadUpdate,
-    restartToUpdate,
-  } = useAppUpdate({
-    autoCheckUpdates: preferences.autoCheckUpdates,
-  })
+  const { state: updateState, checkForUpdate, downloadUpdate, restartToUpdate } = useAppUpdateContext()
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
