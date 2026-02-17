@@ -660,19 +660,84 @@ Styling: `bg-overlay-6` default, `hover:bg-overlay-8 focus:bg-overlay-8 focus:ri
 </div>
 ```
 
-### Loading State
+### Loading State (Inline Action)
+
+For button/badge spinners — inline action feedback only:
 
 ```tsx
-<div className="flex items-center justify-center py-16">
-  <SpinnerGap size={24} className="animate-spin text-foreground/30" />
+/* Refresh/action button */
+<SpinnerGap size={16} weight="bold" className={loading ? 'animate-spin' : ''} />
+
+/* Badge status */
+<span className="flex items-center gap-1 rounded-full bg-overlay-6 px-1.5 py-0.5 text-[10px]">
+  <SpinnerGap size={10} className="animate-spin" />
+  Checking...
+</span>
+```
+
+### Skeleton Loading (Content Areas)
+
+Use skeletons for content-area loading states — not spinners. Skeletons approximate the shape of the content being loaded.
+
+#### Skeleton Primitive
+
+```tsx
+import { Skeleton } from '@/ui/skeleton'
+
+/* Text line */
+<Skeleton className="h-3.5 w-28" />
+
+/* Badge pill */
+<Skeleton className="h-4 w-10 rounded-full" />
+
+/* Full width block */
+<Skeleton className="h-4 w-full" />
+
+/* Card container */
+<Skeleton className="h-10 w-56 rounded-lg" />
+```
+
+Base classes: `animate-shimmer rounded bg-foreground/[0.06]`. Override border radius via `className`.
+
+#### Shimmer Animation
+
+Defined in `src/index.css` as `@utility animate-shimmer`:
+- Gradient sweep: `linear-gradient(90deg, transparent → foreground/8% → transparent)`
+- Timing: `1.5s ease-in-out infinite`
+- Dark mode: automatic (uses `var(--color-foreground)`)
+
+#### Composite Skeleton Components
+
+Pre-built skeletons that match real component layouts:
+
+```tsx
+import { SkillCardSkeleton } from '@/components/skill-card-skeleton'
+import { InstalledSkillItemSkeleton } from '@/components/installed-skill-item-skeleton'
+import { SkillDetailSkeleton } from '@/components/skill-detail-skeleton'
+
+/* Gallery list loading — show 6 */
+<div className="space-y-0.5 pb-4">
+  {Array.from({ length: 6 }).map((_, i) => <SkillCardSkeleton key={i} />)}
 </div>
+
+/* Installed list loading — show 4 */
+<div className="space-y-0.5 px-2 py-2">
+  {Array.from({ length: 4 }).map((_, i) => <InstalledSkillItemSkeleton key={i} />)}
+</div>
+
+/* Detail view loading */
+<SkillDetailSkeleton />
 ```
 
-### Loading Skeleton
+#### When to Use Skeleton vs Spinner
 
-```tsx
-<span className="h-2.5 w-24 animate-pulse rounded bg-foreground/10" />
-```
+| Situation | Use |
+|-----------|-----|
+| Initial page/list load | `Skeleton` components |
+| Inline text placeholder | `<span className="animate-shimmer rounded" />` |
+| Button action in progress | `SpinnerGap` with `animate-spin` |
+| Badge status (checking, updating) | `SpinnerGap` with `animate-spin` |
+| Remove/delete action | `SpinnerGap` with `animate-spin` |
 
 ### Inline Error
 
@@ -843,12 +908,15 @@ src/
 │   ├── command-palette.tsx
 │   ├── error-boundary.tsx
 │   ├── inline-error.tsx
+│   ├── installed-skill-item-skeleton.tsx
 │   ├── layout.tsx
 │   ├── main-content.tsx
 │   ├── preferences-dialog.tsx
 │   ├── search-input.tsx
 │   ├── sidebar.tsx
 │   ├── skill-card.tsx
+│   ├── skill-card-skeleton.tsx
+│   ├── skill-detail-skeleton.tsx
 │   └── update-banner.tsx
 ├── ui/                   # Base UI primitives (base-ui wrappers)
 │   ├── button.tsx
@@ -857,7 +925,8 @@ src/
 │   ├── input.tsx
 │   ├── popover.tsx
 │   ├── segmented-control.tsx
-│   └── select.tsx
+│   ├── select.tsx
+│   └── skeleton.tsx
 ├── views/                # Page-level components
 │   ├── installed-skills-view.tsx
 │   ├── skill-detail-view.tsx
