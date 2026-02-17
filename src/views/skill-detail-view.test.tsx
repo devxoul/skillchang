@@ -84,9 +84,9 @@ describe('SkillDetailView', () => {
     getRepoSkillsCacheSpy.mockRestore()
   })
 
-  it('renders loading state initially', () => {
+  it('renders loading skeletons initially', () => {
     renderWithProviders('vercel-labs/skills/test-skill')
-    expect(document.querySelector('.animate-spin')).toBeInTheDocument()
+    expect(document.querySelector('.animate-shimmer')).toBeInTheDocument()
   })
 
   it('displays skill info after loading', async () => {

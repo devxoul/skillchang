@@ -6,6 +6,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import remarkGfm from 'remark-gfm'
 import { AddSkillDialog } from '@/components/add-skill-dialog'
 import { CodeBlock } from '@/components/code-block'
+import { SkillDetailSkeleton } from '@/components/skill-detail-skeleton'
 import { useProjects } from '@/contexts/projects-context'
 import { useGallerySkills, useSkills } from '@/contexts/skills-context'
 import { usePreferences } from '@/hooks/use-preferences'
@@ -186,7 +187,7 @@ export function SkillDetailView() {
             </button>
             <div className="h-4 w-px bg-overlay-8" />
             {isLoading ? (
-              <span className="h-4 w-32 animate-pulse rounded bg-foreground/10" />
+              <span className="h-4 w-32 animate-shimmer rounded" />
             ) : isNotFound ? (
               <h1 className="text-[15px] font-semibold text-foreground">Skill Not Found</h1>
             ) : skill ? (
@@ -195,7 +196,7 @@ export function SkillDetailView() {
           </div>
           <p className="mt-0.5 h-[18px] text-[12px] text-foreground/40">
             {isLoading ? (
-              <span className="inline-block h-2.5 w-20 animate-pulse rounded bg-foreground/10" />
+              <span className="inline-block h-2.5 w-20 animate-shimmer rounded" />
             ) : skill?.topSource ? (
               <>from {getSourceOrg(skill.topSource)}</>
             ) : installedSkill ? (
@@ -218,8 +219,8 @@ export function SkillDetailView() {
       </header>
 
       {isLoading ? (
-        <div className="flex flex-1 items-center justify-center">
-          <SpinnerGap size={24} className="animate-spin text-foreground/30" />
+        <div className="flex-1 overflow-y-auto">
+          <SkillDetailSkeleton />
         </div>
       ) : isNotFound ? (
         <div className="flex flex-1 items-center justify-center p-6">
@@ -277,8 +278,12 @@ export function SkillDetailView() {
             <div className="mb-8">
               <h3 className="mb-3 text-[11px] font-medium tracking-wide text-foreground/40 uppercase">About</h3>
               {readmeLoading ? (
-                <div className="flex items-center justify-center py-8">
-                  <SpinnerGap size={24} className="animate-spin text-foreground/30" />
+                <div className="space-y-2">
+                  <span className="block h-4 w-full animate-shimmer rounded" />
+                  <span className="block h-4 w-full animate-shimmer rounded" />
+                  <span className="block h-4 w-3/4 animate-shimmer rounded" />
+                  <span className="block h-4 w-5/6 animate-shimmer rounded" />
+                  <span className="block h-4 w-full animate-shimmer rounded" />
                 </div>
               ) : readmeError ? (
                 <div className="flex flex-col items-center justify-center rounded-lg border border-overlay-border bg-overlay-3 py-12 text-center">

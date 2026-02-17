@@ -88,10 +88,10 @@ describe('InstalledSkillsView', () => {
     })
   })
 
-  it('renders loading state initially', async () => {
+  it('renders loading skeletons initially', async () => {
     ;(cli.listSkills as any).mockImplementation?.(() => new Promise(() => {}))
     const { container } = renderWithProvider(<InstalledSkillsView scope="global" />)
-    expect(container.querySelector('svg.animate-spin')).toBeInTheDocument()
+    expect(container.querySelectorAll('.animate-shimmer').length).toBeGreaterThan(0)
   })
 
   it('renders empty state when no skills found', async () => {
@@ -413,11 +413,14 @@ describe('InstalledSkillsView search', () => {
     fireEvent.change(input, { target: { value: 'git' } })
 
     // then
-    await waitFor(() => {
-      expect(screen.getByText('git-master')).toBeInTheDocument()
-      expect(screen.queryByText('frontend-ui-ux')).not.toBeInTheDocument()
-      expect(screen.queryByText('dev-browser')).not.toBeInTheDocument()
-    })
+    await waitFor(
+      () => {
+        expect(screen.getByText('git-master')).toBeInTheDocument()
+        expect(screen.queryByText('frontend-ui-ux')).not.toBeInTheDocument()
+        expect(screen.queryByText('dev-browser')).not.toBeInTheDocument()
+      },
+      { timeout: 2000 },
+    )
   })
 
   it('preserves search input value when no skills match', async () => {

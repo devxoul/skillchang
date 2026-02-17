@@ -17,6 +17,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { AgentIcon } from '@/components/agent-icon'
 import { InlineError } from '@/components/inline-error'
+import { InstalledSkillItemSkeleton } from '@/components/installed-skill-item-skeleton'
 import { SearchInput } from '@/components/search-input'
 import { useInstalledSkills } from '@/contexts/skills-context'
 import { usePersistedSearch } from '@/hooks/use-persisted-search'
@@ -229,8 +230,11 @@ export default function InstalledSkillsView({ scope = 'global', projectPath }: I
   const renderContent = () => {
     if (loading && skills.length === 0) {
       return (
-        <div className="flex flex-1 items-center justify-center">
-          <SpinnerGap size={24} className="animate-spin text-foreground/30" />
+        <div className="space-y-0.5 px-2 py-2">
+          <InstalledSkillItemSkeleton />
+          <InstalledSkillItemSkeleton />
+          <InstalledSkillItemSkeleton />
+          <InstalledSkillItemSkeleton />
         </div>
       )
     }
@@ -312,7 +316,7 @@ export default function InstalledSkillsView({ scope = 'global', projectPath }: I
           </div>
           <p className="mt-0.5 flex h-[18px] items-center text-[12px] text-foreground/40">
             {loading && skills.length === 0 ? (
-              <span className="h-2.5 w-24 animate-pulse rounded bg-foreground/10" />
+              <span className="h-2.5 w-24 animate-shimmer rounded" />
             ) : scope === 'project' && projectPath ? (
               <span className="flex items-center gap-1.5">
                 <span>{projectPath}</span>

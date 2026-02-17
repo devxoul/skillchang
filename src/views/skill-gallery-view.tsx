@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { InlineError } from '@/components/inline-error'
 import { SearchInput } from '@/components/search-input'
 import { SkillCard } from '@/components/skill-card'
+import { SkillCardSkeleton } from '@/components/skill-card-skeleton'
 import { useGallerySkills } from '@/contexts/skills-context'
 import { usePersistedSearch } from '@/hooks/use-persisted-search'
 import { useRepoSkills } from '@/hooks/use-repo-skills'
@@ -97,8 +98,9 @@ export function SkillGalleryView() {
               Skills in {repoSkills.repoQuery}
             </h3>
             {repoSkills.loading ? (
-              <div className="flex items-center justify-center py-6">
-                <SpinnerGap size={20} className="animate-spin text-foreground/30" />
+              <div className="space-y-0.5">
+                <SkillCardSkeleton />
+                <SkillCardSkeleton />
               </div>
             ) : repoSkills.error ? (
               <div className="px-2 pb-2">
@@ -141,8 +143,13 @@ export function SkillGalleryView() {
             />
           </div>
         ) : (loading && skills.length === 0) || searching ? (
-          <div className="flex items-center justify-center py-16">
-            <SpinnerGap size={24} className="animate-spin text-foreground/30" />
+          <div className="space-y-0.5 pb-4">
+            <SkillCardSkeleton />
+            <SkillCardSkeleton />
+            <SkillCardSkeleton />
+            <SkillCardSkeleton />
+            <SkillCardSkeleton />
+            <SkillCardSkeleton />
           </div>
         ) : displayedSkills.length === 0 && !repoSkills.repoQuery ? (
           <div className="flex flex-col items-center justify-center py-16">

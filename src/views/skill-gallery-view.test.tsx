@@ -207,7 +207,7 @@ describe('SkillGalleryView', () => {
       })
     })
 
-    it('shows loading spinner when repo skills are loading', async () => {
+    it('shows loading skeletons when repo skills are loading', async () => {
       useRepoSkillsSpy.mockReturnValue({
         repoQuery: 'xoul/skills',
         loading: true,
@@ -218,8 +218,8 @@ describe('SkillGalleryView', () => {
       renderWithProviders()
 
       await waitFor(() => {
-        const spinners = document.querySelectorAll('.animate-spin')
-        expect(spinners.length).toBeGreaterThan(0)
+        const skeletons = document.querySelectorAll('.animate-shimmer')
+        expect(skeletons.length).toBeGreaterThan(0)
       })
     })
 
