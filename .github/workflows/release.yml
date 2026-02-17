@@ -120,6 +120,31 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Rename release assets
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VERSION="${{ inputs.version }}"
+          mkdir -p /tmp/assets
+          gh release download "$VERSION" -D /tmp/assets
+
+          for file in /tmp/assets/*; do
+            name=$(basename "$file")
+            new_name=$(echo "$name" | sed 's/_/-/g')
+            if [ "$name" != "$new_name" ]; then
+              gh release delete-asset "$VERSION" "$name" --yes
+              mv "$file" "/tmp/assets/$new_name"
+              gh release upload "$VERSION" "/tmp/assets/$new_name"
+            fi
+          done
+
+          if [ -f "/tmp/assets/latest.json" ]; then
+            gh release delete-asset "$VERSION" "latest.json" --yes
+            jq '(.platforms[] | .url) |= (split("/") | .[-1] |= gsub("_"; "-") | join("/"))' /tmp/assets/latest.json > /tmp/assets/latest_updated.json
+            mv /tmp/assets/latest_updated.json /tmp/assets/latest.json
+            gh release upload "$VERSION" "/tmp/assets/latest.json"
+          fi
+
       - name: Publish release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
