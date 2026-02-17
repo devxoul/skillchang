@@ -43,14 +43,16 @@ export function useKeyboardShortcuts({
 
       if (!modifier) return
 
-      if (event.key === 'k' || event.key === 'K') {
+      const key = event.key.toLowerCase()
+
+      if (key === 'k' || key === 'p') {
         event.preventDefault()
         onOpenCommandPalette?.()
         return
       }
 
       // Cmd/Ctrl + F: Focus search
-      if (event.key === 'f' || event.key === 'F') {
+      if (key === 'f') {
         event.preventDefault()
         onFocusSearch?.()
         return
