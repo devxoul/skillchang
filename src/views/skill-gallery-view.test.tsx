@@ -7,6 +7,7 @@ import { ScrollRestorationProvider } from '@/contexts/scroll-context'
 import { SearchPersistenceProvider } from '@/contexts/search-context'
 import * as skillsContext from '@/contexts/skills-context'
 import { SkillsProvider } from '@/contexts/skills-context'
+import * as repoSkillsHook from '@/hooks/use-repo-skills'
 import { SkillGalleryView } from '@/views/skill-gallery-view'
 
 const mockGallerySkills = [
@@ -18,6 +19,7 @@ const mockGallerySkills = [
 const mockSearch = mock<(query: string, limit?: number) => Promise<any[]>>()
 
 let useGallerySkillsSpy: ReturnType<typeof spyOn>
+let useRepoSkillsSpy: ReturnType<typeof spyOn>
 
 beforeEach(() => {
   mockSearch.mockResolvedValue([])
@@ -30,10 +32,17 @@ beforeEach(() => {
     fetch: async () => {},
     search: mockSearch,
   })
+  useRepoSkillsSpy = spyOn(repoSkillsHook, 'useRepoSkills').mockReturnValue({
+    skills: [],
+    loading: false,
+    error: null,
+    repoQuery: null,
+  })
 })
 
 afterEach(() => {
   useGallerySkillsSpy.mockRestore()
+  useRepoSkillsSpy.mockRestore()
   mockSearch.mockClear()
 })
 
@@ -179,6 +188,80 @@ describe('SkillGalleryView', () => {
       expect(screen.getByRole('link', { name: /react hooks/i })).toBeInTheDocument()
       expect(screen.getByRole('link', { name: /typescript basics/i })).toBeInTheDocument()
       expect(screen.getByRole('link', { name: /testing library/i })).toBeInTheDocument()
+    })
+  })
+
+  describe('repo skills section', () => {
+    it('shows section header with repo name when repoQuery is set', async () => {
+      useRepoSkillsSpy.mockReturnValue({
+        repoQuery: 'xoul/skills',
+        loading: false,
+        error: null,
+        skills: [{ id: 'repo:xoul/skills:foo', name: 'foo', installs: 0, topSource: 'xoul/skills' }],
+      })
+
+      renderWithProviders()
+
+      await waitFor(() => {
+        expect(screen.getByText('Skills in xoul/skills')).toBeInTheDocument()
+      })
+    })
+
+    it('shows loading spinner when repo skills are loading', async () => {
+      useRepoSkillsSpy.mockReturnValue({
+        repoQuery: 'xoul/skills',
+        loading: true,
+        error: null,
+        skills: [],
+      })
+
+      renderWithProviders()
+
+      await waitFor(() => {
+        const spinners = document.querySelectorAll('.animate-spin')
+        expect(spinners.length).toBeGreaterThan(0)
+      })
+    })
+
+    it('shows error message when repo skills fetch fails', async () => {
+      useRepoSkillsSpy.mockReturnValue({
+        repoQuery: 'xoul/skills',
+        loading: false,
+        error: 'GitHub API rate limit exceeded. Try again later.',
+        skills: [],
+      })
+
+      renderWithProviders()
+
+      await waitFor(() => {
+        expect(screen.getByText('GitHub API rate limit exceeded. Try again later.')).toBeInTheDocument()
+      })
+    })
+
+    it('shows empty state when repo has no skills', async () => {
+      useRepoSkillsSpy.mockReturnValue({
+        repoQuery: 'xoul/skills',
+        loading: false,
+        error: null,
+        skills: [],
+      })
+
+      renderWithProviders()
+
+      await waitFor(() => {
+        expect(screen.getByText('No skills found in this repository')).toBeInTheDocument()
+      })
+    })
+
+    it('does not show repo section when repoQuery is null', async () => {
+      // Default mock already returns repoQuery: null
+      renderWithProviders()
+
+      await waitFor(() => {
+        expect(screen.getByText('React Hooks')).toBeInTheDocument()
+      })
+
+      expect(screen.queryByText(/Skills in/)).not.toBeInTheDocument()
     })
   })
 })

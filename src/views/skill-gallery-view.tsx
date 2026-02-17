@@ -5,6 +5,7 @@ import { SearchInput } from '@/components/search-input'
 import { SkillCard } from '@/components/skill-card'
 import { useGallerySkills } from '@/contexts/skills-context'
 import { usePersistedSearch } from '@/hooks/use-persisted-search'
+import { useRepoSkills } from '@/hooks/use-repo-skills'
 import { useScrollRestoration } from '@/hooks/use-scroll-restoration'
 import type { Skill } from '@/types/skill'
 
@@ -15,6 +16,7 @@ export function SkillGalleryView() {
   const [searchResults, setSearchResults] = useState<Skill[]>([])
   const [searching, setSearching] = useState(false)
   const [searchError, setSearchError] = useState<string | null>(null)
+  const repoSkills = useRepoSkills(searchQuery)
 
   useEffect(() => {
     fetch()
@@ -89,6 +91,31 @@ export function SkillGalleryView() {
       </div>
 
       <div ref={scrollRef} className="min-h-0 flex-1 overflow-y-auto px-2">
+        {repoSkills.repoQuery && (
+          <div className="pb-2">
+            <h3 className="px-3 pt-3 pb-2 text-[11px] font-medium tracking-wide text-foreground/40 uppercase">
+              Skills in {repoSkills.repoQuery}
+            </h3>
+            {repoSkills.loading ? (
+              <div className="flex items-center justify-center py-6">
+                <SpinnerGap size={20} className="animate-spin text-foreground/30" />
+              </div>
+            ) : repoSkills.error ? (
+              <div className="px-2 pb-2">
+                <InlineError message={repoSkills.error} />
+              </div>
+            ) : repoSkills.skills.length === 0 ? (
+              <p className="px-3 pb-3 text-[13px] text-foreground/40">No skills found in this repository</p>
+            ) : (
+              <div className="space-y-0.5">
+                {repoSkills.skills.map((skill) => (
+                  <SkillCard key={skill.id} skill={skill} />
+                ))}
+              </div>
+            )}
+            <div className="mx-3 my-2 h-px bg-foreground/[0.06]" />
+          </div>
+        )}
         {error ? (
           <div className="p-4">
             <InlineError message={error} onRetry={refresh} />
@@ -117,7 +144,7 @@ export function SkillGalleryView() {
           <div className="flex items-center justify-center py-16">
             <SpinnerGap size={24} className="animate-spin text-foreground/30" />
           </div>
-        ) : displayedSkills.length === 0 ? (
+        ) : displayedSkills.length === 0 && !repoSkills.repoQuery ? (
           <div className="flex flex-col items-center justify-center py-16">
             <p className="text-[13px] text-foreground/40">
               {searchQuery ? 'No skills match your search' : 'No skills available'}
