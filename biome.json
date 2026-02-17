@@ -19,6 +19,7 @@
         "useKeyWithClickEvents": "off"
       },
       "complexity": {
+        "noImportantStyles": "off",
         "noUselessUndefinedInitialization": "off"
       },
       "correctness": {
