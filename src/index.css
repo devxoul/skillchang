@@ -213,3 +213,22 @@ body {
   font-size: 13px;
   color: color-mix(in srgb, var(--color-foreground) 40%, transparent);
 }
+
+/* Shimmer animation for skeleton loading states */
+@keyframes shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+@utility animate-shimmer {
+  animation: shimmer 1.5s ease-in-out infinite;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    color-mix(in srgb, var(--color-foreground) 8%, transparent) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  background-position: 200% 0;
+}
