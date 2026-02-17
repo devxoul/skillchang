@@ -42,7 +42,7 @@ function installedSkillToSkill(info: SkillInfo): Skill {
 export function SkillDetailView() {
   const { '*': skillId } = useParams()
   const navigate = useNavigate()
-  const { skills: gallerySkills, loading: galleryLoading, fetch: fetchGallery } = useGallerySkills()
+  const { skills: gallerySkills, loading: galleryLoading, fetch: fetchGallery, search } = useGallerySkills()
   const { projects } = useProjects()
   const { installed, fetchInstalledSkills } = useSkills()
   const { preferences } = usePreferences()
@@ -52,6 +52,8 @@ export function SkillDetailView() {
   const [readmeLoading, setReadmeLoading] = useState(false)
   const [readmeError, setReadmeError] = useState<string | null>(null)
   const [showDialog, setShowDialog] = useState(false)
+  const [lookedUpSkill, setLookedUpSkill] = useState<Skill | null>(null)
+  const [lookingUp, setLookingUp] = useState(false)
 
   const gallerySkill = gallerySkills.find((s) => s.id === skillId || s.name === skillId)
 
@@ -60,13 +62,33 @@ export function SkillDetailView() {
     return allInstalled.find((s) => s.name === skillId || skillId?.endsWith(s.name)) ?? null
   }, [installed.cache, skillId])
 
-  const skill = gallerySkill ?? (installedSkill ? installedSkillToSkill(installedSkill) : null)
+  const skill = gallerySkill ?? lookedUpSkill ?? (installedSkill ? installedSkillToSkill(installedSkill) : null)
 
   useEffect(() => {
     if (!gallerySkill && !galleryLoading && gallerySkills.length === 0) {
       fetchGallery()
     }
   }, [gallerySkill, galleryLoading, gallerySkills.length, fetchGallery])
+
+  useEffect(() => {
+    if (gallerySkill || !skillId) return
+    const skillName = skillId.split('/').pop() || skillId
+    let cancelled = false
+    setLookingUp(true)
+    search(skillName)
+      .then((results: Skill[]) => {
+        if (cancelled) return
+        const match = results.find((s: Skill) => s.id === skillId || s.name === skillName)
+        if (match) setLookedUpSkill(match)
+      })
+      .catch(() => {})
+      .finally(() => {
+        if (!cancelled) setLookingUp(false)
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [gallerySkill, skillId, search])
 
   useEffect(() => {
     if (!skill?.name) return
@@ -127,7 +149,7 @@ export function SkillDetailView() {
     navigate(-1)
   }
 
-  const isLoading = !skill && (galleryLoading || gallerySkills.length === 0) && !installedSkill
+  const isLoading = !skill && (galleryLoading || gallerySkills.length === 0 || lookingUp) && !installedSkill
   const isNotFound = !skill && !isLoading
 
   return (

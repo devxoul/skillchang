@@ -27,6 +27,7 @@ const mockApiSkills = [
 
 let fetchSkillsSpy: ReturnType<typeof spyOn>
 let fetchSkillReadmeSpy: ReturnType<typeof spyOn>
+let searchSkillsSpy: ReturnType<typeof spyOn>
 let readLocalSkillMdSpy: ReturnType<typeof spyOn>
 let listSkillsSpy: ReturnType<typeof spyOn>
 
@@ -66,6 +67,7 @@ describe('SkillDetailView', () => {
       })),
     )
     fetchSkillReadmeSpy = spyOn(api, 'fetchSkillReadme').mockResolvedValue('# Test Skill\n\nThis is a test README.')
+    searchSkillsSpy = spyOn(api, 'searchSkills').mockResolvedValue([])
     readLocalSkillMdSpy = spyOn(cli, 'readLocalSkillMd').mockRejectedValue(new Error('No local SKILL.md'))
     listSkillsSpy = spyOn(cli, 'listSkills').mockResolvedValue([])
   })
@@ -73,6 +75,7 @@ describe('SkillDetailView', () => {
   afterEach(() => {
     fetchSkillsSpy.mockRestore()
     fetchSkillReadmeSpy.mockRestore()
+    searchSkillsSpy.mockRestore()
     readLocalSkillMdSpy.mockRestore()
     listSkillsSpy.mockRestore()
   })
