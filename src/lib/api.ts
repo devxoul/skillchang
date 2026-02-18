@@ -5,6 +5,14 @@ import type { Skill } from '@/types/skill'
 const API_BASE = 'https://skills.sh/api'
 const DEFAULT_BROWSE_QUERY = 'sk'
 const DEFAULT_LIMIT = 200
+const README_CACHE_DURATION = 30 * 60 * 1000
+
+interface ReadmeCacheEntry {
+  content: string
+  fetchedAt: number
+}
+
+const readmeCache = new Map<string, ReadmeCacheEntry>()
 
 interface ApiSkill {
   id: string
@@ -34,6 +42,12 @@ export async function fetchSkills(): Promise<Skill[]> {
 }
 
 export async function fetchSkillReadme(source: string, skillName?: string): Promise<string> {
+  const cacheKey = `${source}:${skillName ?? ''}`
+  const cached = readmeCache.get(cacheKey)
+  if (cached && Date.now() - cached.fetchedAt < README_CACHE_DURATION) {
+    return cached.content
+  }
+
   const branches = ['main', 'master']
   const paths: string[] = []
 
@@ -50,7 +64,9 @@ export async function fetchSkillReadme(source: string, skillName?: string): Prom
         const response = await fetch(url)
 
         if (response.ok) {
-          return await response.text()
+          const content = await response.text()
+          readmeCache.set(cacheKey, { content, fetchedAt: Date.now() })
+          return content
         }
       } catch {
         // Continue to next attempt
