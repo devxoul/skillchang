@@ -17,17 +17,21 @@ const mockGallerySkills = [
 ]
 
 const mockSearch = mock<(query: string, limit?: number) => Promise<any[]>>()
+const mockSetSearchCache = mock<(query: string, results: any[]) => void>()
 
 let useGallerySkillsSpy: ReturnType<typeof spyOn>
 let useRepoSkillsSpy: ReturnType<typeof spyOn>
 
 beforeEach(() => {
   mockSearch.mockResolvedValue([])
+  mockSetSearchCache.mockImplementation(() => {})
   useGallerySkillsSpy = spyOn(skillsContext, 'useGallerySkills').mockReturnValue({
     skills: mockGallerySkills,
     loading: false,
     error: null,
     lastFetched: Date.now(),
+    searchCache: {},
+    setSearchCache: mockSetSearchCache,
     refresh: async () => {},
     fetch: async () => {},
     search: mockSearch,
@@ -44,6 +48,7 @@ afterEach(() => {
   useGallerySkillsSpy.mockRestore()
   useRepoSkillsSpy.mockRestore()
   mockSearch.mockClear()
+  mockSetSearchCache.mockClear()
 })
 
 function renderWithProviders() {
@@ -188,6 +193,53 @@ describe('SkillGalleryView', () => {
       expect(screen.getByRole('link', { name: /react hooks/i })).toBeInTheDocument()
       expect(screen.getByRole('link', { name: /typescript basics/i })).toBeInTheDocument()
       expect(screen.getByRole('link', { name: /testing library/i })).toBeInTheDocument()
+    })
+  })
+
+  it('uses cached search results instead of re-fetching', async () => {
+    const cachedResults = [{ id: '1', name: 'React Hooks', installs: 1000, topSource: 'npm/packages' }]
+    useGallerySkillsSpy.mockReturnValue({
+      skills: mockGallerySkills,
+      loading: false,
+      error: null,
+      lastFetched: Date.now(),
+      searchCache: { react: cachedResults },
+      setSearchCache: mockSetSearchCache,
+      refresh: async () => {},
+      fetch: async () => {},
+      search: mockSearch,
+    })
+
+    const { user } = renderWithProviders()
+
+    const searchInput = screen.getByPlaceholderText('Search skills...')
+    await user.type(searchInput, 'react')
+
+    await waitFor(() => {
+      expect(screen.getByRole('link', { name: /react hooks/i })).toBeInTheDocument()
+    })
+
+    expect(mockSearch).not.toHaveBeenCalled()
+  })
+
+  it('caches search results after successful API search', async () => {
+    const searchResults = [{ id: '1', name: 'React Hooks', installs: 1000, topSource: 'npm/packages' }]
+    mockSearch.mockResolvedValue(searchResults)
+    const { user } = renderWithProviders()
+
+    await waitFor(() => {
+      expect(screen.getByText('React Hooks')).toBeInTheDocument()
+    })
+
+    const searchInput = screen.getByPlaceholderText('Search skills...')
+    await user.type(searchInput, 'react')
+
+    await waitFor(() => {
+      expect(mockSearch).toHaveBeenCalledWith('react')
+    })
+
+    await waitFor(() => {
+      expect(mockSetSearchCache).toHaveBeenCalledWith('react', searchResults)
     })
   })
 

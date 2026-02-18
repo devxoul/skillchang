@@ -1,5 +1,5 @@
 import { ArrowClockwise, Books } from '@phosphor-icons/react'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { InlineError } from '@/components/inline-error'
 import { SearchInput } from '@/components/search-input'
 import { SkillCard } from '@/components/skill-card'
@@ -11,13 +11,15 @@ import { useScrollRestoration } from '@/hooks/use-scroll-restoration'
 import type { Skill } from '@/types/skill'
 
 export function SkillGalleryView() {
-  const { skills, loading, error, refresh, fetch, search } = useGallerySkills()
+  const { skills, loading, error, refresh, fetch, search, searchCache, setSearchCache } = useGallerySkills()
   const [searchQuery, setSearchQuery] = usePersistedSearch()
   const scrollRef = useScrollRestoration<HTMLDivElement>()
   const [searchResults, setSearchResults] = useState<Skill[]>([])
   const [searching, setSearching] = useState(false)
   const [searchError, setSearchError] = useState<string | null>(null)
   const repoSkills = useRepoSkills(searchQuery)
+  const skillsRef = useRef(skills)
+  skillsRef.current = skills
 
   useEffect(() => {
     fetch()
@@ -34,7 +36,15 @@ export function SkillGalleryView() {
 
     if (trimmed.length < 2) {
       const query = trimmed.toLowerCase()
-      setSearchResults(skills.filter((s) => s.name.toLowerCase().includes(query)))
+      setSearchResults(skillsRef.current.filter((s) => s.name.toLowerCase().includes(query)))
+      setSearching(false)
+      setSearchError(null)
+      return
+    }
+
+    const cached = searchCache[trimmed]
+    if (cached) {
+      setSearchResults(cached)
       setSearching(false)
       setSearchError(null)
       return
@@ -47,6 +57,7 @@ export function SkillGalleryView() {
     search(searchQuery)
       .then((results: Skill[]) => {
         if (!cancelled) {
+          setSearchCache(trimmed, results)
           setSearchResults(results)
           setSearching(false)
         }
@@ -62,7 +73,7 @@ export function SkillGalleryView() {
     return () => {
       cancelled = true
     }
-  }, [searchQuery, skills, search])
+  }, [searchQuery, search, searchCache, setSearchCache])
 
   const displayedSkills = searchQuery.trim() ? searchResults : skills
 
