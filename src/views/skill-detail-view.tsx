@@ -91,7 +91,7 @@ export function SkillDetailView() {
   }, [gallerySkill, galleryLoading, gallerySkills.length, fetchGallery])
 
   useEffect(() => {
-    if (gallerySkill || installedSkill || !skillId) {
+    if (gallerySkill || !skillId || (installedSkill && !skillId.includes('/'))) {
       setLookingUp(false)
       return
     }

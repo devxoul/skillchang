@@ -358,4 +358,39 @@ describe('duplicate name resolution', () => {
     expect(screen.getByText('devxoul/agent-messenger')).toBeInTheDocument()
     expect(screen.queryByText('stablyai/agent-slack')).not.toBeInTheDocument()
   })
+
+  it('resolves correct gallery skill even when same-named skill is installed', async () => {
+    // given - installed skills resolve fast, search resolves slow (simulates real app
+    // where installed cache is already populated before search completes)
+    listSkillsSpy.mockResolvedValue([
+      { name: 'agent-slack', path: '/home/.agents/skills/agent-slack', agents: ['claude'] },
+    ])
+    const searchResults = [
+      { id: 'stablyai/agent-slack/agent-slack', name: 'agent-slack', installs: 161, topSource: 'stablyai/agent-slack' },
+      {
+        id: 'devxoul/agent-messenger/agent-slack',
+        name: 'agent-slack',
+        installs: 10,
+        topSource: 'devxoul/agent-messenger',
+      },
+      {
+        id: 'timpietrusky/agent-slack/agent-slack',
+        name: 'agent-slack',
+        installs: 2,
+        topSource: 'timpietrusky/agent-slack',
+      },
+    ]
+    searchSkillsSpy.mockImplementation(() => new Promise((resolve) => setTimeout(() => resolve(searchResults), 50)))
+
+    // when - navigating to a gallery skill's full ID path
+    renderWithProviders('devxoul/agent-messenger/agent-slack')
+
+    // then - should show the gallery skill's topSource, not fall back to installed skill
+    await waitFor(
+      () => {
+        expect(screen.getByText('devxoul/agent-messenger')).toBeInTheDocument()
+      },
+      { timeout: 3000 },
+    )
+  })
 })
