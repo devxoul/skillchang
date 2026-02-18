@@ -168,13 +168,13 @@ export default function HomePage() {
       </header>
 
       <main className="flex-1">
-        <section className="px-6 pb-16 pt-16 sm:pb-20 sm:pt-20">
+        <section className="px-6 pt-16 pb-16 sm:pt-20 sm:pb-20">
           <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:items-center">
             <div>
-              <h1 className="text-balance text-4xl font-extrabold tracking-tight text-zinc-900 sm:text-5xl md:text-6xl dark:text-zinc-100">
+              <h1 className="text-4xl font-extrabold tracking-tight text-balance text-zinc-900 sm:text-5xl md:text-6xl dark:text-zinc-100">
                 Browse, install, and manage AI agent skills visually
               </h1>
-              <p className="mt-6 max-w-2xl text-pretty text-base leading-relaxed text-zinc-600 sm:text-lg dark:text-zinc-400">
+              <p className="mt-6 max-w-2xl text-base leading-relaxed text-pretty text-zinc-600 sm:text-lg dark:text-zinc-400">
                 SkillPad is a desktop GUI for skills.sh. Browse skills from the gallery, install to any agent in one
                 click, and manage global plus project-scoped skills in one place.
               </p>
@@ -279,7 +279,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="px-6 pb-20 pt-6 sm:pb-24">
+        <section className="px-6 pt-6 pb-20 sm:pb-24">
           <div className="mx-auto max-w-5xl rounded-3xl bg-zinc-900 px-6 py-12 text-center shadow-2xl shadow-zinc-900/20 sm:px-10 dark:bg-zinc-100">
             <h2 className="text-3xl font-bold tracking-tight text-zinc-100 dark:text-zinc-900">Download SkillPad</h2>
             <p className="mx-auto mt-3 max-w-2xl text-sm text-zinc-300 sm:text-base dark:text-zinc-600">

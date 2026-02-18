@@ -72,7 +72,7 @@ export default function InstallRedirectPage() {
   return (
     <main className="min-h-screen bg-zinc-50 text-zinc-900 dark:bg-black dark:text-zinc-100">
       <div className="mx-auto flex min-h-screen w-full max-w-3xl items-center justify-center px-4 py-10">
-        <div className="w-full rounded-2xl border border-zinc-200 bg-white/90 p-8 shadow-xl shadow-zinc-300/30 backdrop-blur dark:border-zinc-800 dark:bg-zinc-950/85 dark:shadow-zinc-950/40 sm:p-10">
+        <div className="w-full rounded-2xl border border-zinc-200 bg-white/90 p-8 shadow-xl shadow-zinc-300/30 backdrop-blur sm:p-10 dark:border-zinc-800 dark:bg-zinc-950/85 dark:shadow-zinc-950/40">
           {isOpening ? (
             <div className="flex flex-col items-center text-center">
               <div className="mb-5 h-10 w-10 animate-spin rounded-full border-2 border-zinc-300 border-t-zinc-900 dark:border-zinc-700 dark:border-t-zinc-100" />
@@ -90,8 +90,8 @@ export default function InstallRedirectPage() {
               </p>
 
               <div className="mt-5 w-full rounded-xl border border-zinc-200 bg-zinc-100/70 px-4 py-3 text-left dark:border-zinc-800 dark:bg-zinc-900/60">
-                <p className="text-xs uppercase tracking-wide text-zinc-500 dark:text-zinc-400">Skill ID</p>
-                <p className="mt-1 break-all font-mono text-sm text-zinc-900 dark:text-zinc-100">{displaySkillId}</p>
+                <p className="text-xs tracking-wide text-zinc-500 uppercase dark:text-zinc-400">Skill ID</p>
+                <p className="mt-1 font-mono text-sm break-all text-zinc-900 dark:text-zinc-100">{displaySkillId}</p>
               </div>
 
               <div className="mt-6 flex w-full flex-col gap-3 sm:flex-row">
