@@ -204,6 +204,26 @@ Try listing global skills with -g`,
       expect(result).toEqual([])
     })
 
+    it('returns empty array when skills directory does not exist (stderr)', async () => {
+      mockExecuteQueue.push({
+        code: 1,
+        stdout: '',
+        stderr: 'No such file or directory (os error 2)',
+      })
+
+      const result = await listSkills()
+
+      expect(result).toEqual([])
+    })
+
+    it('returns empty array when skills directory does not exist (thrown)', async () => {
+      mockExecute.mockRejectedValueOnce(new Error('No such file or directory (os error 2)'))
+
+      const result = await listSkills()
+
+      expect(result).toEqual([])
+    })
+
     it('parses valid skill entries correctly', async () => {
       mockExecuteQueue.push({
         code: 0,

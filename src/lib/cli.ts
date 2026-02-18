@@ -54,6 +54,10 @@ function buildSkillsArgs(pm: PackageManager, subcommand: string[]): string[] {
   return ['skills', ...subcommand]
 }
 
+function isNoSuchDirectoryError(message: string): boolean {
+  return message.includes('No such file or directory')
+}
+
 export async function listSkills(options: ListSkillsOptions = {}): Promise<SkillInfo[]> {
   const { global = false, agents, cwd } = options
   const pm = await getPackageManager()
@@ -68,6 +72,7 @@ export async function listSkills(options: ListSkillsOptions = {}): Promise<Skill
   try {
     result = await executeExclusive(pm, args, commandOptions)
   } catch (error) {
+    if (isNoSuchDirectoryError(String(error))) return []
     throw new Error(`Failed to list skills: ${error}`)
   }
 
@@ -75,6 +80,7 @@ export async function listSkills(options: ListSkillsOptions = {}): Promise<Skill
     const stderr = stripAnsi(result.stderr).trim()
     const stdout = stripAnsi(result.stdout).trim()
     const message = stderr || stdout || `Command exited with code ${result.code}`
+    if (isNoSuchDirectoryError(message)) return []
     throw new Error(`Failed to list skills: ${message}`)
   }
 
