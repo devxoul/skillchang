@@ -146,6 +146,15 @@ function UpdateIcon({ className }: { className?: string }) {
 }
 
 export default function HomePage() {
+  const [owner, setOwner] = useState('')
+  const [repo, setRepo] = useState('')
+  const [skillName, setSkillName] = useState('')
+
+  const installPath =
+    owner || repo || skillName
+      ? `${owner || 'OWNER'}/${repo || 'REPO'}/${skillName || 'SKILL-NAME'}`
+      : 'OWNER/REPO/SKILL-NAME'
+
   return (
     <div className="flex min-h-screen flex-col bg-zinc-50 dark:bg-black">
       <header className="sticky top-0 z-50 border-b border-zinc-200 bg-zinc-50/80 backdrop-blur-md dark:border-zinc-800 dark:bg-black/70">
@@ -259,22 +268,55 @@ export default function HomePage() {
               Skill developers can embed this badge in their README so users can install directly into SkillPad.
             </p>
 
+            <div className="mt-5 grid grid-cols-3 gap-3">
+              <label className="flex flex-col gap-1.5">
+                <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">Owner</span>
+                <input
+                  type="text"
+                  value={owner}
+                  onChange={(e) => setOwner(e.target.value)}
+                  placeholder="OWNER"
+                  className="rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-500 focus:outline-none dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder:text-zinc-600 dark:focus:border-zinc-500"
+                />
+              </label>
+              <label className="flex flex-col gap-1.5">
+                <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">Repo</span>
+                <input
+                  type="text"
+                  value={repo}
+                  onChange={(e) => setRepo(e.target.value)}
+                  placeholder="REPO"
+                  className="rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-500 focus:outline-none dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder:text-zinc-600 dark:focus:border-zinc-500"
+                />
+              </label>
+              <label className="flex flex-col gap-1.5">
+                <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">Skill name</span>
+                <input
+                  type="text"
+                  value={skillName}
+                  onChange={(e) => setSkillName(e.target.value)}
+                  placeholder="SKILL-NAME"
+                  className="rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-500 focus:outline-none dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder:text-zinc-600 dark:focus:border-zinc-500"
+                />
+              </label>
+            </div>
+
             <div className="mt-6 flex flex-col gap-6">
               <div>
                 <p className="mb-2 text-xs font-medium text-zinc-500 dark:text-zinc-400">Dark</p>
                 <div className="rounded-xl border border-zinc-200 bg-white p-5 dark:border-zinc-700 dark:bg-zinc-950">
-                  <img
-                    src="https://badge.skillpad.dev/dark.svg"
-                    alt="Available on SkillPad badge (dark)"
-                    className="h-12 w-auto"
-                  />
+                  <Link href={`/install/${installPath}`} className="inline-block">
+                    <img
+                      src="https://badge.skillpad.dev/dark.svg"
+                      alt="Available on SkillPad badge (dark)"
+                      className="h-12 w-auto"
+                    />
+                  </Link>
                 </div>
                 <div className="mt-2 overflow-x-auto rounded-xl border border-zinc-200 bg-zinc-950 p-4 dark:border-zinc-700">
                   <pre className="text-xs text-zinc-200 sm:text-sm">
                     <code>
-                      {
-                        '[![Available on SkillPad](https://badge.skillpad.dev/dark.svg)](https://skillpad.dev/install/YOUR-SKILL-ID)'
-                      }
+                      {`[![Available on SkillPad](https://badge.skillpad.dev/dark.svg)](https://skillpad.dev/install/${installPath})`}
                     </code>
                   </pre>
                 </div>
@@ -283,18 +325,18 @@ export default function HomePage() {
               <div>
                 <p className="mb-2 text-xs font-medium text-zinc-500 dark:text-zinc-400">Light</p>
                 <div className="rounded-xl border border-zinc-200 bg-white p-5 dark:border-zinc-700 dark:bg-zinc-950">
-                  <img
-                    src="https://badge.skillpad.dev/light.svg"
-                    alt="Available on SkillPad badge (light)"
-                    className="h-12 w-auto"
-                  />
+                  <Link href={`/install/${installPath}`} className="inline-block">
+                    <img
+                      src="https://badge.skillpad.dev/light.svg"
+                      alt="Available on SkillPad badge (light)"
+                      className="h-12 w-auto"
+                    />
+                  </Link>
                 </div>
                 <div className="mt-2 overflow-x-auto rounded-xl border border-zinc-200 bg-zinc-950 p-4 dark:border-zinc-700">
                   <pre className="text-xs text-zinc-200 sm:text-sm">
                     <code>
-                      {
-                        '[![Available on SkillPad](https://badge.skillpad.dev/light.svg)](https://skillpad.dev/install/YOUR-SKILL-ID)'
-                      }
+                      {`[![Available on SkillPad](https://badge.skillpad.dev/light.svg)](https://skillpad.dev/install/${installPath})`}
                     </code>
                   </pre>
                 </div>
@@ -303,18 +345,18 @@ export default function HomePage() {
               <div>
                 <p className="mb-2 text-xs font-medium text-zinc-500 dark:text-zinc-400">Shield</p>
                 <div className="rounded-xl border border-zinc-200 bg-white p-5 dark:border-zinc-700 dark:bg-zinc-950">
-                  <img
-                    src={`https://img.shields.io/badge/Available_on-SkillPad-1a1a1a?style=flat&logo=${encodeURIComponent('https://badge.skillpad.dev/icon.svg')}`}
-                    alt="Available on SkillPad shield"
-                    className="h-5 w-auto"
-                  />
+                  <Link href={`/install/${installPath}`} className="inline-block">
+                    <img
+                      src={`https://img.shields.io/badge/Available_on-SkillPad-1a1a1a?style=flat&logo=${encodeURIComponent('https://badge.skillpad.dev/icon.svg')}`}
+                      alt="Available on SkillPad shield"
+                      className="h-5 w-auto"
+                    />
+                  </Link>
                 </div>
                 <div className="mt-2 overflow-x-auto rounded-xl border border-zinc-200 bg-zinc-950 p-4 dark:border-zinc-700">
                   <pre className="text-xs text-zinc-200 sm:text-sm">
                     <code>
-                      {
-                        '[![Available on SkillPad](https://img.shields.io/badge/Available_on-SkillPad-1a1a1a?style=flat&logo=https%3A%2F%2Fbadge.skillpad.dev%2Ficon.svg)](https://skillpad.dev/install/YOUR-SKILL-ID)'
-                      }
+                      {`[![Available on SkillPad](https://img.shields.io/badge/Available_on-SkillPad-1a1a1a?style=flat&logo=https%3A%2F%2Fbadge.skillpad.dev%2Ficon.svg)](https://skillpad.dev/install/${installPath})`}
                     </code>
                   </pre>
                 </div>
