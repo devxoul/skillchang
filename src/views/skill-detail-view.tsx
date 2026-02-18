@@ -82,7 +82,10 @@ export function SkillDetailView() {
   }, [repoSkill])
 
   const skill =
-    gallerySkill ?? repoSkill ?? lookedUpSkill ?? (installedSkill ? installedSkillToSkill(installedSkill) : null)
+    gallerySkill ??
+    repoSkill ??
+    lookedUpSkill ??
+    (!lookingUp && installedSkill ? installedSkillToSkill(installedSkill) : null)
 
   useEffect(() => {
     if (!gallerySkill && !galleryLoading && gallerySkills.length === 0) {
