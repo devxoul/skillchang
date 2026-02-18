@@ -198,12 +198,8 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div className="rounded-2xl border border-zinc-200 bg-white p-2 shadow-lg shadow-zinc-900/5 dark:border-zinc-800 dark:bg-zinc-900">
-              <img
-                src={screenshotUrl}
-                alt="SkillPad desktop app screenshot"
-                className="w-full rounded-xl border border-zinc-200/80 dark:border-zinc-700/80"
-              />
+            <div>
+              <img src={screenshotUrl} alt="SkillPad desktop app screenshot" className="w-full rounded-xl" />
             </div>
           </div>
         </section>
