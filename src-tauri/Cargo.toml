@@ -32,3 +32,4 @@ tauri-plugin-updater = "2"
 tauri-plugin-process = "2"
 tauri-plugin-single-instance = { version = "2", features = ["deep-link"] }
 tauri-plugin-deep-link = "2"
+fix-path-env = { git = "https://github.com/tauri-apps/fix-path-env-rs" }
