@@ -1,6 +1,6 @@
 import { ArrowLeft, FileText, FolderOpen, GithubLogo, Globe, Plus, SpinnerGap, Warning } from '@phosphor-icons/react'
 import { open } from '@tauri-apps/plugin-shell'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import Markdown from 'react-markdown'
 import { useNavigate, useParams } from 'react-router-dom'
 import remarkGfm from 'remark-gfm'
@@ -56,13 +56,19 @@ export function SkillDetailView() {
   const [showDialog, setShowDialog] = useState(false)
   const [lookedUpSkill, setLookedUpSkill] = useState<Skill | null>(null)
   const [lookingUp, setLookingUp] = useState(false)
-
   const gallerySkill = gallerySkills.find((s) => s.id === skillId) ?? gallerySkills.find((s) => s.name === skillId)
 
   const installedSkill = useMemo(() => {
     const allInstalled = Object.values(installed.cache).flatMap((entry) => entry.skills)
     return allInstalled.find((s) => s.name === skillId || skillId?.endsWith('/' + s.name)) ?? null
   }, [installed.cache, skillId])
+
+  const gallerySkillRef = useRef(gallerySkill)
+  const installedSkillRef = useRef(installedSkill)
+  const lookedUpSkillRef = useRef(lookedUpSkill)
+  gallerySkillRef.current = gallerySkill
+  installedSkillRef.current = installedSkill
+  lookedUpSkillRef.current = lookedUpSkill
 
   const repoSkill = useMemo(() => {
     if (gallerySkill || installedSkill) return null
@@ -94,27 +100,50 @@ export function SkillDetailView() {
   }, [gallerySkill, galleryLoading, gallerySkills.length, fetchGallery])
 
   useEffect(() => {
-    if (gallerySkill || !skillId || (installedSkill && !skillId.includes('/'))) {
+    if (
+      gallerySkillRef.current ||
+      lookedUpSkillRef.current ||
+      !skillId ||
+      (installedSkillRef.current && !skillId.includes('/'))
+    ) {
       setLookingUp(false)
       return
     }
     const skillName = skillId.split('/').pop() || skillId
     let cancelled = false
+    let retryTimer: ReturnType<typeof setTimeout> | undefined
+    let attempts = 0
     setLookingUp(true)
-    search(skillName)
-      .then((results: Skill[]) => {
-        if (cancelled) return
-        const match = results.find((s: Skill) => s.id === skillId) ?? results.find((s: Skill) => s.name === skillName)
-        if (match) setLookedUpSkill(match)
-      })
-      .catch(() => {})
-      .finally(() => {
-        if (!cancelled) setLookingUp(false)
-      })
+    const doSearch = () => {
+      if (gallerySkillRef.current || lookedUpSkillRef.current) {
+        setLookingUp(false)
+        return
+      }
+      attempts++
+      search(skillName)
+        .then((results: Skill[]) => {
+          if (cancelled || gallerySkillRef.current || lookedUpSkillRef.current) return
+          const match = results.find((s: Skill) => s.id === skillId) ?? results.find((s: Skill) => s.name === skillName)
+          if (match) setLookedUpSkill(match)
+          setLookingUp(false)
+        })
+        .catch(() => {
+          if (cancelled) return
+          if (attempts < 3) {
+            retryTimer = setTimeout(() => {
+              if (!cancelled) doSearch()
+            }, 1500)
+          } else {
+            setLookingUp(false)
+          }
+        })
+    }
+    doSearch()
     return () => {
       cancelled = true
+      clearTimeout(retryTimer)
     }
-  }, [gallerySkill, installedSkill, skillId, search])
+  }, [skillId, search])
 
   useEffect(() => {
     if (!skill?.name) return
