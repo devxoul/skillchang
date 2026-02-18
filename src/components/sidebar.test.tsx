@@ -1,25 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, mock, spyOn } from 'bun:test'
 import { render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
+import { AppUpdateProvider } from '@/contexts/app-update-context'
 import { ProjectsProvider } from '@/contexts/projects-context'
 import * as projects from '@/lib/projects'
-
-mock.module('@/contexts/app-update-context', () => ({
-  useAppUpdateContext: mock(() => ({
-    state: { status: 'idle' as const },
-    checkForUpdate: mock(() => Promise.resolve(false)),
-    downloadUpdate: mock(() => Promise.resolve()),
-    restartToUpdate: mock(() => Promise.resolve()),
-  })),
-}))
-
-mock.module('@/hooks/use-preferences', () => ({
-  usePreferences: mock(() => ({
-    preferences: { defaultAgents: [], packageManager: 'npx', autoCheckUpdates: false },
-    loading: false,
-    savePreferences: mock(() => {}),
-  })),
-}))
+import { mockUsePreferences } from '@/test-mocks'
 
 import { Sidebar } from './sidebar'
 
@@ -29,6 +14,12 @@ let removeProjectSpy: ReturnType<typeof spyOn>
 let reorderProjectsSpy: ReturnType<typeof spyOn>
 
 beforeEach(() => {
+  mockUsePreferences.mockReset()
+  mockUsePreferences.mockImplementation(() => ({
+    preferences: { defaultAgents: [], packageManager: 'npx', autoCheckUpdates: false },
+    loading: false,
+    savePreferences: mock(() => {}),
+  }))
   getProjectsSpy = spyOn(projects, 'getProjects').mockResolvedValue([])
   importProjectSpy = spyOn(projects, 'importProject').mockResolvedValue(null)
   removeProjectSpy = spyOn(projects, 'removeProject').mockResolvedValue(undefined)
@@ -36,6 +27,7 @@ beforeEach(() => {
 })
 
 afterEach(() => {
+  mockUsePreferences.mockReset()
   getProjectsSpy.mockRestore()
   importProjectSpy.mockRestore()
   removeProjectSpy.mockRestore()
@@ -44,9 +36,11 @@ afterEach(() => {
 
 const renderWithProviders = (ui: React.ReactElement, { route = '/' } = {}) => {
   const result = render(
-    <ProjectsProvider>
-      <MemoryRouter initialEntries={[route]}>{ui}</MemoryRouter>
-    </ProjectsProvider>,
+    <AppUpdateProvider autoCheckUpdates={false}>
+      <ProjectsProvider>
+        <MemoryRouter initialEntries={[route]}>{ui}</MemoryRouter>
+      </ProjectsProvider>
+    </AppUpdateProvider>,
   )
 
   // Assign queries to global screen object to work around the timing issue

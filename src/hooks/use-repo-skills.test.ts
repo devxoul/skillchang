@@ -1,21 +1,11 @@
-import { afterEach, beforeEach, describe, expect, it, mock } from 'bun:test'
+import { afterEach, beforeEach, describe, expect, it, spyOn } from 'bun:test'
 import { act, renderHook } from '@testing-library/react'
+import * as api from '@/lib/api'
 import { ApiError } from '@/types/api'
-
-// Mock the api module before importing the hook
-const mockFetchRepoSkills = mock(async (_owner: string, _repo: string) => [] as any[])
-const mockIsRepoQuery = mock((_query: string) => false)
-
-mock.module('@/lib/api', () => ({
-  fetchRepoSkills: async (owner: string, repo: string) => mockFetchRepoSkills(owner, repo),
-  isRepoQuery: (query: string) => mockIsRepoQuery(query),
-  fetchSkills: async () => [],
-  searchSkills: async () => [],
-  fetchSkillReadme: async () => '',
-}))
-
-// Import AFTER mocks
 import { getRepoSkillsCache, useRepoSkills } from './use-repo-skills'
+
+let mockFetchRepoSkills: any
+let mockIsRepoQuery: any
 
 const mockSkills = [
   { id: 'repo:xoul/skills:git-master', name: 'git-master', installs: 0, topSource: 'xoul/skills' },
@@ -23,13 +13,14 @@ const mockSkills = [
 ]
 
 beforeEach(() => {
-  mockFetchRepoSkills.mockClear()
-  mockIsRepoQuery.mockClear()
-  // Clear module-level cache between tests
+  mockFetchRepoSkills = spyOn(api, 'fetchRepoSkills').mockResolvedValue([])
+  mockIsRepoQuery = spyOn(api, 'isRepoQuery').mockReturnValue(false)
   getRepoSkillsCache().clear()
 })
 
 afterEach(() => {
+  mockFetchRepoSkills.mockRestore()
+  mockIsRepoQuery.mockRestore()
   getRepoSkillsCache().clear()
 })
 

@@ -21,9 +21,9 @@ interface PreferencesDialogProps {
 
 export function PreferencesDialog({ open, onOpenChange }: PreferencesDialogProps) {
   const { preferences, savePreferences } = usePreferences()
-  const [selectedAgents, setSelectedAgents] = useState<string[]>([])
-  const [packageManager, setPackageManager] = useState<PackageManager>('bunx')
-  const [autoCheckUpdates, setAutoCheckUpdates] = useState(true)
+  const [selectedAgents, setSelectedAgents] = useState<string[]>(preferences.defaultAgents)
+  const [packageManager, setPackageManager] = useState<PackageManager>(preferences.packageManager)
+  const [autoCheckUpdates, setAutoCheckUpdates] = useState(preferences.autoCheckUpdates)
 
   useEffect(() => {
     if (open) {

@@ -1,18 +1,24 @@
-import { describe, expect, it, mock } from 'bun:test'
+import { afterEach, beforeEach, describe, expect, it, mock, spyOn } from 'bun:test'
 import { renderHook } from '@testing-library/react'
 import type { ReactNode } from 'react'
+import * as useAppUpdateModule from '@/hooks/use-app-update'
 
-// Must mock before importing the module that uses it
-mock.module('@/hooks/use-app-update', () => ({
-  useAppUpdate: mock(() => ({
+import { AppUpdateProvider, useAppUpdateContext } from './app-update-context'
+
+let useAppUpdateSpy: ReturnType<typeof spyOn>
+
+beforeEach(() => {
+  useAppUpdateSpy = spyOn(useAppUpdateModule, 'useAppUpdate').mockReturnValue({
     state: { status: 'idle' as const },
     checkForUpdate: mock(() => Promise.resolve(false)),
     downloadUpdate: mock(() => Promise.resolve()),
     restartToUpdate: mock(() => Promise.resolve()),
-  })),
-}))
+  })
+})
 
-import { AppUpdateProvider, useAppUpdateContext } from './app-update-context'
+afterEach(() => {
+  useAppUpdateSpy.mockRestore()
+})
 
 function wrapper({ children }: { children: ReactNode }) {
   return <AppUpdateProvider autoCheckUpdates={false}>{children}</AppUpdateProvider>

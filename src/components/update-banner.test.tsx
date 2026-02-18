@@ -1,19 +1,13 @@
-import { describe, expect, it, vi } from 'bun:test'
+import { describe, expect, it, mock } from 'bun:test'
 import { fireEvent, render } from '@testing-library/react'
 import type { AppUpdateState } from '@/types/app-update'
 import { UpdateBanner } from './update-banner'
 
-// Mock icons to avoid rendering issues in tests
-vi.mock('@phosphor-icons/react', () => ({
-  ArrowsClockwise: () => <div data-testid="icon-restart" />,
-  DownloadSimple: () => <div data-testid="icon-download" />,
-}))
-
 describe('UpdateBanner', () => {
   const defaultProps = {
-    onDownload: vi.fn(),
-    onRestart: vi.fn(),
-    onRetry: vi.fn(),
+    onDownload: mock(() => {}),
+    onRestart: mock(() => {}),
+    onRetry: mock(() => {}),
   }
 
   it('renders nothing when state is idle', () => {
@@ -30,10 +24,9 @@ describe('UpdateBanner', () => {
 
   it('renders available state correctly', () => {
     const state: AppUpdateState = { status: 'available', version: '1.2.3' }
-    const { getByText, getByTestId, getByRole } = render(<UpdateBanner state={state} {...defaultProps} />)
+    const { getByText, getByRole } = render(<UpdateBanner state={state} {...defaultProps} />)
 
     expect(getByText('v1.2.3 available')).toBeTruthy()
-    expect(getByTestId('icon-download')).toBeTruthy()
 
     const button = getByRole('button')
     fireEvent.click(button)
@@ -51,10 +44,9 @@ describe('UpdateBanner', () => {
 
   it('renders ready state correctly', () => {
     const state: AppUpdateState = { status: 'ready' }
-    const { getByText, getByTestId, getByRole } = render(<UpdateBanner state={state} {...defaultProps} />)
+    const { getByText, getByRole } = render(<UpdateBanner state={state} {...defaultProps} />)
 
     expect(getByText('Ready to update')).toBeTruthy()
-    expect(getByTestId('icon-restart')).toBeTruthy()
 
     const button = getByRole('button')
     fireEvent.click(button)

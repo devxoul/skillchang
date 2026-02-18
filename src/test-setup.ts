@@ -2,11 +2,36 @@
 import { afterEach, expect, mock } from 'bun:test'
 import * as matchers from '@testing-library/jest-dom/matchers'
 import { cleanup } from '@testing-library/react'
+import {
+  mockDialogOpen,
+  mockHomeDir,
+  mockHttpFetch,
+  mockProcessExit,
+  mockProcessRelaunch,
+  mockSavePreferences,
+  mockShellCreate,
+  mockStoreGet,
+  mockStoreSave,
+  mockStoreSet,
+  mockUpdaterCheck,
+  mockUsePreferences,
+  mockWindowOnMoved,
+  mockWindowOnResized,
+  mockWindowOnThemeChanged,
+  mockWindowTheme,
+} from './test-mocks'
 
 expect.extend(matchers)
 
 afterEach(() => {
   cleanup()
+  mockUsePreferences.mockReset()
+  mockSavePreferences.mockReset()
+  mockUsePreferences.mockImplementation(() => ({
+    preferences: { defaultAgents: [], packageManager: 'npx', autoCheckUpdates: false },
+    loading: false,
+    savePreferences: mockSavePreferences,
+  }))
 })
 
 mock.module('@lobehub/icons', () => ({
@@ -37,27 +62,47 @@ mock.module('@tauri-apps/api/core', () => ({
   transformCallback: mock(() => {}),
 }))
 
-mock.module('@tauri-apps/plugin-dialog', () => ({
-  open: mock(async () => null),
+mock.module('@tauri-apps/plugin-http', () => ({
+  fetch: mockHttpFetch,
 }))
 
 mock.module('@tauri-apps/plugin-store', () => ({
   Store: {
-    load: mock(async () => ({
-      get: mock(async () => null),
-      set: mock(async () => undefined),
-      save: mock(async () => undefined),
-    })),
+    load: async () => ({
+      get: mockStoreGet,
+      set: mockStoreSet,
+      save: mockStoreSave,
+    }),
   },
 }))
 
+mock.module('@tauri-apps/plugin-shell', () => ({
+  Command: {
+    create: mockShellCreate,
+  },
+  open: mock(async () => undefined),
+}))
+
+mock.module('@tauri-apps/plugin-dialog', () => ({
+  open: mockDialogOpen,
+}))
+
+mock.module('@tauri-apps/plugin-updater', () => ({
+  check: mockUpdaterCheck,
+}))
+
+mock.module('@tauri-apps/plugin-process', () => ({
+  relaunch: mockProcessRelaunch,
+  exit: mockProcessExit,
+}))
+
 mock.module('@tauri-apps/api/window', () => ({
-  getCurrentWindow: mock(() => ({
-    theme: mock(async () => 'light'),
-    onThemeChanged: mock(async () => () => {}),
-    onMoved: mock(async () => () => {}),
-    onResized: mock(async () => () => {}),
-  })),
+  getCurrentWindow: () => ({
+    theme: mockWindowTheme,
+    onThemeChanged: mockWindowOnThemeChanged,
+    onMoved: mockWindowOnMoved,
+    onResized: mockWindowOnResized,
+  }),
 }))
 
 mock.module('@tauri-apps/plugin-window-state', () => ({
@@ -65,11 +110,10 @@ mock.module('@tauri-apps/plugin-window-state', () => ({
   saveWindowState: mock(async () => undefined),
 }))
 
-mock.module('@tauri-apps/plugin-updater', () => ({
-  check: mock(async () => null),
+mock.module('@tauri-apps/api/path', () => ({
+  homeDir: mockHomeDir,
 }))
 
-mock.module('@tauri-apps/plugin-process', () => ({
-  relaunch: mock(async () => undefined),
-  exit: mock(async () => undefined),
+mock.module('@/hooks/use-preferences', () => ({
+  usePreferences: mockUsePreferences,
 }))

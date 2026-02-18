@@ -1,39 +1,25 @@
-import { beforeEach, describe, expect, it, mock } from 'bun:test'
+import { beforeEach, describe, expect, it } from 'bun:test'
+import { mockShellCreate, mockShellExecute } from '@/test-mocks'
+
+const { executeExclusive } = await import('./command-queue')
 
 let executionOrder: number[] = []
 let callCount = 0
-
-const mockExecute = mock(async () => {
-  const id = ++callCount
-  executionOrder.push(id)
-  await new Promise((r) => setTimeout(r, 50))
-  return { code: 0, stdout: `result-${id}`, stderr: '' }
-})
-
-const mockCreate = mock((..._args: any[]) => ({
-  execute: mockExecute,
-}))
-
-mock.module('@tauri-apps/plugin-shell', () => ({
-  Command: { create: mockCreate },
-}))
-
-const { executeExclusive } = await import('./command-queue')
 
 describe('executeExclusive', () => {
   beforeEach(() => {
     executionOrder = []
     callCount = 0
-    mockExecute.mockReset()
-    mockExecute.mockImplementation(async () => {
+    mockShellExecute.mockReset()
+    mockShellExecute.mockImplementation(async () => {
       const id = ++callCount
       executionOrder.push(id)
       await new Promise((r) => setTimeout(r, 50))
       return { code: 0, stdout: `result-${id}`, stderr: '' }
     })
-    mockCreate.mockReset()
-    mockCreate.mockImplementation((..._args: any[]) => ({
-      execute: mockExecute,
+    mockShellCreate.mockReset()
+    mockShellCreate.mockImplementation((..._args: any[]) => ({
+      execute: mockShellExecute,
     }))
   })
 
@@ -54,7 +40,7 @@ describe('executeExclusive', () => {
 
   it('continues queue after a failure', async () => {
     // given: first call fails, second succeeds
-    mockExecute
+    mockShellExecute
       .mockImplementationOnce(async () => {
         executionOrder.push(++callCount)
         throw new Error('EEXIST')
@@ -77,6 +63,6 @@ describe('executeExclusive', () => {
   it('passes arguments through to Command.create', async () => {
     await executeExclusive('npx', ['-y', 'skills', 'list'], { cwd: '/tmp' })
 
-    expect(mockCreate).toHaveBeenCalledWith('npx', ['-y', 'skills', 'list'], { cwd: '/tmp' })
+    expect(mockShellCreate).toHaveBeenCalledWith('npx', ['-y', 'skills', 'list'], { cwd: '/tmp' })
   })
 })

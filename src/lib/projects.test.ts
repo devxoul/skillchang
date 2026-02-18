@@ -1,4 +1,6 @@
-import { beforeEach, describe, expect, it, mock } from 'bun:test'
+import { beforeEach, describe, expect, it } from 'bun:test'
+import { addProject, getProjects, importProject, removeProject, reorderProjects } from '@/lib/projects'
+import { mockDialogOpen, mockStoreGet, mockStoreSave, mockStoreSet } from '@/test-mocks'
 
 let mockGetQueue: any[] = []
 let mockGetCalls: any[] = []
@@ -6,50 +8,6 @@ let mockSetCalls: any[] = []
 let mockSaveCalls: any[] = []
 let mockOpenCalls: any[] = []
 let mockOpenQueue: any[] = []
-
-const mockStoreGet = mock(async (...args: any[]) => {
-  mockGetCalls.push(args)
-  if (mockGetQueue.length > 0) {
-    return mockGetQueue.shift()
-  }
-  return null
-})
-
-const mockStoreSet = mock(async (...args: any[]) => {
-  mockSetCalls.push(args)
-})
-
-const mockStoreSave = mock(async () => {
-  mockSaveCalls.push([])
-})
-
-const mockStoreLoad = mock(async () => {
-  return {
-    get: mockStoreGet,
-    set: mockStoreSet,
-    save: mockStoreSave,
-  }
-})
-
-const mockOpen = mock(async (...args: any[]) => {
-  mockOpenCalls.push(args)
-  if (mockOpenQueue.length > 0) {
-    return mockOpenQueue.shift()
-  }
-  return null
-})
-
-mock.module('@tauri-apps/plugin-dialog', () => ({
-  open: mockOpen,
-}))
-
-mock.module('@tauri-apps/plugin-store', () => ({
-  Store: {
-    load: mockStoreLoad,
-  },
-}))
-
-import { addProject, getProjects, importProject, removeProject, reorderProjects } from '@/lib/projects'
 
 describe('projects', () => {
   beforeEach(async () => {
@@ -59,11 +17,26 @@ describe('projects', () => {
     mockSaveCalls = []
     mockOpenCalls = []
     mockOpenQueue = []
-    mockStoreGet.mockClear()
-    mockStoreSet.mockClear()
-    mockStoreSave.mockClear()
-    mockStoreLoad.mockClear()
-    mockOpen.mockClear()
+    mockStoreGet.mockReset()
+    mockStoreGet.mockImplementation(async (...args: any[]) => {
+      mockGetCalls.push(args)
+      if (mockGetQueue.length > 0) return mockGetQueue.shift()
+      return null
+    })
+    mockStoreSet.mockReset()
+    mockStoreSet.mockImplementation(async (...args: any[]) => {
+      mockSetCalls.push(args)
+    })
+    mockStoreSave.mockReset()
+    mockStoreSave.mockImplementation(async () => {
+      mockSaveCalls.push([])
+    })
+    mockDialogOpen.mockReset()
+    mockDialogOpen.mockImplementation(async (...args: any[]) => {
+      mockOpenCalls.push(args)
+      if (mockOpenQueue.length > 0) return mockOpenQueue.shift()
+      return null
+    })
   })
 
   describe('getProjects', () => {

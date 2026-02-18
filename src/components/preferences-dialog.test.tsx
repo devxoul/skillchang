@@ -1,46 +1,37 @@
 import { afterEach, beforeEach, describe, expect, it, mock } from 'bun:test'
 import { fireEvent, render, waitFor } from '@testing-library/react'
 import { PreferencesDialog } from '@/components/preferences-dialog'
+import { mockUsePreferences } from '@/test-mocks'
 
 let mockUsePreferencesImpl: any = null
-
-mock.module('@/hooks/use-preferences', () => ({
-  usePreferences: mock(
-    () =>
-      mockUsePreferencesImpl ?? {
-        preferences: { defaultAgents: [], packageManager: 'npx' },
-        loading: false,
-        savePreferences: mock(() => {}),
-      },
-  ),
-}))
-
-mock.module('@tauri-apps/plugin-store', () => ({
-  Store: {
-    load: mock(async () => ({
-      get: mock(async () => null),
-      set: mock(async () => undefined),
-      save: mock(async () => undefined),
-    })),
-  },
-}))
 
 describe('PreferencesDialog', () => {
   let mockSavePreferences: any
 
   beforeEach(() => {
+    mockUsePreferences.mockReset()
     mockSavePreferences = mock(() => {})
     mockUsePreferencesImpl = {
       preferences: {
         defaultAgents: ['opencode', 'claude-code'],
         packageManager: 'bunx',
+        autoCheckUpdates: true,
       },
       loading: false,
       savePreferences: mockSavePreferences,
     }
+    mockUsePreferences.mockImplementation(
+      () =>
+        mockUsePreferencesImpl ?? {
+          preferences: { defaultAgents: [], packageManager: 'npx', autoCheckUpdates: false },
+          loading: false,
+          savePreferences: mock(() => {}),
+        },
+    )
   })
 
   afterEach(() => {
+    mockUsePreferences.mockReset()
     mockUsePreferencesImpl = null
   })
 
@@ -63,8 +54,8 @@ describe('PreferencesDialog', () => {
   it('pre-selects default agents from preferences', () => {
     const { getAllByRole } = render(<PreferencesDialog open={true} onOpenChange={mock(() => {})} />)
     const checkboxes = getAllByRole('checkbox')
-    const openCodeCheckbox = checkboxes[0]
-    const claudeCheckbox = checkboxes[1]
+    const openCodeCheckbox = checkboxes[1]
+    const claudeCheckbox = checkboxes[2]
 
     expect(openCodeCheckbox?.getAttribute('aria-checked')).toBe('true')
     expect(claudeCheckbox?.getAttribute('aria-checked')).toBe('true')

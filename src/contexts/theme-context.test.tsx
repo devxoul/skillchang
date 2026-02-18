@@ -1,12 +1,4 @@
-import { describe, expect, it, mock } from 'bun:test'
-
-mock.module('@tauri-apps/api/window', () => ({
-  getCurrentWindow: () => ({
-    theme: mock(() => Promise.resolve('light')),
-    onThemeChanged: mock(() => Promise.resolve(() => {})),
-  }),
-}))
-
+import { describe, expect, it } from 'bun:test'
 import { render, waitFor } from '@testing-library/react'
 import { ThemeProvider, useTheme } from '@/contexts/theme-context'
 

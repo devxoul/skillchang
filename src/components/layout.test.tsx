@@ -2,23 +2,6 @@ import { afterEach, beforeEach, describe, expect, it, mock, spyOn } from 'bun:te
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 
-mock.module('@/contexts/app-update-context', () => ({
-  useAppUpdateContext: mock(() => ({
-    state: { status: 'idle' as const },
-    checkForUpdate: mock(() => Promise.resolve(false)),
-    downloadUpdate: mock(() => Promise.resolve()),
-    restartToUpdate: mock(() => Promise.resolve()),
-  })),
-}))
-
-mock.module('@/hooks/use-preferences', () => ({
-  usePreferences: mock(() => ({
-    preferences: { defaultAgents: [], packageManager: 'npx', autoCheckUpdates: false },
-    loading: false,
-    savePreferences: mock(() => {}),
-  })),
-}))
-
 globalThis.ResizeObserver ??= class ResizeObserver {
   observe() {}
   unobserve() {}
@@ -28,6 +11,7 @@ globalThis.ResizeObserver ??= class ResizeObserver {
 import { Layout } from '@/components/layout'
 import { MainContent } from '@/components/main-content'
 import { Sidebar } from '@/components/sidebar'
+import { AppUpdateProvider } from '@/contexts/app-update-context'
 import { ProjectsProvider } from '@/contexts/projects-context'
 import { ScrollRestorationProvider } from '@/contexts/scroll-context'
 import { SearchPersistenceProvider } from '@/contexts/search-context'
@@ -35,6 +19,7 @@ import { SkillsProvider } from '@/contexts/skills-context'
 import * as api from '@/lib/api'
 import * as cli from '@/lib/cli'
 import * as projects from '@/lib/projects'
+import { mockUsePreferences } from '@/test-mocks'
 
 let fetchSkillsSpy: ReturnType<typeof spyOn>
 let listSkillsSpy: ReturnType<typeof spyOn>
@@ -45,6 +30,12 @@ let removeProjectSpy: ReturnType<typeof spyOn>
 let reorderProjectsSpy: ReturnType<typeof spyOn>
 
 beforeEach(() => {
+  mockUsePreferences.mockReset()
+  mockUsePreferences.mockImplementation(() => ({
+    preferences: { defaultAgents: [], packageManager: 'npx', autoCheckUpdates: false },
+    loading: false,
+    savePreferences: mock(() => {}),
+  }))
   fetchSkillsSpy = spyOn(api, 'fetchSkills').mockResolvedValue([])
   listSkillsSpy = spyOn(cli, 'listSkills').mockResolvedValue([])
   checkUpdatesApiSpy = spyOn(cli, 'checkUpdatesApi').mockResolvedValue({
@@ -59,6 +50,7 @@ beforeEach(() => {
 })
 
 afterEach(() => {
+  mockUsePreferences.mockReset()
   fetchSkillsSpy.mockRestore()
   listSkillsSpy.mockRestore()
   checkUpdatesApiSpy.mockRestore()
@@ -70,15 +62,17 @@ afterEach(() => {
 
 const renderWithProviders = (ui: React.ReactElement, { route = '/' } = {}) => {
   const result = render(
-    <ProjectsProvider>
-      <SkillsProvider>
-        <MemoryRouter initialEntries={[route]}>
-          <SearchPersistenceProvider>
-            <ScrollRestorationProvider>{ui}</ScrollRestorationProvider>
-          </SearchPersistenceProvider>
-        </MemoryRouter>
-      </SkillsProvider>
-    </ProjectsProvider>,
+    <AppUpdateProvider autoCheckUpdates={false}>
+      <ProjectsProvider>
+        <SkillsProvider>
+          <MemoryRouter initialEntries={[route]}>
+            <SearchPersistenceProvider>
+              <ScrollRestorationProvider>{ui}</ScrollRestorationProvider>
+            </SearchPersistenceProvider>
+          </MemoryRouter>
+        </SkillsProvider>
+      </ProjectsProvider>
+    </AppUpdateProvider>,
   )
 
   // Assign queries to global screen object to work around the timing issue

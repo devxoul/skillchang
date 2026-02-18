@@ -1,4 +1,5 @@
-import { beforeEach, describe, expect, it, mock } from 'bun:test'
+import { beforeEach, describe, expect, it } from 'bun:test'
+import { mockHttpFetch, mockShellCreate, mockShellExecute, mockStoreGet } from '@/test-mocks'
 
 let mockExecuteQueue: any[] = []
 let mockFetchQueue: any[] = []
@@ -6,64 +7,6 @@ let mockExecuteCalls: any[] = []
 let mockFetchCalls: any[] = []
 let mockCreateCalls: any[] = []
 let mockStorePreferences: any = null
-
-const mockExecute = mock(async (...args: any[]) => {
-  mockExecuteCalls.push(args)
-  if (mockExecuteQueue.length > 0) {
-    const response = mockExecuteQueue.shift()
-    if (response instanceof Error) {
-      throw response
-    }
-    return response
-  }
-})
-
-const mockCreate = mock((...args: any[]) => {
-  mockCreateCalls.push(args)
-  return {
-    execute: mockExecute,
-  }
-})
-
-const mockFetch = mock(async (...args: any[]) => {
-  mockFetchCalls.push(args)
-  if (mockFetchQueue.length > 0) {
-    const response = mockFetchQueue.shift()
-    if (response instanceof Error) {
-      throw response
-    }
-    return response
-  }
-})
-
-const mockStoreGet = mock(async (key: string) => {
-  if (key === 'preferences') return mockStorePreferences
-  return null
-})
-
-mock.module('@tauri-apps/plugin-shell', () => ({
-  Command: {
-    create: mockCreate,
-  },
-}))
-
-mock.module('@tauri-apps/plugin-http', () => ({
-  fetch: mockFetch,
-}))
-
-mock.module('@tauri-apps/api/path', () => ({
-  homeDir: mock(async () => '/Users/test'),
-}))
-
-mock.module('@tauri-apps/plugin-store', () => ({
-  Store: {
-    load: mock(async () => ({
-      get: mockStoreGet,
-      set: mock(async () => {}),
-      save: mock(async () => {}),
-    })),
-  },
-}))
 
 import {
   addSkill,
@@ -83,8 +26,8 @@ describe('cli', () => {
     mockFetchCalls = []
     mockCreateCalls = []
     mockStorePreferences = null
-    mockExecute.mockReset()
-    mockExecute.mockImplementation(async (...args: any[]) => {
+    mockShellExecute.mockReset()
+    mockShellExecute.mockImplementation(async (...args: any[]) => {
       mockExecuteCalls.push(args)
       if (mockExecuteQueue.length > 0) {
         const response = mockExecuteQueue.shift()
@@ -92,19 +35,24 @@ describe('cli', () => {
         return response
       }
     })
-    mockCreate.mockReset()
-    mockCreate.mockImplementation((...args: any[]) => {
+    mockShellCreate.mockReset()
+    mockShellCreate.mockImplementation((...args: any[]) => {
       mockCreateCalls.push(args)
-      return { execute: mockExecute }
+      return { execute: mockShellExecute }
     })
-    mockFetch.mockReset()
-    mockFetch.mockImplementation(async (...args: any[]) => {
+    mockHttpFetch.mockReset()
+    mockHttpFetch.mockImplementation(async (...args: any[]) => {
       mockFetchCalls.push(args)
       if (mockFetchQueue.length > 0) {
         const response = mockFetchQueue.shift()
         if (response instanceof Error) throw response
         return response
       }
+    })
+    mockStoreGet.mockReset()
+    mockStoreGet.mockImplementation(async (key: string) => {
+      if (key === 'preferences') return mockStorePreferences
+      return null
     })
   })
 
@@ -186,7 +134,7 @@ describe('cli', () => {
 
       await listSkills()
 
-      expect(mockExecute).toHaveBeenCalled()
+      expect(mockShellExecute).toHaveBeenCalled()
     })
 
     it('filters out info messages from empty project skills output', async () => {
@@ -217,7 +165,7 @@ Try listing global skills with -g`,
     })
 
     it('returns empty array when skills directory does not exist (thrown)', async () => {
-      mockExecute.mockRejectedValueOnce(new Error('No such file or directory (os error 2)'))
+      mockShellExecute.mockRejectedValueOnce(new Error('No such file or directory (os error 2)'))
 
       const result = await listSkills()
 
@@ -642,7 +590,7 @@ Could not check 5 skill(s) (may need reinstall)`
     })
 
     it('throws error when API request fails', async () => {
-      mockExecute
+      mockShellExecute
         .mockResolvedValueOnce({
           code: 0,
           stdout: '/Users/test\n',

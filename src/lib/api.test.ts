@@ -1,29 +1,23 @@
-import { beforeEach, expect, mock, test } from 'bun:test'
+import { beforeEach, expect, test } from 'bun:test'
 import { fetchRepoSkills, fetchSkills, isRepoQuery, searchSkills } from '@/lib/api'
+import { mockHttpFetch } from '@/test-mocks'
 import { ApiError } from '@/types/api'
 
 let mockFetchQueue: any[] = []
 let mockFetchCalls: any[] = []
 
-const mockFetch = mock(async (...args: any[]) => {
-  mockFetchCalls.push(args)
-  if (mockFetchQueue.length > 0) {
-    const response = mockFetchQueue.shift()
-    if (response instanceof Error) {
-      throw response
-    }
-    return response
-  }
-})
-
-mock.module('@tauri-apps/plugin-http', () => ({
-  fetch: mockFetch,
-}))
-
 beforeEach(() => {
   mockFetchQueue = []
   mockFetchCalls = []
-  mockFetch.mockClear()
+  mockHttpFetch.mockReset()
+  mockHttpFetch.mockImplementation(async (...args: any[]) => {
+    mockFetchCalls.push(args)
+    if (mockFetchQueue.length > 0) {
+      const response = mockFetchQueue.shift()
+      if (response instanceof Error) throw response
+      return response
+    }
+  })
 })
 
 test('fetchSkills returns skills from search endpoint', async () => {
