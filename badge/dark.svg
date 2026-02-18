@@ -1,13 +1,13 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="160" height="44" viewBox="0 0 160 44" role="img" aria-label="Available on SkillPad">
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="54" viewBox="0 0 160 54" role="img" aria-label="Available on SkillPad">
   <title>Available on SkillPad</title>
-  <rect width="160" height="44" rx="8" fill="#1a1a1a"/>
-  <rect x="0.5" y="0.5" width="159" height="43" rx="7.5" fill="none" stroke="#333333"/>
-  <svg x="14" y="13" width="18" height="18" viewBox="113 150 540 540">
+  <rect width="160" height="54" rx="10" fill="#1a1a1a"/>
+  <rect x="0.5" y="0.5" width="159" height="53" rx="9.5" fill="none" stroke="#333333"/>
+  <svg x="16" y="14" width="26" height="26" viewBox="113 150 540 540">
     <path d="M400 181.547C412.376 174.402 427.624 174.402 440 181.547L616.506 283.453C628.882 290.598 636.506 303.803 636.506 318.094V521.906C636.506 536.197 628.882 549.402 616.506 556.547L440 658.453C427.624 665.598 412.376 665.598 400 658.453L223.494 556.547C211.118 549.402 203.494 536.197 203.494 521.906V318.094C203.494 303.803 211.118 290.598 223.494 283.453L400 181.547Z" fill="#ffffff"/>
     <circle cx="147.5" cy="191.5" r="17.5" fill="#ffffff"/>
     <circle cx="192.5" cy="191.5" r="17.5" fill="#ffffff"/>
     <circle cx="237.5" cy="191.5" r="17.5" fill="#ffffff"/>
   </svg>
-  <text x="40" y="19" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif" font-size="9" font-weight="400" fill="#999999" letter-spacing="0.2">Available on</text>
-  <text x="40" y="32" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif" font-size="15" font-weight="600" fill="#ffffff" letter-spacing="-0.3">SkillPad</text>
+  <text x="52" y="20" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="400" fill="#999999" letter-spacing="0.2">Available on</text>
+  <text x="50" y="41" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif" font-size="22" font-weight="500" fill="#ffffff" letter-spacing="0">SkillPad</text>
 </svg>
