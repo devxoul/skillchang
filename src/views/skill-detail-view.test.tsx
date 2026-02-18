@@ -298,3 +298,64 @@ describe('SkillDetailView', () => {
     })
   })
 })
+
+describe('duplicate name resolution', () => {
+  let fetchSkillsSpy: ReturnType<typeof spyOn>
+  let fetchSkillReadmeSpy: ReturnType<typeof spyOn>
+  let searchSkillsSpy: ReturnType<typeof spyOn>
+  let readLocalSkillMdSpy: ReturnType<typeof spyOn>
+  let listSkillsSpy: ReturnType<typeof spyOn>
+  let getRepoSkillsCacheSpy: ReturnType<typeof spyOn>
+
+  beforeEach(() => {
+    fetchSkillsSpy = spyOn(api, 'fetchSkills').mockResolvedValue([])
+    fetchSkillReadmeSpy = spyOn(api, 'fetchSkillReadme').mockResolvedValue('# Agent Slack\n\nMessenger agent.')
+    searchSkillsSpy = spyOn(api, 'searchSkills').mockResolvedValue([
+      {
+        id: 'stablyai/agent-slack/agent-slack',
+        name: 'agent-slack',
+        installs: 161,
+        topSource: 'stablyai/agent-slack',
+      },
+      {
+        id: 'devxoul/agent-messenger/agent-slack',
+        name: 'agent-slack',
+        installs: 10,
+        topSource: 'devxoul/agent-messenger',
+      },
+      {
+        id: 'timpietrusky/agent-slack/agent-slack',
+        name: 'agent-slack',
+        installs: 2,
+        topSource: 'timpietrusky/agent-slack',
+      },
+    ])
+    readLocalSkillMdSpy = spyOn(cli, 'readLocalSkillMd').mockRejectedValue(new Error('No local SKILL.md'))
+    listSkillsSpy = spyOn(cli, 'listSkills').mockResolvedValue([])
+    getRepoSkillsCacheSpy = spyOn(useRepoSkills, 'getRepoSkillsCache').mockReturnValue(new Map())
+  })
+
+  afterEach(() => {
+    fetchSkillsSpy.mockRestore()
+    fetchSkillReadmeSpy.mockRestore()
+    searchSkillsSpy.mockRestore()
+    readLocalSkillMdSpy.mockRestore()
+    listSkillsSpy.mockRestore()
+    getRepoSkillsCacheSpy.mockRestore()
+  })
+
+  it('resolves correct skill when multiple skills have same name', async () => {
+    // given - gallery is empty, search returns 3 skills with same name but different topSource
+    // when - navigating to the second skill's full ID path
+    renderWithProviders('devxoul/agent-messenger/agent-slack')
+
+    // then - should display the correct topSource for the target skill (devxoul/agent-messenger)
+    // not the first skill's topSource (stablyai/agent-slack)
+    await waitFor(() => {
+      expect(screen.getAllByText('agent-slack').length).toBeGreaterThan(0)
+    })
+
+    expect(screen.getByText('devxoul/agent-messenger')).toBeInTheDocument()
+    expect(screen.queryByText('stablyai/agent-slack')).not.toBeInTheDocument()
+  })
+})
