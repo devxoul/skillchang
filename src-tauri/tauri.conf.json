@@ -48,6 +48,11 @@
         "https://github.com/devxoul/skillpad/releases/latest/download/latest.json"
       ],
       "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDdCQzRFNEZDRkE4REY2NUEKUldSYTlvMzYvT1RFZTY4SkZucXhHdm5oTVVxSVJDT2o1Wnova2JSWkY2MGhMR0YxeFpMZDZObXQK"
+    },
+    "deep-link": {
+      "desktop": {
+        "schemes": ["skillpad"]
+      }
     }
   }
 }
