@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "clean": "cargo clean --manifest-path src-tauri/Cargo.toml && rm -rf dist node_modules/.vite",
-    "dev": "tauri dev --config src-tauri/tauri.dev.conf.json",
+    "dev": "concurrently -n tauri,docs -c blue,green 'tauri dev --config src-tauri/tauri.dev.conf.json' 'bun run --cwd docs dev'",
+    "dev:tauri": "tauri dev --config src-tauri/tauri.dev.conf.json",
+    "dev:docs": "bun run --cwd docs dev",
     "build": "tauri build",
     "dev:vite": "vite",
     "dev:e2e": "VITE_E2E=true vite",
