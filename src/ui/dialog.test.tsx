@@ -102,7 +102,10 @@ describe('Dialog', () => {
     )
 
     fireEvent.click(getByRole('button', { name: 'Open' }))
-    expect(onOpenChange).toHaveBeenCalledWith(true)
+    // Base UI calls onOpenChange(open, eventInfo) where eventInfo contains
+    // a cyclic React event. toHaveBeenCalledWith deep-compares all args,
+    // hanging bun test on the cyclic structure.
+    expect(onOpenChange.mock.calls[0][0]).toBe(true)
   })
 
   it('applies custom className to dialog components', () => {

@@ -56,8 +56,11 @@ describe('Select', () => {
 
     await user.click(getByRole('option', { name: 'Banana' }))
 
+    // Base UI calls onValueChange(value, event) where event contains
+    // a cyclic React event. toHaveBeenCalledWith deep-compares all args,
+    // hanging bun test on the cyclic structure.
     await waitFor(() => {
-      expect(onValueChange).toHaveBeenCalledWith('banana')
+      expect(onValueChange.mock.calls[0]?.[0]).toBe('banana')
     })
   })
 
