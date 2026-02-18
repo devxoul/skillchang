@@ -58,7 +58,7 @@ describe('Select', () => {
 
     await waitFor(() => {
       expect(onValueChange).toHaveBeenCalled()
-      expect(onValueChange.mock.calls[0]).toEqual(['banana'])
+      expect(onValueChange.mock.calls[0][0]).toBe('banana')
     })
   })
 

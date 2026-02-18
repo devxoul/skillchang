@@ -27,3 +27,6 @@ playwright-report/
 
 # E2E sandbox
 e2e/home/
+
+# Fumadocs
+docs/.next/

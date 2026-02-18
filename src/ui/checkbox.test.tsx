@@ -36,7 +36,7 @@ describe('Checkbox', () => {
 
     await user.click(getByRole('checkbox'))
     expect(onCheckedChange).toHaveBeenCalled()
-    expect(onCheckedChange.mock.calls[0]).toEqual([true])
+    expect(onCheckedChange.mock.calls[0][0]).toBe(true)
   })
 
   it('renders with defaultChecked', () => {
