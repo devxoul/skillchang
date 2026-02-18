@@ -1,6 +1,6 @@
 {
   "name": "skillpad",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "A Tauri v2 desktop application built with React, TypeScript, and Bun",
   "type": "module",
   "scripts": {
