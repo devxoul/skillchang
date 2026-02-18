@@ -175,7 +175,7 @@ export function SkillDetailView() {
     navigate(-1)
   }
 
-  const isLoading = !skill && (galleryLoading || gallerySkills.length === 0 || lookingUp) && !installedSkill
+  const isLoading = !skill && (galleryLoading || gallerySkills.length === 0 || lookingUp)
   const isNotFound = !skill && !isLoading
 
   return (
