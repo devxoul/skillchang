@@ -2,7 +2,7 @@
 
 A desktop GUI wrapper for the [skills.sh](https://skills.sh) CLI tool.
 
-<video src="docs/public/screenshots/SkillPad-1080p.mp4" autoplay loop muted playsinline></video>
+![skillpad](docs/public/screenshots/global-skills.png)
 
 ## Motivation
 
