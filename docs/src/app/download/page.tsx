@@ -1,6 +1,21 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { DownloadContent, type Release } from './download-content'
 import { ThemeToggle } from './theme-toggle'
+
+export const metadata: Metadata = {
+  title: 'Download',
+  description:
+    'Download SkillPad for macOS or Windows. Free and open-source desktop app for managing AI agent skills from skills.sh.',
+  alternates: {
+    canonical: '/download',
+  },
+  openGraph: {
+    title: 'Download SkillPad',
+    description: 'Download SkillPad for macOS or Windows. Free and open source.',
+    url: '/download',
+  },
+}
 
 const GITHUB_API = 'https://api.github.com/repos/devxoul/skillpad/releases/latest'
 const GITHUB_URL = 'https://github.com/devxoul/skillpad'
