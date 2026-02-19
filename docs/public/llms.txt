@@ -1,0 +1,67 @@
+# SkillPad
+
+> A desktop GUI for browsing, installing, and managing AI agent skills from skills.sh.
+
+SkillPad is an open-source Tauri desktop app (macOS + Windows) that wraps the skills.sh CLI. It lets users discover skills from a gallery, install them to any agent with one click, and manage global plus project-scoped skills visually.
+
+- Website: https://skillpad.dev
+- Download: https://skillpad.dev/download
+- GitHub: https://github.com/devxoul/skillpad
+
+## Features
+
+- Browse skills from the skills.sh gallery
+- One-click install to any agent (Claude Code, Cursor, Windsurf, etc.)
+- Global and project-scoped skill management
+- Deep-link install via `skillpad://skill/OWNER/REPO/SKILL-NAME`
+- Automatic dark/light theme (follows system preference)
+- Built-in auto-updates
+
+## Install URL
+
+To link users directly to a skill install page:
+
+```
+https://skillpad.dev/install/OWNER/REPO/SKILL-NAME
+```
+
+Replace `OWNER`, `REPO`, and `SKILL-NAME` with the actual values. When opened, this page attempts to launch SkillPad via the `skillpad://` deep link. If SkillPad is not installed, it shows a download prompt.
+
+## Badges
+
+Skill developers can embed "Available on SkillPad" badges in their README to let users install skills directly.
+
+### Dark Badge
+
+Image URL: `https://badge.skillpad.dev/dark.svg`
+
+Markdown:
+
+```
+[![Available on SkillPad](https://badge.skillpad.dev/dark.svg)](https://skillpad.dev/install/OWNER/REPO/SKILL-NAME)
+```
+
+### Light Badge
+
+Image URL: `https://badge.skillpad.dev/light.svg`
+
+Markdown:
+
+```
+[![Available on SkillPad](https://badge.skillpad.dev/light.svg)](https://skillpad.dev/install/OWNER/REPO/SKILL-NAME)
+```
+
+### Shields.io Badge
+
+For a compact shields.io-style badge:
+
+```
+[![SkillPad](https://img.shields.io/badge/SkillPad-SKILL--NAME-1a1a1a?style=flat&logo=data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjExMyAxNTAgNTQwIDU0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cGF0aCBkPSJNNDAwIDE4MS41NDdDNDEyLjM3NiAxNzQuNDAyIDQyNy42MjQgMTc0LjQwMiA0NDAgMTgxLjU0N0w2MTYuNTA2IDI4My40NTNDNjI4Ljg4MiAyOTAuNTk4IDYzNi41MDYgMzAzLjgwMyA2MzYuNTA2IDMxOC4wOTRWNTIxLjkwNkM2MzYuNTA2IDUzNi4xOTcgNjI4Ljg4MiA1NDkuNDAyIDYxNi41MDYgNTU2LjU0N0w0NDAgNjU4LjQ1M0M0MjcuNjI0IDY2NS41OTggNDEyLjM3NiA2NjUuNTk4IDQwMCA2NTguNDUzTDIyMy40OTQgNTU2LjU0N0MyMTEuMTE4IDU0OS40MDIgMjAzLjQ5NCA1MzYuMTk3IDIwMy40OTQgNTIxLjkwNlYzMTguMDk0QzIwMy40OTQgMzAzLjgwMyAyMTEuMTE4IDI5MC41OTggMjIzLjQ5NCAyODMuNDUzTDQwMCAxODEuNTQ3WiIgZmlsbD0id2hpdGUiLz4KICA8Y2lyY2xlIGN4PSIxNDcuNSIgY3k9IjE5MS41IiByPSIxNy41IiBmaWxsPSJ3aGl0ZSIvPgogIDxjaXJjbGUgY3g9IjE5Mi41IiBjeT0iMTkxLjUiIHI9IjE3LjUiIGZpbGw9IndoaXRlIi8+CiAgPGNpcmNsZSBjeD0iMjM3LjUiIGN5PSIxOTEuNSIgcj0iMTcuNSIgZmlsbD0id2hpdGUiLz4KPC9zdmc+Cg%3D%3D)](https://skillpad.dev/install/OWNER/REPO/SKILL-NAME)
+```
+
+Replace `OWNER`, `REPO`, and `SKILL-NAME` in both the badge text and the link URL. Hyphens in SKILL-NAME must be doubled (`--`) in the shields.io badge text parameter.
+
+### Badge Examples
+
+- `vercel-labs/skills/find-skills` badge: `[![Available on SkillPad](https://badge.skillpad.dev/dark.svg)](https://skillpad.dev/install/vercel-labs/skills/find-skills)`
+- `devxoul/agent-messenger/agent-slack` badge: `[![Available on SkillPad](https://badge.skillpad.dev/dark.svg)](https://skillpad.dev/install/devxoul/agent-messenger/agent-slack)`
