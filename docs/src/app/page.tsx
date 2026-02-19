@@ -488,15 +488,15 @@ export default function HomePage() {
         </section>
 
         <section className="px-6 pt-6 pb-20 sm:pb-24">
-          <div className="mx-auto max-w-5xl rounded-3xl bg-zinc-900 px-6 py-12 text-center shadow-2xl shadow-zinc-900/20 sm:px-10 dark:bg-zinc-100">
-            <h2 className="text-3xl font-bold tracking-tight text-zinc-100 dark:text-zinc-900">Download SkillPad</h2>
-            <p className="mx-auto mt-3 max-w-2xl text-sm text-zinc-300 sm:text-base dark:text-zinc-600">
+          <div className="mx-auto max-w-5xl rounded-3xl border border-transparent bg-zinc-900 px-6 py-12 text-center shadow-2xl shadow-zinc-900/20 sm:px-10 dark:border-zinc-700/60 dark:bg-zinc-800/80">
+            <h2 className="text-3xl font-bold tracking-tight text-zinc-100">Download SkillPad</h2>
+            <p className="mx-auto mt-3 max-w-2xl text-sm text-zinc-400 sm:text-base">
               Free and open source. Available for macOS and Windows.
             </p>
             <div className="mt-8">
               <Link
                 href="/download"
-                className="inline-flex items-center justify-center rounded-xl bg-white px-6 py-3 text-sm font-semibold text-zinc-900 transition-colors hover:bg-zinc-200 dark:bg-zinc-900 dark:text-zinc-100 dark:hover:bg-zinc-800"
+                className="inline-flex items-center justify-center rounded-xl bg-white px-6 py-3 text-sm font-semibold text-zinc-900 transition-all hover:-translate-y-0.5 hover:bg-zinc-200"
               >
                 Download
               </Link>
