@@ -13,9 +13,48 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
 })
 
+const siteUrl = 'https://skillpad.dev'
+const siteName = 'SkillPad'
+const siteDescription =
+  'A free, open-source desktop app for browsing, installing, and managing AI agent skills from skills.sh. Available for macOS and Windows.'
+
 export const metadata: Metadata = {
-  title: 'SkillPad',
-  description: 'A desktop GUI for managing skills.sh agent skills',
+  metadataBase: new URL(siteUrl),
+  title: {
+    default: `${siteName} — Desktop GUI for AI Agent Skills`,
+    template: `%s | ${siteName}`,
+  },
+  description: siteDescription,
+  applicationName: siteName,
+  keywords: [
+    'SkillPad',
+    'skills.sh',
+    'AI agent skills',
+    'agent skills manager',
+    'Claude Code skills',
+    'Cursor skills',
+    'Windsurf skills',
+    'desktop app',
+    'skill installer',
+    'open source',
+  ],
+  authors: [{ name: 'devxoul', url: 'https://github.com/devxoul' }],
+  creator: 'devxoul',
+  openGraph: {
+    type: 'website',
+    siteName,
+    title: `${siteName} — Desktop GUI for AI Agent Skills`,
+    description: siteDescription,
+    url: siteUrl,
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: `${siteName} — Desktop GUI for AI Agent Skills`,
+    description: siteDescription,
+  },
+  alternates: {
+    canonical: siteUrl,
+  },
 }
 
 export default function RootLayout({
