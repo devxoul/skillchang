@@ -5,7 +5,7 @@ import { useTheme } from 'next-themes'
 import { useCallback, useEffect, useState } from 'react'
 
 const githubUrl = 'https://github.com/devxoul/skillpad'
-const screenshotUrl = '/screenshots/global-skills.png'
+const videoUrl = '/screenshots/SkillPad-1080p.mp4'
 const exampleSkills = [
   { owner: 'vercel-labs', repo: 'skills', skillName: 'find-skills' },
   { owner: 'anthropics', repo: 'skills', skillName: 'frontend-design' },
@@ -260,7 +260,7 @@ export default function HomePage() {
             </div>
 
             <div>
-              <img src={screenshotUrl} alt="SkillPad desktop app screenshot" className="w-full rounded-xl" />
+              <video src={videoUrl} autoPlay loop muted playsInline className="w-full rounded-xl" />
             </div>
           </div>
         </section>
