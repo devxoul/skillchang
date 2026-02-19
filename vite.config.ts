@@ -10,6 +10,20 @@ export default defineConfig({
   server: {
     port: 5173,
     strictPort: true,
+    watch: {
+      ignored: [
+        '**/docs/**',
+        '**/badge/**',
+        '**/dist/**',
+        '**/e2e/**',
+        '**/src-tauri/**',
+        '**/playwright-report/**',
+        '**/test-results/**',
+        '**/.github/**',
+        '**/.claude/**',
+        '**/.sisyphus/**',
+      ],
+    },
     proxy: process.env.VITE_E2E
       ? {
           '/__proxy/skills-sh': {
