@@ -396,7 +396,7 @@ export function HomePage() {
                 <div className="flex flex-1 items-center justify-center rounded-xl border border-zinc-200 bg-white p-5 dark:border-zinc-700 dark:bg-zinc-950">
                   <Link href={`/install/${installPath}`} className="inline-block">
                     <img
-                      src="https://badge.skillpad.dev/dark.svg"
+                      src={`https://badge.skillpad.dev/${skillName || 'SKILL-NAME'}/dark.svg`}
                       alt="Available on SkillPad badge (dark)"
                       className="h-12 w-auto"
                     />
@@ -405,11 +405,11 @@ export function HomePage() {
                 <div className="mt-2 flex items-center gap-2 rounded-xl border border-zinc-200 bg-zinc-950 p-3 dark:border-zinc-700">
                   <pre className="min-w-0 flex-1 overflow-x-auto text-xs text-zinc-200">
                     <code>
-                      {`[![Available on SkillPad](https://badge.skillpad.dev/dark.svg)](https://skillpad.dev/install/${installPath})`}
+                      {`[![Available on SkillPad](https://badge.skillpad.dev/${skillName || 'SKILL-NAME'}/dark.svg)](https://skillpad.dev/install/${installPath})`}
                     </code>
                   </pre>
                   <CopyButton
-                    text={`[![Available on SkillPad](https://badge.skillpad.dev/dark.svg)](https://skillpad.dev/install/${installPath})`}
+                    text={`[![Available on SkillPad](https://badge.skillpad.dev/${skillName || 'SKILL-NAME'}/dark.svg)](https://skillpad.dev/install/${installPath})`}
                   />
                 </div>
               </div>
@@ -419,7 +419,7 @@ export function HomePage() {
                 <div className="flex flex-1 items-center justify-center rounded-xl border border-zinc-200 bg-white p-5 dark:border-zinc-700 dark:bg-zinc-950">
                   <Link href={`/install/${installPath}`} className="inline-block">
                     <img
-                      src="https://badge.skillpad.dev/light.svg"
+                      src={`https://badge.skillpad.dev/${skillName || 'SKILL-NAME'}/light.svg`}
                       alt="Available on SkillPad badge (light)"
                       className="h-12 w-auto"
                     />
@@ -428,11 +428,11 @@ export function HomePage() {
                 <div className="mt-2 flex items-center gap-2 rounded-xl border border-zinc-200 bg-zinc-950 p-3 dark:border-zinc-700">
                   <pre className="min-w-0 flex-1 overflow-x-auto text-xs text-zinc-200">
                     <code>
-                      {`[![Available on SkillPad](https://badge.skillpad.dev/light.svg)](https://skillpad.dev/install/${installPath})`}
+                      {`[![Available on SkillPad](https://badge.skillpad.dev/${skillName || 'SKILL-NAME'}/light.svg)](https://skillpad.dev/install/${installPath})`}
                     </code>
                   </pre>
                   <CopyButton
-                    text={`[![Available on SkillPad](https://badge.skillpad.dev/light.svg)](https://skillpad.dev/install/${installPath})`}
+                    text={`[![Available on SkillPad](https://badge.skillpad.dev/${skillName || 'SKILL-NAME'}/light.svg)](https://skillpad.dev/install/${installPath})`}
                   />
                 </div>
               </div>
@@ -471,14 +471,13 @@ export function HomePage() {
                     <Link
                       key={`badge-${path}`}
                       href={`/install/${path}`}
-                      className="flex flex-col items-center gap-1.5 rounded-xl border border-zinc-200 bg-white px-4 py-3 transition-colors hover:border-zinc-300 dark:border-zinc-700 dark:bg-zinc-950 dark:hover:border-zinc-600"
+                      className="flex items-center gap-1.5 rounded-xl border border-zinc-200 bg-white px-4 py-3 transition-colors hover:border-zinc-300 dark:border-zinc-700 dark:bg-zinc-950 dark:hover:border-zinc-600"
                     >
                       <img
-                        src="https://badge.skillpad.dev/dark.svg"
+                        src={`https://badge.skillpad.dev/${example.skillName}/dark.svg`}
                         alt={`${path} install badge`}
                         className="h-7 w-auto"
                       />
-                      <span className="text-[11px] text-zinc-400 dark:text-zinc-500">{example.skillName}</span>
                     </Link>
                   )
                 })}

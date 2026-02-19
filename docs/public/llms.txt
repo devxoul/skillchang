@@ -29,26 +29,26 @@ Replace `OWNER`, `REPO`, and `SKILL-NAME` with the actual values. When opened, t
 
 ## Badges
 
-Skill developers can embed "Available on SkillPad" badges in their README to let users install skills directly.
+Skill developers can embed badges with their skill name in their README to let users install skills directly.
+
+Badge URL pattern: `https://badge.skillpad.dev/SKILL-NAME/dark.svg` or `https://badge.skillpad.dev/SKILL-NAME/light.svg`
+
+Replace `SKILL-NAME` with the actual skill name (kebab-case). The badge dynamically displays the skill name.
 
 ### Dark Badge
-
-Image URL: `https://badge.skillpad.dev/dark.svg`
 
 Markdown:
 
 ```
-[![Available on SkillPad](https://badge.skillpad.dev/dark.svg)](https://skillpad.dev/install/OWNER/REPO/SKILL-NAME)
+[![Available on SkillPad](https://badge.skillpad.dev/SKILL-NAME/dark.svg)](https://skillpad.dev/install/OWNER/REPO/SKILL-NAME)
 ```
 
 ### Light Badge
 
-Image URL: `https://badge.skillpad.dev/light.svg`
-
 Markdown:
 
 ```
-[![Available on SkillPad](https://badge.skillpad.dev/light.svg)](https://skillpad.dev/install/OWNER/REPO/SKILL-NAME)
+[![Available on SkillPad](https://badge.skillpad.dev/SKILL-NAME/light.svg)](https://skillpad.dev/install/OWNER/REPO/SKILL-NAME)
 ```
 
 ### Shields.io Badge
@@ -63,5 +63,5 @@ Replace `OWNER`, `REPO`, and `SKILL-NAME` in both the badge text and the link UR
 
 ### Badge Examples
 
-- `vercel-labs/skills/find-skills` badge: `[![Available on SkillPad](https://badge.skillpad.dev/dark.svg)](https://skillpad.dev/install/vercel-labs/skills/find-skills)`
-- `devxoul/agent-messenger/agent-slack` badge: `[![Available on SkillPad](https://badge.skillpad.dev/dark.svg)](https://skillpad.dev/install/devxoul/agent-messenger/agent-slack)`
+- `vercel-labs/skills/find-skills` badge: `[![Available on SkillPad](https://badge.skillpad.dev/find-skills/dark.svg)](https://skillpad.dev/install/vercel-labs/skills/find-skills)`
+- `devxoul/agent-messenger/agent-slack` badge: `[![Available on SkillPad](https://badge.skillpad.dev/agent-slack/dark.svg)](https://skillpad.dev/install/devxoul/agent-messenger/agent-slack)`
