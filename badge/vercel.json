@@ -1,0 +1,12 @@
+{
+  "rewrites": [
+    {
+      "source": "/:name/dark.svg",
+      "destination": "/api/badge?name=:name&theme=dark"
+    },
+    {
+      "source": "/:name/light.svg",
+      "destination": "/api/badge?name=:name&theme=light"
+    }
+  ]
+}
