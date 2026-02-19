@@ -33,7 +33,7 @@ Agent skills are powerful, and the skills CLI works well — but not everyone li
 
 ```bash
 # Clone the repository
-git clone <repo-url>
+git clone https://github.com/devxoul/skillpad.git
 cd skillpad
 
 # Install dependencies
@@ -47,14 +47,15 @@ bun run dev
 
 ### Navigation
 
-- **Gallery**: Browse all available skills from skills.sh
+- **Skills Directory**: Browse all available skills from skills.sh
 - **Global Skills**: View globally installed skills
 - **Projects**: Import and manage project-specific skills
 
 ### Keyboard Shortcuts
 
+- `Cmd/Ctrl + K` - Open command palette
 - `Cmd/Ctrl + F` - Focus search
-- `Cmd/Ctrl + 1` - Navigate to Gallery
+- `Cmd/Ctrl + 1` - Navigate to Skills Directory
 - `Cmd/Ctrl + 2` - Navigate to Global Skills
 - `Cmd/Ctrl + 3-9` - Navigate to projects (1st-7th)
 - `Cmd/Ctrl + Shift + [` - Previous tab
@@ -125,6 +126,11 @@ bun run format
 ```bash
 bun run clean
 ```
+
+## Links
+
+- [Website](https://skillpad.dev)
+- [Download](https://skillpad.dev/download)
 
 ## License
 
