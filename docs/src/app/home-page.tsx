@@ -271,19 +271,70 @@ export function HomePage() {
                 SkillPad is a desktop GUI for skills.sh. Browse skills from the gallery, install to any agent in one
                 click, and manage global plus project-scoped skills in one place.
               </p>
-              <div className="mt-8">
+              <div className="mt-8 flex items-center gap-4">
                 <Link
                   href="/download"
                   className="inline-flex items-center justify-center rounded-xl bg-zinc-900 px-6 py-3 text-sm font-semibold text-white transition-all hover:-translate-y-0.5 hover:bg-zinc-800 dark:bg-zinc-100 dark:text-black dark:hover:bg-zinc-200"
                 >
                   Download
                 </Link>
+                <a
+                  href="#what-is-agent-skills"
+                  className="text-sm font-medium text-zinc-500 underline decoration-zinc-300 underline-offset-4 transition-colors hover:text-zinc-900 hover:decoration-zinc-500 dark:text-zinc-400 dark:decoration-zinc-600 dark:hover:text-zinc-100 dark:hover:decoration-zinc-400"
+                >
+                  What&apos;s Agent Skills?
+                </a>
               </div>
             </div>
 
             <div>
               <video src={videoUrl} autoPlay loop muted playsInline className="w-full rounded-xl" />
             </div>
+          </div>
+        </section>
+
+        <section id="what-is-agent-skills" className="scroll-mt-20 px-6 py-14 sm:py-20">
+          <div className="mx-auto max-w-3xl">
+            <h2 className="text-3xl font-bold tracking-tight text-zinc-900 sm:text-4xl dark:text-zinc-100">
+              What&apos;s Agent Skills?
+            </h2>
+            <p className="mt-4 text-base leading-relaxed text-zinc-600 sm:text-lg dark:text-zinc-400">
+              Agent Skills are markdown files that give AI coding agents specialized knowledge they don&apos;t have out
+              of the box. Think of them as{' '}
+              <strong className="font-semibold text-zinc-800 dark:text-zinc-200">plugins for your AI</strong> — install
+              a skill, and your agent instantly knows how to do something new.
+            </p>
+            <p className="mt-4 text-base leading-relaxed text-zinc-600 sm:text-lg dark:text-zinc-400">
+              For example, a skill can teach your agent to write better React components, follow your team&apos;s coding
+              conventions, automate browser tasks, or manage your Slack workspace.
+            </p>
+
+            <dl className="mt-8 grid gap-4 sm:grid-cols-2">
+              <div className="rounded-xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900/60">
+                <dt className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Just markdown</dt>
+                <dd className="mt-1 text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">
+                  Each skill is a SKILL.md file with focused, structured instructions your agent reads at runtime.
+                </dd>
+              </div>
+              <div className="rounded-xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900/60">
+                <dt className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Works with any agent</dt>
+                <dd className="mt-1 text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">
+                  Claude Code, Cursor, Windsurf, and more. Skills use the open skills.sh standard.
+                </dd>
+              </div>
+              <div className="rounded-xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900/60">
+                <dt className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Global or project-scoped</dt>
+                <dd className="mt-1 text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">
+                  Install skills globally for all projects, or scope them to a specific project.
+                </dd>
+              </div>
+              <div className="rounded-xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900/60">
+                <dt className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Community-driven</dt>
+                <dd className="mt-1 text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">
+                  Browse hundreds of skills on skills.sh, or write your own and share with others.
+                </dd>
+              </div>
+            </dl>
           </div>
         </section>
 
