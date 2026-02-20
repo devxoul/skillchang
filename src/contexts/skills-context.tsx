@@ -1,8 +1,9 @@
 import { createContext, type ReactNode, useCallback, useContext, useMemo, useState } from 'react'
 import { fetchSkills, searchSkills as searchSkillsApi } from '@/lib/api'
 import {
-  checkUpdatesApi,
+  checkUpdates,
   listSkills,
+  parseUpdateCheckOutput,
   type RemoveSkillOptions,
   removeSkill,
   type SkillInfo,
@@ -201,7 +202,8 @@ export function SkillsProvider({ children }: { children: ReactNode }) {
       setCheckingUpdatesScope(scope)
 
       try {
-        const result = await checkUpdatesApi()
+        const output = await checkUpdates()
+        const result = parseUpdateCheckOutput(output)
 
         const newStatuses: UpdateStatusMap = {}
         const newErrors: Array<{ name: string; error: string }> = []
@@ -218,14 +220,11 @@ export function SkillsProvider({ children }: { children: ReactNode }) {
         }
 
         for (const err of result.errors || []) {
-          const isCacheMiss = err.error.includes('No cached hash') || err.error.includes('may need reinstall')
-          if (!isCacheMiss) {
-            newStatuses[err.name] = {
-              status: 'error',
-              message: err.error,
-            }
-            newErrors.push({ name: err.name, error: err.error })
+          newStatuses[err.name] = {
+            status: 'error',
+            message: err.error,
           }
+          newErrors.push({ name: err.name, error: err.error })
         }
 
         setUpdateStatusCache((prev) => ({

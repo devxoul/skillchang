@@ -9,22 +9,24 @@ import type { SkillInfo } from '@/lib/cli'
 import * as cli from '@/lib/cli'
 import InstalledSkillsView from '@/views/installed-skills-view'
 
+const NO_UPDATES_OUTPUT = 'Checking 0 skill(s) for updates...\n\nAll 0 skill(s) are up to date'
+
 let listSkillsSpy: ReturnType<typeof spyOn>
 let removeSkillSpy: ReturnType<typeof spyOn>
-let checkUpdatesApiSpy: ReturnType<typeof spyOn>
+let checkUpdatesSpy: ReturnType<typeof spyOn>
 let updateSkillsSpy: ReturnType<typeof spyOn>
 
 beforeEach(() => {
-  listSkillsSpy = spyOn(cli, 'listSkills')
-  removeSkillSpy = spyOn(cli, 'removeSkill')
-  checkUpdatesApiSpy = spyOn(cli, 'checkUpdatesApi')
-  updateSkillsSpy = spyOn(cli, 'updateSkills')
+  listSkillsSpy = spyOn(cli, 'listSkills').mockResolvedValue([])
+  removeSkillSpy = spyOn(cli, 'removeSkill').mockResolvedValue(undefined)
+  checkUpdatesSpy = spyOn(cli, 'checkUpdates').mockResolvedValue(NO_UPDATES_OUTPUT)
+  updateSkillsSpy = spyOn(cli, 'updateSkills').mockResolvedValue({ updatedCount: 0, updatedSkills: [] })
 })
 
 afterEach(() => {
   listSkillsSpy.mockRestore()
   removeSkillSpy.mockRestore()
-  checkUpdatesApiSpy.mockRestore()
+  checkUpdatesSpy.mockRestore()
   updateSkillsSpy.mockRestore()
 })
 
@@ -39,7 +41,6 @@ const renderWithProvider = (ui: React.ReactElement) => {
     </MemoryRouter>,
   )
 
-  // Assign queries to global screen object to work around the timing issue
   for (const key in result) {
     if (typeof result[key as keyof typeof result] === 'function') {
       ;(screen as any)[key] = result[key as keyof typeof result]
@@ -47,6 +48,13 @@ const renderWithProvider = (ui: React.ReactElement) => {
   }
 
   return result
+}
+
+function mockDefaults() {
+  listSkillsSpy.mockClear().mockResolvedValue([])
+  removeSkillSpy.mockClear().mockResolvedValue(undefined)
+  checkUpdatesSpy.mockClear().mockResolvedValue(NO_UPDATES_OUTPUT)
+  updateSkillsSpy.mockClear().mockResolvedValue({ updatedCount: 0, updatedSkills: [] })
 }
 
 describe('InstalledSkillsView', () => {
@@ -64,42 +72,29 @@ describe('InstalledSkillsView', () => {
   ]
 
   beforeEach(() => {
-    ;(cli.listSkills as any).mockClear?.()
-    ;(cli.removeSkill as any).mockClear?.()
-    ;(cli.checkUpdatesApi as any).mockClear?.()
-    ;(cli.updateSkills as any).mockClear?.()
-    ;(cli.checkUpdatesApi as any).mockResolvedValue?.({
-      totalChecked: 2,
-      updatesAvailable: [],
-      errors: [],
-    })
+    mockDefaults()
   })
 
   it('auto-checks for updates on mount', async () => {
-    ;(cli.listSkills as any).mockResolvedValue(mockSkills)
-    ;(cli.checkUpdatesApi as any).mockResolvedValue({
-      totalChecked: 2,
-      updatesAvailable: [],
-      errors: [],
-    })
+    listSkillsSpy.mockResolvedValue(mockSkills)
+    checkUpdatesSpy.mockResolvedValue('Checking 2 skill(s) for updates...\n\nAll 2 skill(s) are up to date')
     renderWithProvider(<InstalledSkillsView scope="global" />)
 
     await waitFor(() => {
-      expect(cli.checkUpdatesApi).toHaveBeenCalled()
+      expect(cli.checkUpdates).toHaveBeenCalled()
     })
   })
 
   it('renders loading skeletons initially', async () => {
-    ;(cli.listSkills as any).mockImplementation?.(() => new Promise(() => {}))
+    listSkillsSpy.mockImplementation(() => new Promise(() => {}))
     const { container } = renderWithProvider(<InstalledSkillsView scope="global" />)
     expect(container.querySelectorAll('.animate-shimmer').length).toBeGreaterThan(0)
   })
 
   it('renders empty state when no skills found', async () => {
-    ;(cli.listSkills as any).mockResolvedValue([])
+    listSkillsSpy.mockResolvedValue([])
     renderWithProvider(<InstalledSkillsView scope="global" />)
 
-    // given: text appears in both header and main content
     await waitFor(() => {
       const elements = screen.getAllByText('No skills installed')
       expect(elements.length).toBeGreaterThanOrEqual(1)
@@ -107,7 +102,7 @@ describe('InstalledSkillsView', () => {
   })
 
   it('renders list of skills', async () => {
-    ;(cli.listSkills as any).mockResolvedValue(mockSkills)
+    listSkillsSpy.mockResolvedValue(mockSkills)
     renderWithProvider(<InstalledSkillsView scope="global" />)
 
     await waitFor(() => {
@@ -118,10 +113,9 @@ describe('InstalledSkillsView', () => {
   })
 
   it('renders error state', async () => {
-    ;(cli.listSkills as any).mockRejectedValue(new Error('Failed to fetch'))
+    listSkillsSpy.mockRejectedValue(new Error('Failed to fetch'))
     renderWithProvider(<InstalledSkillsView scope="global" />)
 
-    // then: error message appears in InlineError component
     await waitFor(
       () => {
         expect(screen.getByText('Failed to fetch')).toBeInTheDocument()
@@ -131,12 +125,11 @@ describe('InstalledSkillsView', () => {
   })
 
   it('handles remove skill action', async () => {
-    // given: initial list has both skills, after removal only skill-2 remains
-    ;(cli.listSkills as any)
+    listSkillsSpy
       .mockResolvedValueOnce(mockSkills)
       .mockResolvedValueOnce([mockSkills[1]!])
       .mockResolvedValue([mockSkills[1]!])
-    ;(cli.removeSkill as any).mockResolvedValue(undefined)
+    removeSkillSpy.mockResolvedValue(undefined)
 
     renderWithProvider(<InstalledSkillsView scope="global" />)
 
@@ -144,7 +137,6 @@ describe('InstalledSkillsView', () => {
       expect(screen.getByText('skill-1')).toBeInTheDocument()
     })
 
-    // when: click remove on first skill twice (confirmation pattern)
     const removeButtons = screen.getAllByLabelText('Remove skill')
     const button = removeButtons[0]
     if (!button) throw new Error('No remove button found')
@@ -153,7 +145,6 @@ describe('InstalledSkillsView', () => {
 
     expect(cli.removeSkill).toHaveBeenCalledWith('skill-1', { global: true })
 
-    // then: skill-1 is removed from list
     await waitFor(() => {
       expect(screen.queryByText('skill-1')).not.toBeInTheDocument()
       expect(screen.getByText('skill-2')).toBeInTheDocument()
@@ -161,26 +152,22 @@ describe('InstalledSkillsView', () => {
   })
 
   it('handles remove failure', async () => {
-    // given: always return both skills (removal fails so list stays the same)
-    ;(cli.listSkills as any).mockResolvedValue(mockSkills)
-    ;(cli.removeSkill as any).mockRejectedValue(new Error('Remove failed'))
+    listSkillsSpy.mockResolvedValue(mockSkills)
+    removeSkillSpy.mockRejectedValue(new Error('Remove failed'))
 
     renderWithProvider(<InstalledSkillsView scope="global" />)
 
-    // when: initial list loads
     await waitFor(() => {
       expect(screen.getByText('skill-1')).toBeInTheDocument()
       expect(screen.getByText('skill-2')).toBeInTheDocument()
     })
 
-    // when: click remove on first skill twice (confirmation pattern)
     const removeButtons = screen.getAllByLabelText('Remove skill')
     const button = removeButtons[0]
     if (!button) throw new Error('No remove button found')
     fireEvent.click(button)
     fireEvent.click(button)
 
-    // then: error message appears and skill-1 remains in list
     await waitFor(() => {
       expect(screen.getByText('Remove failed')).toBeInTheDocument()
     })
@@ -189,7 +176,7 @@ describe('InstalledSkillsView', () => {
   })
 
   it('fetches skills only once on mount (no infinite loop)', async () => {
-    ;(cli.listSkills as any).mockResolvedValue(mockSkills)
+    listSkillsSpy.mockResolvedValue(mockSkills)
     renderWithProvider(<InstalledSkillsView scope="global" />)
 
     await waitFor(() => {
@@ -202,12 +189,10 @@ describe('InstalledSkillsView', () => {
   })
 
   it('passes correct options for project scope with path', async () => {
-    ;(cli.listSkills as any).mockResolvedValue([])
+    listSkillsSpy.mockResolvedValue([])
 
-    // given: render with project scope and path
     renderWithProvider(<InstalledSkillsView scope="project" projectPath="/path/to/project" />)
 
-    // then: listSkills should be called with global=false and cwd
     await waitFor(() => {
       expect(cli.listSkills).toHaveBeenCalledWith({
         global: false,
@@ -217,12 +202,10 @@ describe('InstalledSkillsView', () => {
   })
 
   it('passes global=true for global scope', async () => {
-    ;(cli.listSkills as any).mockResolvedValue([])
+    listSkillsSpy.mockResolvedValue([])
 
-    // given: render with global scope
     renderWithProvider(<InstalledSkillsView scope="global" />)
 
-    // then: listSkills should be called with global=true
     await waitFor(() => {
       expect(cli.listSkills).toHaveBeenCalledWith({ global: true, cwd: undefined })
     })
@@ -244,30 +227,20 @@ describe('Check for Updates', () => {
   ]
 
   beforeEach(() => {
-    ;(cli.listSkills as any).mockClear?.()
-    ;(cli.removeSkill as any).mockClear?.()
-    ;(cli.checkUpdatesApi as any).mockClear?.()
-    ;(cli.updateSkills as any).mockClear?.()
-    ;(cli.checkUpdatesApi as any).mockResolvedValue?.({
-      totalChecked: 2,
-      updatesAvailable: [],
-      errors: [],
-    })
+    mockDefaults()
   })
 
   it('renders "Check for Updates" button in header', async () => {
-    // given: skill list loaded
-    ;(cli.listSkills as any).mockResolvedValue(mockSkills)
+    listSkillsSpy.mockResolvedValue(mockSkills)
     renderWithProvider(<InstalledSkillsView scope="global" />)
     await waitFor(() => expect(screen.getByText('skill-1')).toBeInTheDocument())
 
-    // then: Check for Updates button exists
     expect(screen.getByLabelText('Check for updates')).toBeInTheDocument()
   })
 
   it('shows loading spinner when checking updates', async () => {
-    ;(cli.listSkills as any).mockResolvedValue(mockSkills)
-    ;(cli.checkUpdatesApi as any).mockImplementation(() => new Promise(() => {}))
+    listSkillsSpy.mockResolvedValue(mockSkills)
+    checkUpdatesSpy.mockImplementation(() => new Promise(() => {}))
     renderWithProvider(<InstalledSkillsView scope="global" />)
     await waitFor(() => expect(screen.getByText('skill-1')).toBeInTheDocument())
 
@@ -281,12 +254,8 @@ describe('Check for Updates', () => {
   })
 
   it('displays update result on success', async () => {
-    ;(cli.listSkills as any).mockResolvedValue(mockSkills)
-    ;(cli.checkUpdatesApi as any).mockResolvedValue({
-      totalChecked: 2,
-      updatesAvailable: [],
-      errors: [],
-    })
+    listSkillsSpy.mockResolvedValue(mockSkills)
+    checkUpdatesSpy.mockResolvedValue('Checking 2 skill(s) for updates...\n\nAll 2 skill(s) are up to date')
     renderWithProvider(<InstalledSkillsView scope="global" />)
     await waitFor(() => expect(screen.getByText('skill-1')).toBeInTheDocument())
 
@@ -299,15 +268,10 @@ describe('Check for Updates', () => {
   })
 
   it('displays updates available', async () => {
-    ;(cli.listSkills as any).mockResolvedValue(mockSkills)
-    ;(cli.checkUpdatesApi as any).mockResolvedValue({
-      totalChecked: 2,
-      updatesAvailable: [
-        { name: 'skill-1', source: 'user/repo' },
-        { name: 'skill-2', source: 'user/repo2' },
-      ],
-      errors: [],
-    })
+    listSkillsSpy.mockResolvedValue(mockSkills)
+    checkUpdatesSpy.mockResolvedValue(
+      'Checking 2 skill(s) for updates...\n\n2 update(s) available:\n\n  ↑ skill-1\n    source: user/repo\n  ↑ skill-2\n    source: user/repo2\n\nRun npx skills update to update all skills',
+    )
     renderWithProvider(<InstalledSkillsView scope="global" />)
     await waitFor(() => expect(screen.getByText('skill-1')).toBeInTheDocument())
 
@@ -319,41 +283,12 @@ describe('Check for Updates', () => {
     })
   })
 
-  it('displays individual skill errors from API', async () => {
-    ;(cli.listSkills as any).mockResolvedValue?.(mockSkills)
-    ;(cli.checkUpdatesApi as any).mockResolvedValue?.({
-      totalChecked: 2,
-      updatesAvailable: [],
-      errors: [{ name: 'skill-1', source: 'user/repo', error: 'Network timeout' }],
-    })
-    renderWithProvider(<InstalledSkillsView scope="global" />)
-    await waitFor(() => expect(screen.getByText('skill-1')).toBeInTheDocument())
-
-    const checkButton = screen.getByLabelText('Check for updates')
-    fireEvent.click(checkButton)
-
-    // Errors are shown inline in subtitle, verify indicator is shown
-    await waitFor(() => {
-      expect(screen.getByText("1 couldn't be checked")).toBeInTheDocument()
-    })
-
-    // Click to expand and see individual error details
-    const errorButton = screen.getByText("1 couldn't be checked")
-    fireEvent.click(errorButton)
-
-    await waitFor(() => {
-      expect(screen.getByText('Network timeout')).toBeInTheDocument()
-    })
-  })
-
   it('Update All button calls updateSkills and refreshes', async () => {
-    ;(cli.listSkills as any).mockResolvedValue(mockSkills)
-    ;(cli.checkUpdatesApi as any).mockResolvedValue({
-      totalChecked: 2,
-      updatesAvailable: [{ name: 'skill-1', source: 'user/repo' }],
-      errors: [],
-    })
-    ;(cli.updateSkills as any).mockResolvedValue({ updatedCount: 1, updatedSkills: ['skill-1'] })
+    listSkillsSpy.mockResolvedValue(mockSkills)
+    checkUpdatesSpy.mockResolvedValue(
+      'Checking 2 skill(s) for updates...\n\n1 update(s) available:\n\n  ↑ skill-1\n    source: user/repo\n\nRun npx skills update to update all skills',
+    )
+    updateSkillsSpy.mockResolvedValue({ updatedCount: 1, updatedSkills: ['skill-1'] })
     renderWithProvider(<InstalledSkillsView scope="global" />)
 
     await waitFor(() => {
@@ -369,18 +304,37 @@ describe('Check for Updates', () => {
   })
 
   it('shows Update badge on skills with available updates', async () => {
-    ;(cli.listSkills as any).mockResolvedValue(mockSkills)
-    ;(cli.checkUpdatesApi as any).mockResolvedValue({
-      totalChecked: 2,
-      updatesAvailable: [{ name: 'skill-1', source: 'user/repo' }],
-      errors: [],
-    })
+    listSkillsSpy.mockResolvedValue(mockSkills)
+    checkUpdatesSpy.mockResolvedValue(
+      'Checking 2 skill(s) for updates...\n\n1 update(s) available:\n\n  ↑ skill-1\n    source: user/repo\n\nRun npx skills update to update all skills',
+    )
     renderWithProvider(<InstalledSkillsView scope="global" />)
 
     await waitFor(() => {
-      // "Update" badge should appear
       const updateBadges = screen.getAllByText('Update')
       expect(updateBadges.length).toBeGreaterThan(0)
+    })
+  })
+
+  it('shows update badge for all skills from same repo', async () => {
+    // given - 3 skills from same repo, CLI reports all 3 have updates
+    const sameRepoSkills: SkillInfo[] = [
+      { name: 'agent-discord', path: '/Users/test/.skills/agent-discord', agents: ['claude'] },
+      { name: 'agent-slack', path: '/Users/test/.skills/agent-slack', agents: ['claude'] },
+      { name: 'agent-teams', path: '/Users/test/.skills/agent-teams', agents: ['claude'] },
+    ]
+    listSkillsSpy.mockResolvedValue(sameRepoSkills)
+    checkUpdatesSpy.mockResolvedValue(
+      'Checking 3 skill(s) for updates...\n\n3 update(s) available:\n\n  ↑ agent-discord\n    source: devxoul/agent-messenger\n  ↑ agent-slack\n    source: devxoul/agent-messenger\n  ↑ agent-teams\n    source: devxoul/agent-messenger\n\nRun npx skills update to update all skills',
+    )
+
+    // when
+    renderWithProvider(<InstalledSkillsView scope="global" />)
+
+    // then - all 3 skills should show update badge
+    await waitFor(() => {
+      const updateBadges = screen.getAllByText('Update')
+      expect(updateBadges).toHaveLength(3)
     })
   })
 })
@@ -393,28 +347,18 @@ describe('InstalledSkillsView search', () => {
   ]
 
   beforeEach(() => {
-    ;(cli.listSkills as any).mockClear?.()
-    ;(cli.removeSkill as any).mockClear?.()
-    ;(cli.checkUpdatesApi as any).mockClear?.()
-    ;(cli.updateSkills as any).mockClear?.()
-    ;(cli.checkUpdatesApi as any).mockResolvedValue?.({
-      totalChecked: 3,
-      updatesAvailable: [],
-      errors: [],
-    })
+    mockDefaults()
   })
 
   it('filters skills by search query', async () => {
     const user = userEvent.setup({ delay: null })
-    ;(cli.listSkills as any).mockResolvedValue(mockSkills)
+    listSkillsSpy.mockResolvedValue(mockSkills)
     renderWithProvider(<InstalledSkillsView scope="global" />)
     await waitFor(() => expect(screen.getByText('git-master')).toBeInTheDocument())
 
-    // when
     const input = screen.getByPlaceholderText('Search skills...')
     await user.type(input, 'git')
 
-    // then
     await waitFor(() => {
       expect(screen.getByText('git-master')).toBeInTheDocument()
       expect(screen.queryByText('frontend-ui-ux')).not.toBeInTheDocument()
@@ -424,15 +368,13 @@ describe('InstalledSkillsView search', () => {
 
   it('preserves search input value when no skills match', async () => {
     const user = userEvent.setup({ delay: null })
-    ;(cli.listSkills as any).mockResolvedValue(mockSkills)
+    listSkillsSpy.mockResolvedValue(mockSkills)
     renderWithProvider(<InstalledSkillsView scope="global" />)
     await waitFor(() => expect(screen.getByText('git-master')).toBeInTheDocument())
 
-    // when
     const input = screen.getByPlaceholderText('Search skills...') as HTMLInputElement
     await user.type(input, 'nonexistent')
 
-    // then
     await waitFor(() => {
       expect(screen.getByText('No skills match your search')).toBeInTheDocument()
     })
@@ -441,19 +383,16 @@ describe('InstalledSkillsView search', () => {
 
   it('shows all skills again when search is cleared', async () => {
     const user = userEvent.setup({ delay: null })
-    ;(cli.listSkills as any).mockResolvedValue(mockSkills)
+    listSkillsSpy.mockResolvedValue(mockSkills)
     renderWithProvider(<InstalledSkillsView scope="global" />)
     await waitFor(() => expect(screen.getByText('git-master')).toBeInTheDocument())
 
-    // given
     const input = screen.getByPlaceholderText('Search skills...')
     await user.type(input, 'git')
     await waitFor(() => expect(screen.queryByText('frontend-ui-ux')).not.toBeInTheDocument())
 
-    // when
     await user.click(screen.getByLabelText('Clear search'))
 
-    // then
     await waitFor(() => {
       expect(screen.getByText('git-master')).toBeInTheDocument()
       expect(screen.getByText('frontend-ui-ux')).toBeInTheDocument()
@@ -477,44 +416,30 @@ describe('InstalledSkillItem click-twice-to-delete', () => {
   ]
 
   beforeEach(() => {
-    ;(cli.listSkills as any).mockClear?.()
-    ;(cli.removeSkill as any).mockClear?.()
-    ;(cli.checkUpdatesApi as any).mockClear?.()
-    ;(cli.updateSkills as any).mockClear?.()
-    ;(cli.checkUpdatesApi as any).mockResolvedValue?.({
-      totalChecked: 2,
-      updatesAvailable: [],
-      errors: [],
-    })
+    mockDefaults()
   })
 
   it('first click shows "Remove" text and expands button', async () => {
-    // given: skill is rendered
-    ;(cli.listSkills as any).mockResolvedValue([mockSkills[0]])
+    listSkillsSpy.mockResolvedValue([mockSkills[0]])
     renderWithProvider(<InstalledSkillsView scope="global" />)
     await waitFor(() => expect(screen.getByText('skill-1')).toBeInTheDocument())
 
-    // when: click remove button once
     const removeButton = screen.getByLabelText('Remove skill')
     fireEvent.click(removeButton)
 
-    // then: "Remove" text is visible
     expect(screen.getByText('Remove')).toBeInTheDocument()
   })
 
   it('second click within 2s calls onRemove', async () => {
-    // given: skill is rendered
-    ;(cli.listSkills as any).mockResolvedValueOnce([mockSkills[0]]).mockResolvedValueOnce([mockSkills[1]!])
-    ;(cli.removeSkill as any).mockResolvedValue(undefined)
+    listSkillsSpy.mockResolvedValueOnce([mockSkills[0]]).mockResolvedValueOnce([mockSkills[1]!])
+    removeSkillSpy.mockResolvedValue(undefined)
     renderWithProvider(<InstalledSkillsView scope="global" />)
     await waitFor(() => expect(screen.getByText('skill-1')).toBeInTheDocument())
 
-    // when: click remove button twice
     const removeButton = screen.getByLabelText('Remove skill')
     fireEvent.click(removeButton)
     fireEvent.click(removeButton)
 
-    // then: removeSkill is called
     expect(cli.removeSkill).toHaveBeenCalledWith('skill-1', { global: true })
   })
 
@@ -525,7 +450,7 @@ describe('InstalledSkillItem click-twice-to-delete', () => {
     }) as typeof setTimeout
 
     try {
-      ;(cli.listSkills as any).mockResolvedValue([mockSkills[0]])
+      listSkillsSpy.mockResolvedValue([mockSkills[0]])
       renderWithProvider(<InstalledSkillsView scope="global" />)
       await waitFor(() => expect(screen.getByText('skill-1')).toBeInTheDocument())
 
@@ -543,8 +468,7 @@ describe('InstalledSkillItem click-twice-to-delete', () => {
   })
 
   it('onBlur resets confirmation state', async () => {
-    // given: skill is rendered and in confirming state
-    ;(cli.listSkills as any).mockResolvedValue([mockSkills[0]])
+    listSkillsSpy.mockResolvedValue([mockSkills[0]])
     renderWithProvider(<InstalledSkillsView scope="global" />)
     await waitFor(() => expect(screen.getByText('skill-1')).toBeInTheDocument())
 
@@ -553,10 +477,8 @@ describe('InstalledSkillItem click-twice-to-delete', () => {
     const removeText = screen.getByText('Remove')
     expect(removeText).toHaveClass('opacity-100')
 
-    // when: blur the button
     fireEvent.blur(removeButton)
 
-    // then: "Remove" text becomes hidden
     expect(removeText).toHaveClass('opacity-0')
   })
 })
@@ -576,40 +498,26 @@ describe('InstalledSkillItem navigation', () => {
   ]
 
   beforeEach(() => {
-    ;(cli.listSkills as any).mockClear?.()
-    ;(cli.removeSkill as any).mockClear?.()
-    ;(cli.checkUpdatesApi as any).mockClear?.()
-    ;(cli.updateSkills as any).mockClear?.()
-    ;(cli.checkUpdatesApi as any).mockResolvedValue?.({
-      totalChecked: 2,
-      updatesAvailable: [],
-      errors: [],
-    })
+    mockDefaults()
   })
 
   it('skill item is wrapped in Link to /skill/{name}', async () => {
-    // given: skill is rendered
-    ;(cli.listSkills as any).mockResolvedValue([mockSkills[0]])
+    listSkillsSpy.mockResolvedValue([mockSkills[0]])
     renderWithProvider(<InstalledSkillsView scope="global" />)
     await waitFor(() => expect(screen.getByText('skill-1')).toBeInTheDocument())
 
-    // then: there should be a link to the skill detail page
     const link = screen.getByRole('link', { name: /skill-1/i })
     expect(link).toHaveAttribute('href', '/skill/skill-1')
   })
 
   it('clicking remove button does not navigate', async () => {
-    // given: skill is rendered
-    ;(cli.listSkills as any).mockResolvedValue([mockSkills[0]])
+    listSkillsSpy.mockResolvedValue([mockSkills[0]])
     renderWithProvider(<InstalledSkillsView scope="global" />)
     await waitFor(() => expect(screen.getByText('skill-1')).toBeInTheDocument())
 
-    // when: click remove button once (first click to enter confirmation)
     const removeButton = screen.getByLabelText('Remove skill')
     fireEvent.click(removeButton)
 
-    // then: should still be on the same page (link wasn't followed)
-    // The "Remove" text should appear (confirming we're in confirmation state, not navigated)
     expect(screen.getByText('Remove')).toBeInTheDocument()
   })
 })
