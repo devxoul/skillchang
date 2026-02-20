@@ -8,8 +8,11 @@ const githubUrl = 'https://github.com/devxoul/skillpad'
 const videoUrl = '/screenshots/SkillPad-1080p.mp4'
 const exampleSkills = [
   { owner: 'vercel-labs', repo: 'skills', skillName: 'find-skills' },
+  { owner: 'anthropic', repo: 'skills', skillName: 'skill-creator' },
   { owner: 'anthropics', repo: 'skills', skillName: 'frontend-design' },
+  { owner: 'vercel-labs', repo: 'agent-skills', skillName: 'web-design-guidelines' },
   { owner: 'devxoul', repo: 'agent-messenger', skillName: 'agent-slack' },
+  { owner: 'devxoul', repo: 'agent-discord', skillName: 'agent-discord' },
   { owner: 'devxoul', repo: 'vibe-notion', skillName: 'vibe-notion' },
 ]
 
@@ -205,11 +208,30 @@ export function HomePage() {
   const [owner, setOwner] = useState('')
   const [repo, setRepo] = useState('')
   const [skillName, setSkillName] = useState('')
+  const [variant, setVariant] = useState<'dark' | 'light' | 'shield'>('dark')
+
+  useEffect(() => {
+    const random = exampleSkills[Math.floor(Math.random() * exampleSkills.length)]
+    setOwner(random.owner)
+    setRepo(random.repo)
+    setSkillName(random.skillName)
+  }, [])
 
   const installPath =
     owner || repo || skillName
       ? `${owner || 'OWNER'}/${repo || 'REPO'}/${skillName || 'SKILL-NAME'}`
       : 'OWNER/REPO/SKILL-NAME'
+
+  const shieldSkillName = (skillName || 'SKILL--NAME').replace(/-/g, '--')
+  const shieldLogoEncoded =
+    'data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjExMyAxNTAgNTQwIDU0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cGF0aCBkPSJNNDAwIDE4MS41NDdDNDEyLjM3NiAxNzQuNDAyIDQyNy42MjQgMTc0LjQwMiA0NDAgMTgxLjU0N0w2MTYuNTA2IDI4My40NTNDNjI4Ljg4MiAyOTAuNTk4IDYzNi41MDYgMzAzLjgwMyA2MzYuNTA2IDMxOC4wOTRWNTIxLjkwNkM2MzYuNTA2IDUzNi4xOTcgNjI4Ljg4MiA1NDkuNDAyIDYxNi41MDYgNTU2LjU0N0w0NDAgNjU4LjQ1M0M0MjcuNjI0IDY2NS41OTggNDEyLjM3NiA2NjUuNTk4IDQwMCA2NTguNDUzTDIyMy40OTQgNTU2LjU0N0MyMTEuMTE4IDU0OS40MDIgMjAzLjQ5NCA1MzYuMTk3IDIwMy40OTQgNTIxLjkwNlYzMTguMDk0QzIwMy40OTQgMzAzLjgwMyAyMTEuMTE4IDI5MC41OTggMjIzLjQ5NCAyODMuNDUzTDQwMCAxODEuNTQ3WiIgZmlsbD0id2hpdGUiLz4KICA8Y2lyY2xlIGN4PSIxNDcuNSIgY3k9IjE5MS41IiByPSIxNy41IiBmaWxsPSJ3aGl0ZSIvPgogIDxjaXJjbGUgY3g9IjE5Mi41IiBjeT0iMTkxLjUiIHI9IjE3LjUiIGZpbGw9IndoaXRlIi8+CiAgPGNpcmNsZSBjeD0iMjM3LjUiIGN5PSIxOTEuNSIgcj0iMTcuNSIgZmlsbD0id2hpdGUiLz4KPC9zdmc+Cg%3D%3D'
+  const shieldBadgeUrl = `https://img.shields.io/badge/SkillPad-${shieldSkillName}-1a1a1a?style=flat&logo=${shieldLogoEncoded}`
+  const badgeUrl =
+    variant === 'shield' ? shieldBadgeUrl : `https://badge.skillpad.dev/${skillName || 'SKILL-NAME'}/${variant}.svg`
+  const markdownCode =
+    variant === 'shield'
+      ? `[![SkillPad](${shieldBadgeUrl})](https://skillpad.dev/install/${installPath})`
+      : `[![Available on SkillPad](https://badge.skillpad.dev/${skillName || 'SKILL-NAME'}/${variant}.svg)](https://skillpad.dev/install/${installPath})`
 
   return (
     <div className="flex min-h-screen flex-col bg-zinc-50 dark:bg-black">
@@ -316,49 +338,42 @@ export function HomePage() {
             <h2 className="text-2xl font-bold tracking-tight text-zinc-900 sm:text-3xl dark:text-zinc-100">
               Available on SkillPad badge
             </h2>
-            <p className="mt-3 max-w-3xl text-sm leading-relaxed text-zinc-600 sm:text-base dark:text-zinc-400">
-              Skill developers can embed this badge in their README so users can install directly into SkillPad.
+            <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
+              Embed this badge in your README for one-click install.
             </p>
 
-            <div className="mt-5 grid gap-3 sm:grid-cols-3">
-              <label className="flex flex-col gap-1.5">
-                <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">Owner</span>
-                <input
-                  type="text"
-                  value={owner}
-                  onChange={(e) => setOwner(e.target.value)}
-                  placeholder="OWNER"
-                  className="rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-500 focus:outline-none dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder:text-zinc-600 dark:focus:border-zinc-500"
-                />
-              </label>
-              <label className="flex flex-col gap-1.5">
-                <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">Repo</span>
-                <input
-                  type="text"
-                  value={repo}
-                  onChange={(e) => setRepo(e.target.value)}
-                  placeholder="REPO"
-                  className="rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-500 focus:outline-none dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder:text-zinc-600 dark:focus:border-zinc-500"
-                />
-              </label>
-              <label className="flex flex-col gap-1.5">
-                <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">Skill name</span>
-                <input
-                  type="text"
-                  value={skillName}
-                  onChange={(e) => setSkillName(e.target.value)}
-                  placeholder="SKILL-NAME"
-                  className="rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-500 focus:outline-none dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder:text-zinc-600 dark:focus:border-zinc-500"
-                />
-              </label>
+            <div className="mt-5 flex items-center gap-1.5">
+              <input
+                type="text"
+                value={owner}
+                onChange={(e) => setOwner(e.target.value)}
+                placeholder="owner"
+                className="min-w-0 flex-1 rounded-lg border border-zinc-300 bg-white px-3 py-2 text-center text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-500 focus:outline-none dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100 dark:placeholder:text-zinc-600 dark:focus:border-zinc-500"
+              />
+              <span className="text-sm font-medium text-zinc-300 dark:text-zinc-700">/</span>
+              <input
+                type="text"
+                value={repo}
+                onChange={(e) => setRepo(e.target.value)}
+                placeholder="repo"
+                className="min-w-0 flex-1 rounded-lg border border-zinc-300 bg-white px-3 py-2 text-center text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-500 focus:outline-none dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100 dark:placeholder:text-zinc-600 dark:focus:border-zinc-500"
+              />
+              <span className="text-sm font-medium text-zinc-300 dark:text-zinc-700">/</span>
+              <input
+                type="text"
+                value={skillName}
+                onChange={(e) => setSkillName(e.target.value)}
+                placeholder="skill-name"
+                className="min-w-0 flex-1 rounded-lg border border-zinc-300 bg-white px-3 py-2 text-center text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-500 focus:outline-none dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100 dark:placeholder:text-zinc-600 dark:focus:border-zinc-500"
+              />
             </div>
 
             <div className="mt-3 flex items-center gap-2">
-              <p className="shrink-0 text-xs font-medium text-zinc-500 dark:text-zinc-400">Try:</p>
-              <div className="flex gap-2 overflow-x-auto">
+              <p className="shrink-0 text-xs text-zinc-400 dark:text-zinc-500">Try:</p>
+              <div className="flex flex-wrap gap-1.5">
                 {exampleSkills.map((example) => {
                   const path = `${example.owner}/${example.repo}/${example.skillName}`
-
+                  const isSelected = owner === example.owner && repo === example.repo && skillName === example.skillName
                   return (
                     <button
                       key={path}
@@ -368,119 +383,64 @@ export function HomePage() {
                         setRepo(example.repo)
                         setSkillName(example.skillName)
                       }}
-                      className="cursor-pointer shrink-0 rounded-full border border-zinc-300 bg-white px-3 py-1 text-xs font-medium text-zinc-600 transition-colors hover:border-zinc-400 hover:text-zinc-900 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-300 dark:hover:border-zinc-600 dark:hover:text-zinc-100"
+                      className={`cursor-pointer rounded-full border px-2.5 py-1 text-[11px] font-medium transition-colors ${
+                        isSelected
+                          ? 'border-zinc-900 bg-zinc-900 text-white dark:border-zinc-100 dark:bg-zinc-100 dark:text-zinc-900'
+                          : 'border-zinc-300 bg-white text-zinc-500 hover:border-zinc-400 hover:text-zinc-700 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-400 dark:hover:border-zinc-600 dark:hover:text-zinc-200'
+                      }`}
                     >
-                      {path}
+                      {example.skillName}
                     </button>
                   )
                 })}
-              </div>
-              {(owner || repo || skillName) && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setOwner('')
-                    setRepo('')
-                    setSkillName('')
-                  }}
-                  className="cursor-pointer shrink-0 text-xs font-medium text-zinc-400 transition-colors hover:text-zinc-600 dark:text-zinc-500 dark:hover:text-zinc-300"
-                >
-                  Clear
-                </button>
-              )}
-            </div>
-
-            <div className="mt-6 grid gap-4 sm:grid-cols-3">
-              <div className="flex min-w-0 flex-col">
-                <p className="mb-2 text-xs font-medium text-zinc-500 dark:text-zinc-400">Dark</p>
-                <div className="flex flex-1 items-center justify-center rounded-xl border border-zinc-200 bg-white p-5 dark:border-zinc-700 dark:bg-zinc-950">
-                  <Link href={`/install/${installPath}`} className="inline-block">
-                    <img
-                      src={`https://badge.skillpad.dev/${skillName || 'SKILL-NAME'}/dark.svg`}
-                      alt="Available on SkillPad badge (dark)"
-                      className="h-12 w-auto"
-                    />
-                  </Link>
-                </div>
-                <div className="mt-2 flex items-center gap-2 rounded-xl border border-zinc-200 bg-zinc-100 p-3 dark:border-zinc-700 dark:bg-zinc-950">
-                  <pre className="min-w-0 flex-1 overflow-x-auto text-xs text-zinc-700 dark:text-zinc-200">
-                    <code>
-                      {`[![Available on SkillPad](https://badge.skillpad.dev/${skillName || 'SKILL-NAME'}/dark.svg)](https://skillpad.dev/install/${installPath})`}
-                    </code>
-                  </pre>
-                  <CopyButton
-                    text={`[![Available on SkillPad](https://badge.skillpad.dev/${skillName || 'SKILL-NAME'}/dark.svg)](https://skillpad.dev/install/${installPath})`}
-                  />
-                </div>
-              </div>
-
-              <div className="flex min-w-0 flex-col">
-                <p className="mb-2 text-xs font-medium text-zinc-500 dark:text-zinc-400">Light</p>
-                <div className="flex flex-1 items-center justify-center rounded-xl border border-zinc-200 bg-white p-5 dark:border-zinc-700 dark:bg-zinc-950">
-                  <Link href={`/install/${installPath}`} className="inline-block">
-                    <img
-                      src={`https://badge.skillpad.dev/${skillName || 'SKILL-NAME'}/light.svg`}
-                      alt="Available on SkillPad badge (light)"
-                      className="h-12 w-auto"
-                    />
-                  </Link>
-                </div>
-                <div className="mt-2 flex items-center gap-2 rounded-xl border border-zinc-200 bg-zinc-100 p-3 dark:border-zinc-700 dark:bg-zinc-950">
-                  <pre className="min-w-0 flex-1 overflow-x-auto text-xs text-zinc-700 dark:text-zinc-200">
-                    <code>
-                      {`[![Available on SkillPad](https://badge.skillpad.dev/${skillName || 'SKILL-NAME'}/light.svg)](https://skillpad.dev/install/${installPath})`}
-                    </code>
-                  </pre>
-                  <CopyButton
-                    text={`[![Available on SkillPad](https://badge.skillpad.dev/${skillName || 'SKILL-NAME'}/light.svg)](https://skillpad.dev/install/${installPath})`}
-                  />
-                </div>
-              </div>
-
-              <div className="flex min-w-0 flex-col">
-                <p className="mb-2 text-xs font-medium text-zinc-500 dark:text-zinc-400">Shield</p>
-                <div className="flex flex-1 items-center justify-center rounded-xl border border-zinc-200 bg-white p-5 dark:border-zinc-700 dark:bg-zinc-950">
-                  <Link href={`/install/${installPath}`} className="inline-block">
-                    <img
-                      src={`https://img.shields.io/badge/SkillPad-${(skillName || 'SKILL--NAME').replace(/-/g, '--')}-1a1a1a?style=flat&logo=${encodeURIComponent('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjExMyAxNTAgNTQwIDU0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cGF0aCBkPSJNNDAwIDE4MS41NDdDNDEyLjM3NiAxNzQuNDAyIDQyNy42MjQgMTc0LjQwMiA0NDAgMTgxLjU0N0w2MTYuNTA2IDI4My40NTNDNjI4Ljg4MiAyOTAuNTk4IDYzNi41MDYgMzAzLjgwMyA2MzYuNTA2IDMxOC4wOTRWNTIxLjkwNkM2MzYuNTA2IDUzNi4xOTcgNjI4Ljg4MiA1NDkuNDAyIDYxNi41MDYgNTU2LjU0N0w0NDAgNjU4LjQ1M0M0MjcuNjI0IDY2NS41OTggNDEyLjM3NiA2NjUuNTk4IDQwMCA2NTguNDUzTDIyMy40OTQgNTU2LjU0N0MyMTEuMTE4IDU0OS40MDIgMjAzLjQ5NCA1MzYuMTk3IDIwMy40OTQgNTIxLjkwNlYzMTguMDk0QzIwMy40OTQgMzAzLjgwMyAyMTEuMTE4IDI5MC41OTggMjIzLjQ5NCAyODMuNDUzTDQwMCAxODEuNTQ3WiIgZmlsbD0id2hpdGUiLz4KICA8Y2lyY2xlIGN4PSIxNDcuNSIgY3k9IjE5MS41IiByPSIxNy41IiBmaWxsPSJ3aGl0ZSIvPgogIDxjaXJjbGUgY3g9IjE5Mi41IiBjeT0iMTkxLjUiIHI9IjE3LjUiIGZpbGw9IndoaXRlIi8+CiAgPGNpcmNsZSBjeD0iMjM3LjUiIGN5PSIxOTEuNSIgcj0iMTcuNSIgZmlsbD0id2hpdGUiLz4KPC9zdmc+Cg==')}`}
-                      alt="SkillPad shield"
-                      className="h-5 w-auto"
-                    />
-                  </Link>
-                </div>
-                <div className="mt-2 flex items-center gap-2 rounded-xl border border-zinc-200 bg-zinc-100 p-3 dark:border-zinc-700 dark:bg-zinc-950">
-                  <pre className="min-w-0 flex-1 overflow-x-auto text-xs text-zinc-700 dark:text-zinc-200">
-                    <code>
-                      {`[![SkillPad](https://img.shields.io/badge/SkillPad-${(skillName || 'SKILL--NAME').replace(/-/g, '--')}-1a1a1a?style=flat&logo=data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjExMyAxNTAgNTQwIDU0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cGF0aCBkPSJNNDAwIDE4MS41NDdDNDEyLjM3NiAxNzQuNDAyIDQyNy42MjQgMTc0LjQwMiA0NDAgMTgxLjU0N0w2MTYuNTA2IDI4My40NTNDNjI4Ljg4MiAyOTAuNTk4IDYzNi41MDYgMzAzLjgwMyA2MzYuNTA2IDMxOC4wOTRWNTIxLjkwNkM2MzYuNTA2IDUzNi4xOTcgNjI4Ljg4MiA1NDkuNDAyIDYxNi41MDYgNTU2LjU0N0w0NDAgNjU4LjQ1M0M0MjcuNjI0IDY2NS41OTggNDEyLjM3NiA2NjUuNTk4IDQwMCA2NTguNDUzTDIyMy40OTQgNTU2LjU0N0MyMTEuMTE4IDU0OS40MDIgMjAzLjQ5NCA1MzYuMTk3IDIwMy40OTQgNTIxLjkwNlYzMTguMDk0QzIwMy40OTQgMzAzLjgwMyAyMTEuMTE4IDI5MC41OTggMjIzLjQ5NCAyODMuNDUzTDQwMCAxODEuNTQ3WiIgZmlsbD0id2hpdGUiLz4KICA8Y2lyY2xlIGN4PSIxNDcuNSIgY3k9IjE5MS41IiByPSIxNy41IiBmaWxsPSJ3aGl0ZSIvPgogIDxjaXJjbGUgY3g9IjE5Mi41IiBjeT0iMTkxLjUiIHI9IjE3LjUiIGZpbGw9IndoaXRlIi8+CiAgPGNpcmNsZSBjeD0iMjM3LjUiIGN5PSIxOTEuNSIgcj0iMTcuNSIgZmlsbD0id2hpdGUiLz4KPC9zdmc+Cg%3D%3D)](https://skillpad.dev/install/${installPath})`}
-                    </code>
-                  </pre>
-                  <CopyButton
-                    text={`[![SkillPad](https://img.shields.io/badge/SkillPad-${(skillName || 'SKILL--NAME').replace(/-/g, '--')}-1a1a1a?style=flat&logo=data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjExMyAxNTAgNTQwIDU0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cGF0aCBkPSJNNDAwIDE4MS41NDdDNDEyLjM3NiAxNzQuNDAyIDQyNy42MjQgMTc0LjQwMiA0NDAgMTgxLjU0N0w2MTYuNTA2IDI4My40NTNDNjI4Ljg4MiAyOTAuNTk4IDYzNi41MDYgMzAzLjgwMyA2MzYuNTA2IDMxOC4wOTRWNTIxLjkwNkM2MzYuNTA2IDUzNi4xOTcgNjI4Ljg4MiA1NDkuNDAyIDYxNi41MDYgNTU2LjU0N0w0NDAgNjU4LjQ1M0M0MjcuNjI0IDY2NS41OTggNDEyLjM3NiA2NjUuNTk4IDQwMCA2NTguNDUzTDIyMy40OTQgNTU2LjU0N0MyMTEuMTE4IDU0OS40MDIgMjAzLjQ5NCA1MzYuMTk3IDIwMy40OTQgNTIxLjkwNlYzMTguMDk0QzIwMy40OTQgMzAzLjgwMyAyMTEuMTE4IDI5MC41OTggMjIzLjQ5NCAyODMuNDUzTDQwMCAxODEuNTQ3WiIgZmlsbD0id2hpdGUiLz4KICA8Y2lyY2xlIGN4PSIxNDcuNSIgY3k9IjE5MS41IiByPSIxNy41IiBmaWxsPSJ3aGl0ZSIvPgogIDxjaXJjbGUgY3g9IjE5Mi41IiBjeT0iMTkxLjUiIHI9IjE3LjUiIGZpbGw9IndoaXRlIi8+CiAgPGNpcmNsZSBjeD0iMjM3LjUiIGN5PSIxOTEuNSIgcj0iMTcuNSIgZmlsbD0id2hpdGUiLz4KPC9zdmc+Cg%3D%3D)](https://skillpad.dev/install/${installPath})`}
-                  />
-                </div>
+                {(owner || repo || skillName) && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setOwner('')
+                      setRepo('')
+                      setSkillName('')
+                    }}
+                    className="cursor-pointer text-[11px] text-zinc-400 transition-colors hover:text-zinc-600 dark:text-zinc-500 dark:hover:text-zinc-300"
+                  >
+                    Clear
+                  </button>
+                )}
               </div>
             </div>
 
-            <div className="mt-7 border-t border-zinc-200 pt-5 dark:border-zinc-800">
-              <p className="text-xs font-medium text-zinc-500 dark:text-zinc-400">Example badges</p>
-              <div className="mt-3 flex flex-wrap items-center gap-3">
-                {exampleSkills.map((example) => {
-                  const path = `${example.owner}/${example.repo}/${example.skillName}`
+            <div className="mt-6 flex justify-center rounded-xl border border-zinc-200 bg-white p-6 dark:border-zinc-700 dark:bg-zinc-950">
+              <Link href={`/install/${installPath}`} className="inline-block">
+                <img
+                  src={badgeUrl}
+                  alt={`Available on SkillPad badge (${variant})`}
+                  className={`${variant === 'shield' ? 'h-5' : 'h-12'} w-auto`}
+                />
+              </Link>
+            </div>
 
-                  return (
-                    <Link
-                      key={`badge-${path}`}
-                      href={`/install/${path}`}
-                      className="flex items-center gap-1.5 rounded-xl border border-zinc-200 bg-white px-4 py-3 transition-colors hover:border-zinc-300 dark:border-zinc-700 dark:bg-zinc-950 dark:hover:border-zinc-600"
-                    >
-                      <img
-                        src={`https://badge.skillpad.dev/${example.skillName}/dark.svg`}
-                        alt={`${path} install badge`}
-                        className="h-7 w-auto"
-                      />
-                    </Link>
-                  )
-                })}
+            <div className="mt-2 overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-700">
+              <div className="flex items-center gap-px border-b border-zinc-200 bg-zinc-50 px-1 dark:border-zinc-700 dark:bg-zinc-900">
+                {(['dark', 'light', 'shield'] as const).map((v) => (
+                  <button
+                    key={v}
+                    type="button"
+                    onClick={() => setVariant(v)}
+                    className={`cursor-pointer px-3 py-2 text-xs font-medium capitalize transition-colors ${
+                      variant === v
+                        ? 'border-b-2 border-zinc-900 text-zinc-900 dark:border-zinc-100 dark:text-zinc-100'
+                        : 'text-zinc-400 hover:text-zinc-600 dark:text-zinc-500 dark:hover:text-zinc-300'
+                    }`}
+                  >
+                    {v}
+                  </button>
+                ))}
+              </div>
+              <div className="flex items-center gap-2 bg-white p-3 dark:bg-zinc-950">
+                <pre className="min-w-0 flex-1 overflow-x-auto text-xs text-zinc-600 dark:text-zinc-300">
+                  <code>{markdownCode}</code>
+                </pre>
+                <CopyButton text={markdownCode} />
               </div>
             </div>
           </div>
