@@ -14,20 +14,20 @@ const NO_UPDATES_OUTPUT = 'Checking 0 skill(s) for updates...\n\nAll 0 skill(s) 
 let listSkillsSpy: ReturnType<typeof spyOn>
 let removeSkillSpy: ReturnType<typeof spyOn>
 let checkUpdatesSpy: ReturnType<typeof spyOn>
-let updateSkillsSpy: ReturnType<typeof spyOn>
+let addSkillSpy: ReturnType<typeof spyOn>
 
 beforeEach(() => {
   listSkillsSpy = spyOn(cli, 'listSkills').mockResolvedValue([])
   removeSkillSpy = spyOn(cli, 'removeSkill').mockResolvedValue(undefined)
   checkUpdatesSpy = spyOn(cli, 'checkUpdates').mockResolvedValue(NO_UPDATES_OUTPUT)
-  updateSkillsSpy = spyOn(cli, 'updateSkills').mockResolvedValue({ updatedCount: 0, updatedSkills: [] })
+  addSkillSpy = spyOn(cli, 'addSkill').mockResolvedValue(undefined)
 })
 
 afterEach(() => {
   listSkillsSpy.mockRestore()
   removeSkillSpy.mockRestore()
   checkUpdatesSpy.mockRestore()
-  updateSkillsSpy.mockRestore()
+  addSkillSpy.mockRestore()
 })
 
 const renderWithProvider = (ui: React.ReactElement) => {
@@ -54,7 +54,7 @@ function mockDefaults() {
   listSkillsSpy.mockClear().mockResolvedValue([])
   removeSkillSpy.mockClear().mockResolvedValue(undefined)
   checkUpdatesSpy.mockClear().mockResolvedValue(NO_UPDATES_OUTPUT)
-  updateSkillsSpy.mockClear().mockResolvedValue({ updatedCount: 0, updatedSkills: [] })
+  addSkillSpy.mockClear().mockResolvedValue(undefined)
 }
 
 describe('InstalledSkillsView', () => {
@@ -283,12 +283,12 @@ describe('Check for Updates', () => {
     })
   })
 
-  it('Update All button calls updateSkills and refreshes', async () => {
+  it('Update All button calls addSkill per source and refreshes', async () => {
     listSkillsSpy.mockResolvedValue(mockSkills)
     checkUpdatesSpy.mockResolvedValue(
       'Checking 2 skill(s) for updates...\n\n1 update(s) available:\n\n  ↑ skill-1\n    source: user/repo\n\nRun npx skills update to update all skills',
     )
-    updateSkillsSpy.mockResolvedValue({ updatedCount: 1, updatedSkills: ['skill-1'] })
+    addSkillSpy.mockResolvedValue(undefined)
     renderWithProvider(<InstalledSkillsView scope="global" />)
 
     await waitFor(() => {
@@ -299,7 +299,11 @@ describe('Check for Updates', () => {
     fireEvent.click(updateButton)
 
     await waitFor(() => {
-      expect(cli.updateSkills).toHaveBeenCalled()
+      expect(cli.addSkill).toHaveBeenCalledWith('user/repo', {
+        global: true,
+        skills: ['skill-1'],
+        yes: true,
+      })
     })
   })
 

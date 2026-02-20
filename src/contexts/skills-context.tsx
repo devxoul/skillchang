@@ -1,13 +1,13 @@
 import { createContext, type ReactNode, useCallback, useContext, useMemo, useState } from 'react'
 import { fetchSkills, searchSkills as searchSkillsApi } from '@/lib/api'
 import {
+  addSkill,
   checkUpdates,
   listSkills,
   parseUpdateCheckOutput,
   type RemoveSkillOptions,
   removeSkill,
   type SkillInfo,
-  updateSkills,
 } from '@/lib/cli'
 import type { Skill } from '@/types/skill'
 import type { UpdateStatusMap } from '@/types/update-status'
@@ -249,37 +249,65 @@ export function SkillsProvider({ children }: { children: ReactNode }) {
       setUpdatingAll(true)
 
       const cached = updateStatusCache[scope]
-      if (cached) {
-        const updatingStatuses: UpdateStatusMap = { ...cached.statuses }
-        for (const name of Object.keys(updatingStatuses)) {
-          const status = updatingStatuses[name]
-          if (status?.status === 'update-available') {
-            updatingStatuses[name] = { status: 'updating' }
-          }
-        }
-        setUpdateStatusCache((prev) => ({
-          ...prev,
-          [scope]: { ...prev[scope]!, statuses: updatingStatuses },
-        }))
+      if (!cached) {
+        setUpdatingAll(false)
+        return
       }
 
+      const skillsToUpdate: Array<{ name: string; source: string }> = []
+      const updatingStatuses: UpdateStatusMap = { ...cached.statuses }
+      for (const [name, status] of Object.entries(updatingStatuses)) {
+        if (status?.status === 'update-available') {
+          updatingStatuses[name] = { status: 'updating' }
+          skillsToUpdate.push({ name, source: status.source })
+        }
+      }
+      setUpdateStatusCache((prev) => ({
+        ...prev,
+        [scope]: { ...prev[scope]!, statuses: updatingStatuses },
+      }))
+
+      const isGlobal = scope === 'global'
+
       try {
-        await updateSkills()
-        const isGlobal = scope === 'global'
+        const bySource = new Map<string, string[]>()
+        for (const { name, source } of skillsToUpdate) {
+          const existing = bySource.get(source) ?? []
+          existing.push(name)
+          bySource.set(source, existing)
+        }
+
+        for (const [source, skillNames] of bySource) {
+          await addSkill(source, {
+            global: isGlobal,
+            skills: skillNames,
+            yes: true,
+          })
+        }
+
         await fetchInstalledSkills({
           global: isGlobal,
           projectPath: isGlobal ? undefined : scope,
           force: true,
         })
-        const skills = installed.cache[scope]?.skills ?? []
-        await checkForUpdates({ scope, skills, force: true })
       } catch (err) {
         console.error('Failed to update skills:', err)
+      }
+
+      try {
+        const isGlobalScope = scope === 'global'
+        const freshSkills = await listSkills({
+          global: isGlobalScope,
+          cwd: isGlobalScope ? undefined : scope,
+        })
+        await checkForUpdates({ scope, skills: freshSkills, force: true })
+      } catch (err) {
+        console.error('Failed to check updates after update:', err)
       } finally {
         setUpdatingAll(false)
       }
     },
-    [updateStatusCache, fetchInstalledSkills, installed.cache, checkForUpdates],
+    [updateStatusCache, fetchInstalledSkills, checkForUpdates],
   )
 
   const value = useMemo(
