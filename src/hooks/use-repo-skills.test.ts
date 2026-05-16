@@ -229,6 +229,24 @@ describe('useRepoSkills', () => {
     expect(result.current.skills).not.toEqual(mockSkills)
   })
 
+  it('resolves k-skill alias to NomaDamas/k-skill and fetches that repo', async () => {
+    // given - real isRepoQuery is used to detect the aliased owner/repo
+    mockIsRepoQuery.mockImplementation((q: string) => q === 'NomaDamas/k-skill')
+    mockFetchRepoSkills.mockResolvedValue(mockSkills)
+
+    // when
+    const { result } = renderHook(() => useRepoSkills('k-skill'))
+
+    await act(async () => {
+      await new Promise((r) => setTimeout(r, 50))
+    })
+
+    // then
+    expect(mockFetchRepoSkills).toHaveBeenCalledWith('NomaDamas', 'k-skill')
+    expect(result.current.repoQuery).toBe('NomaDamas/k-skill')
+    expect(result.current.skills).toEqual(mockSkills)
+  })
+
   it('getRepoSkillsCache returns the module-level cache Map', () => {
     const cache = getRepoSkillsCache()
     expect(cache).toBeInstanceOf(Map)

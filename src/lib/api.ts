@@ -195,6 +195,16 @@ export async function searchSkills(query: string, limit = 20): Promise<Skill[]> 
   }
 }
 
+const SOURCE_ALIASES: Record<string, string> = {
+  'k-skill': 'NomaDamas/k-skill',
+  'agent-messenger': 'agent-messenger/agent-messenger',
+}
+
+export function resolveSourceAlias(query: string): string {
+  const trimmed = query.trim()
+  return SOURCE_ALIASES[trimmed] ?? trimmed
+}
+
 export function isRepoQuery(query: string): boolean {
   return /^[a-zA-Z0-9_.-]+\/[a-zA-Z0-9_.-]+$/.test(query.trim())
 }

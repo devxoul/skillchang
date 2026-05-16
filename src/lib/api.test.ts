@@ -9,6 +9,7 @@ import {
   isSkillPathQuery,
   parseSkillPath,
   resolveInstallSource,
+  resolveSourceAlias,
   searchReposByName,
   searchSkills,
 } from '@/lib/api'
@@ -214,6 +215,22 @@ test('parseSkillPath returns null for invalid formats', () => {
   expect(parseSkillPath('a/b/c/d')).toBeNull()
   expect(parseSkillPath('owner/repo/..')).toBeNull()
   expect(parseSkillPath('owner/./skill')).toBeNull()
+})
+
+test('resolveSourceAlias maps k-skill to NomaDamas/k-skill', () => {
+  expect(resolveSourceAlias('k-skill')).toBe('NomaDamas/k-skill')
+  expect(resolveSourceAlias('  k-skill  ')).toBe('NomaDamas/k-skill')
+})
+
+test('resolveSourceAlias maps agent-messenger to agent-messenger/agent-messenger', () => {
+  expect(resolveSourceAlias('agent-messenger')).toBe('agent-messenger/agent-messenger')
+})
+
+test('resolveSourceAlias returns trimmed query when no alias matches', () => {
+  expect(resolveSourceAlias('react')).toBe('react')
+  expect(resolveSourceAlias('xoul/skills')).toBe('xoul/skills')
+  expect(resolveSourceAlias('  xoul/skills  ')).toBe('xoul/skills')
+  expect(resolveSourceAlias('')).toBe('')
 })
 
 test('fetchRepoSkills returns skills from GitHub contents API', async () => {

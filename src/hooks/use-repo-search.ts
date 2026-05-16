@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-import { isRepoQuery, isSkillPathQuery, searchReposByName } from '@/lib/api'
+import { isRepoQuery, isSkillPathQuery, resolveSourceAlias, searchReposByName } from '@/lib/api'
 import { ApiError } from '@/types/api'
 import type { Skill } from '@/types/skill'
 
@@ -33,7 +33,8 @@ export function useRepoSearch(searchQuery: string, skillSearchEmpty: boolean): R
   useEffect(() => {
     const trimmed = searchQuery.trim()
 
-    if (!trimmed || trimmed.length < 2 || isRepoQuery(trimmed) || isSkillPathQuery(trimmed)) {
+    const aliased = resolveSourceAlias(trimmed)
+    if (!trimmed || trimmed.length < 2 || isRepoQuery(trimmed) || isSkillPathQuery(trimmed) || aliased !== trimmed) {
       setState({ skills: [], loading: false, error: null })
       return
     }

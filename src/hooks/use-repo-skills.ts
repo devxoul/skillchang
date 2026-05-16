@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-import { fetchRepoSkills, isRepoQuery } from '@/lib/api'
+import { fetchRepoSkills, isRepoQuery, resolveSourceAlias } from '@/lib/api'
 import { ApiError } from '@/types/api'
 import type { Skill } from '@/types/skill'
 
@@ -34,7 +34,7 @@ export function useRepoSkills(searchQuery: string): RepoSkillsState {
   })
 
   useEffect(() => {
-    const trimmed = searchQuery.trim()
+    const trimmed = resolveSourceAlias(searchQuery)
 
     if (!isRepoQuery(trimmed)) {
       setState({ skills: [], loading: false, error: null, repoQuery: null })
