@@ -98,10 +98,31 @@ export default async function handler(request: Request): Promise<Response> {
   if (ifModifiedSince) headers['If-Modified-Since'] = ifModifiedSince
 
   try {
-    const response = await fetch(upstreamUrl, {
+    let response = await fetch(upstreamUrl, {
       method: request.method,
       headers,
     })
+
+    // Fine-grained GitHub tokens return 404 (not 403) for repos outside their
+    // scope, masking public repos as missing. Retry without auth so public
+    // repos always resolve regardless of the proxy token's scope.
+    if (
+      GITHUB_UPSTREAMS.has(prefix) &&
+      headers['Authorization'] &&
+      (response.status === 404 || response.status === 403)
+    ) {
+      const unauthHeaders: Record<string, string> = {}
+      for (const [key, value] of Object.entries(headers)) {
+        if (key !== 'Authorization') unauthHeaders[key] = value
+      }
+      const unauthResponse = await fetch(upstreamUrl, {
+        method: request.method,
+        headers: unauthHeaders,
+      })
+      if (unauthResponse.ok) {
+        response = unauthResponse
+      }
+    }
 
     const responseHeaders = new Headers(CORS_HEADERS)
     for (const name of FORWARDED_RESPONSE_HEADERS) {
