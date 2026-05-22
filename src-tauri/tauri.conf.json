@@ -1,7 +1,7 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "SkillPad",
-  "version": "0.15.0",
+  "version": "0.15.1",
   "identifier": "com.skillpad.app",
   "build": {
     "frontendDist": "../dist",
